@@ -1,9 +1,29 @@
 {
   "name": "normkompass",
   "private": true,
+  "type": "module",
   "packageManager": "pnpm@12.16.1",
-  "engines": { "node": ">=24" },
+  "engines": {
+    "node": ">=24"
+  },
   "devDependencies": {
-    "@fission-ai/openspec": "1.16.0"
+    "@eslint/js": "^10.0.1",
+    "@fission-ai/openspec": "1.16.0",
+    "@swc/core": "^1.16.21",
+    "@types/node": "^24.19.2",
+    "eslint": "^10.14.0",
+    "prettier": "^3.9.10",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.72.1",
+    "unplugin-swc": "^2.0.0",
+    "vitest": "^5.0.5"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "format": "prettier --check .",
+    "typecheck": "pnpm -r typecheck",
+    "test": "vitest run",
+    "build": "pnpm -r build",
+    "spec": "openspec validate --all --strict --no-interactive"
   }
 }
