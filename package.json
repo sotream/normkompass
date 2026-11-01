@@ -1,0 +1,9 @@
+{
+  "name": "normkompass",
+  "private": true,
+  "packageManager": "pnpm@12.16.1",
+  "engines": { "node": ">=24" },
+  "devDependencies": {
+    "@fission-ai/openspec": "1.16.0"
+  }
+}

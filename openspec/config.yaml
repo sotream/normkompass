@@ -1,0 +1,10 @@
+schema: spec-driven
+
+context: |
+  normkompass is a reference implementation of RAG with verifiable citations
+  for regulated documents (demo corpus: German federal law). It is not a
+  finished product and not legal advice.
+  Stack: TypeScript (strict), Node 24, pnpm workspace, NestJS, Vitest,
+  Postgres with pgvector and full-text search, Docker Compose.
+  All repository artifacts (specs, ADRs, code, commits) are written in English.
+  Specs describe observable behavior (requirements and scenarios), not code.
