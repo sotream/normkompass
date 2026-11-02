@@ -8,8 +8,8 @@
 
 - [x] 2.1 Record provider and model in `pnpm eval:answers` output and result files
 - [x] 2.2 Document local setup (install Ollama, pull a model, run the eval) in the README
-- [ ] 2.3 Run the answer eval with a local model once one is installed and report the result with its label
+- [x] 2.3 Run the answer eval with a local model once one is installed and report the result with its label
 
 ## 3. Archive
 
-- [ ] 3.1 Run `openspec archive local-answer-model` and fill the Purpose section
+- [x] 3.1 Run `openspec archive local-answer-model` and fill the Purpose section
