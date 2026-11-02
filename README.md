@@ -128,7 +128,14 @@ if its content is right. How often that happens depends on the model and has to 
 - `claude` (default): the Anthropic API. Set `ANTHROPIC_API_KEY` and `ANSWER_MODEL`.
 - `ollama`: a model running locally in [Ollama](https://ollama.com). Set `OLLAMA_MODEL` (a model you have
   pulled) and optionally `OLLAMA_URL` (default `http://localhost:11434`). Question and source text are sent
-  only to that URL, so nothing leaves the machine. There is no default model in the code for either provider.
+  only to that URL, so nothing leaves the machine.
+- `openai-compatible`: any endpoint with an OpenAI-style chat completions API (for example the Google Gemini
+  compatibility endpoint). Set `ANSWER_BASE_URL`, `ANSWER_API_KEY` and `ANSWER_MODEL`, and optionally
+  `ANSWER_MIN_INTERVAL_MS` to space requests inside a free tier's rate limit. Question and source text
+  (public law and the eval questions) **are sent to that host**, a third party, so do not use it with data that
+  must stay private. Transient failures (429, 5xx, dropped connections) are retried with exponential backoff and jitter; a 429 also widens the spacing between requests.
+
+There is no default model in the code for any provider. Keys go only in the git-ignored `.env`.
 
 Citation verification and the refusal rule are identical for every provider. Results always name the
 provider and model; a local model's numbers say nothing about Claude and the other way round.
@@ -139,6 +146,11 @@ ollama pull llama3.1:8b                    # example; about 5 GB
 pnpm eval:answers                          # 89 requests, runs locally
 ```
 
+To use a free hosted model instead, create a key (for Gemini: Google AI Studio, "Get API key"), then in `.env`
+set `ANSWER_PROVIDER=openai-compatible`, `ANSWER_BASE_URL=https://generativelanguage.googleapis.com/v1beta/openai/`,
+`ANSWER_API_KEY`, `ANSWER_MODEL` (the available names change; `GET <base url>/models` lists them) and
+`ANSWER_MIN_INTERVAL_MS=6000`, and run `pnpm eval:answers`.
+
 ## Answer evaluation
 
 `pnpm eval:answers` runs all 89 questions through the full pipeline with the real model and reports
@@ -147,18 +159,36 @@ expected norm, and refusal precision and recall (with "refused" as the positive 
 requests to the configured model. With `claude` that costs money, so it is a manual command; with `ollama`
 it is free but takes a while.
 
-### Result: local model (not Claude)
+### Results: other models (not Claude)
 
-| Date       | Commit               | Answer model         | Embedder              | Citation validity | Cites expected norm    | Refusal precision | Refusal recall |
-| ---------- | -------------------- | -------------------- | --------------------- | ----------------- | ---------------------- | ----------------- | -------------- |
-| 2026-11-02 | `abef35d` (see note) | ollama `llama3.1:8b` | multilingual-e5-small | 0.486 (69/142)    | 0.867 (of 30 answered) | 0.237             | 1.000          |
+| Date       | Commit               | Answer model                                                                          | Embedder              | Citation validity | Cites expected norm             | Refusal precision | Refusal recall |
+| ---------- | -------------------- | ------------------------------------------------------------------------------------- | --------------------- | ----------------- | ------------------------------- | ----------------- | -------------- |
+| 2026-11-02 | `abef35d` (see note) | ollama `llama3.1:8b`                                                                  | multilingual-e5-small | 0.486 (69/142)    | 0.867 (of 30 answered)          | 0.237             | 1.000          |
+| 2026-11-02 | `7971384`            | openai-compatible `gemini-3.5-flash-lite` @ generativelanguage.googleapis.com, 4 runs | multilingual-e5-small | 0.940–0.976       | 0.956–0.971 (of 66–69 answered) | 0.609–0.700       | 1.000          |
+| 2026-11-02 | `7971384`            | openai-compatible `gemini-3.1-flash-lite` @ generativelanguage.googleapis.com, 1 run  | multilingual-e5-small | 0.851 (80/94)     | 0.966 (of 59 answered)          | 0.467             | 1.000          |
 
-This is a small local model run on a laptop, **not Claude**. Reading the numbers plainly: the pipeline never
-accepted a bad citation, but the model is a poor fit for the task. Of the 75 answerable questions only 30
-were answered; 45 were refused, and all 14 unanswerable questions were refused (hence recall 1.0 and a low
+None of these rows is Claude. The first is a small local model run on a laptop. Reading its numbers plainly: the
+pipeline never accepted a bad citation, but the model is a poor fit for the task. Of the 75 answerable questions
+only 30 were answered; 45 were refused, and all 14 unanswerable questions were refused (hence recall 1.0 and a low
 precision of 0.237). Refusal reasons across all 89 questions: `citation-rejected` 44, `model-refused` 7,
 `no-citations` 6, `model-error` 2. Most refusals come from the strict rule that any citation failing
 verification (usually a quote that is not verbatim) rejects the whole answer.
+
+The Gemini rows are Google models through the free tier (hosted third parties; question and source text were sent
+to Google). `gemini-3.5-flash-lite` was run four times to see the spread: citation validity 0.955, 0.940, 0.954,
+0.976; 66 to 69 of 75 answerable questions answered; refusal precision 0.609 to 0.700; all 14 unanswerable
+questions refused every time. The main weakness is over-refusal: about 6 to 9 answerable questions are refused per
+run, partly because a quote was not verbatim and partly because the model declined. No request failed. The raw
+per-run files are in `eval/results/` (`...-run2.json` and so on; the unsuffixed file is run 1).
+`gemini-3.1-flash-lite` was clearly worse in its one run (more non-verbatim quotes, fewer answers). Hosted models
+can change or be retired without notice and runs are not guaranteed repeatable, so these are data points for this
+corpus and not a ranking. The commit `7971384` is the implementation branch before squashing, so it does not exist
+on `main` under that hash.
+
+Not measured, on purpose or for lack of access: `gemini-3.8-flash` and `gemini-3-flash-preview` (so overloaded or
+slow on the free tier that no run finished in a reasonable time), `gemma-4-26b-a4b-it` (stopped, too slow on the
+free tier), `gemma-4-31b-it` (the endpoint returned an internal error), and every model of Mistral and Groq (no
+key; Groq's free tier also appears too small for a full run in a day). **Claude has not been measured** (see below).
 
 Note on the commit: the recorded `abef35d` is a docs-only commit made before the provider code was merged
 to `main` (as `595c501`). The run was made from a local build of that provider code, but the recorded

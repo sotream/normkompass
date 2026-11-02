@@ -79,7 +79,9 @@ describe('provider selection', () => {
   it('rejects an unknown provider without any request', () => {
     const fetchSpy = vi.spyOn(globalThis, 'fetch');
     expect(() => createAnswerModel({ ANSWER_PROVIDER: 'openai' })).toThrow(ConfigurationError);
-    expect(() => createAnswerModel({ ANSWER_PROVIDER: 'openai' })).toThrow(/"claude" or "ollama"/);
+    expect(() => createAnswerModel({ ANSWER_PROVIDER: 'openai' })).toThrow(
+      /"claude", "ollama" or "openai-compatible"/,
+    );
     expect(fetchSpy).not.toHaveBeenCalled();
     fetchSpy.mockRestore();
   });

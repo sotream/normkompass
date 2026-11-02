@@ -32,16 +32,34 @@ The API key SHALL be sent only to the configured base URL and SHALL NOT appear i
 - **WHEN** a request to the endpoint fails
 - **THEN** no log line, response or result file contains the key
 
-### Requirement: Rate limits are respected
-The OpenAI-compatible provider SHALL wait at least a configured interval between requests and SHALL retry a "too many requests" response a bounded number of times, waiting between attempts.
+### Requirement: Requests are spaced
+The OpenAI-compatible provider SHALL wait at least a configured interval between requests, SHALL widen that interval after a rate-limited answer, and SHALL narrow it again, down to the configured one, after successful requests.
 
-#### Scenario: Limit hit then cleared
-- **WHEN** the endpoint answers "too many requests" and a later attempt succeeds within the bound
+#### Scenario: Rate limited
+- **WHEN** the endpoint answers "too many requests"
+- **THEN** later requests are spaced further apart until successes shrink the spacing again
+
+### Requirement: Transient failures are retried with backoff
+The OpenAI-compatible provider SHALL retry transient failures (rate-limited, overloaded or temporarily failing answers, a dropped connection, a timeout) a bounded number of times, with exponentially growing, randomly jittered waits that are never shorter than the wait the server asked for.
+
+#### Scenario: Overload then recovery
+- **WHEN** the endpoint answers "temporarily unavailable" and a later attempt succeeds within the bound
 - **THEN** the answer is produced from the successful attempt
 
+#### Scenario: Server asks for a wait
+- **WHEN** the endpoint states how long to wait before retrying
+- **THEN** the next attempt is not made sooner than that
+
 #### Scenario: Limit persists
-- **WHEN** the endpoint keeps answering "too many requests" beyond the bound
+- **WHEN** the endpoint keeps failing transiently beyond the bound
 - **THEN** the call fails, the response is a refusal, and the failure is counted as a model error in the eval
+
+### Requirement: Permanent errors fail fast
+The OpenAI-compatible provider SHALL NOT retry errors that retrying cannot fix, such as an unknown model or an invalid key, and SHALL abandon a request that gets no answer within a time limit.
+
+#### Scenario: Unknown model
+- **WHEN** the endpoint answers that the model is not available
+- **THEN** the call fails immediately without retries
 
 ### Requirement: Results record the endpoint
 Every answer eval result produced with this provider SHALL record the provider, the model and the endpoint host.

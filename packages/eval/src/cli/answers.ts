@@ -56,7 +56,9 @@ try {
   const date = new Date().toISOString().slice(0, 10);
   const fmt = (n: number | null): string => (n === null ? 'n/a' : n.toFixed(3));
 
-  console.log(`\nAnswer model: ${label.provider} / ${label.model}   embedder: ${embedder.model}`);
+  console.log(
+    `\nAnswer model: ${label.provider} / ${label.model}${label.host ? ` @ ${label.host}` : ''}   embedder: ${embedder.model}`,
+  );
   console.log(`commit: ${commit}${dirty ? ' (dirty)' : ''}   date: ${date}`);
   console.log(
     `Questions: ${metrics.questions} (${metrics.answerable} answerable, ${metrics.unanswerable} unanswerable)`,
@@ -89,6 +91,7 @@ try {
         dirty,
         answerProvider: label.provider,
         answerModel: label.model,
+        answerHost: label.host ?? null,
         embedder: embedder.model,
         metrics,
         perQuestion: cases.map((c) => ({
