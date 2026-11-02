@@ -24,6 +24,7 @@
     "typecheck": "pnpm -r typecheck",
     "test": "vitest run",
     "build": "pnpm -r build",
-    "spec": "openspec validate --all --strict --no-interactive"
+    "spec": "openspec validate --all --strict --no-interactive",
+    "ingest": "pnpm --filter @normkompass/corpus build && node packages/corpus/dist/cli/ingest.js"
   }
 }
