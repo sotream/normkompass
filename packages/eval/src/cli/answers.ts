@@ -2,7 +2,12 @@ import { execFileSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { AnswerPipeline, ConfigurationError, createAnswerModel } from '@normkompass/answer';
+import {
+  AnswerPipeline,
+  ConfigurationError,
+  createAnswerModel,
+  describeAnswerModel,
+} from '@normkompass/answer';
 import { HybridSearch, createEmbedder, createPool } from '@normkompass/search';
 import { evaluateAnswers } from '../evaluate-answers.js';
 import { loadQuestions } from '../questions.js';
@@ -13,14 +18,16 @@ const questions = await loadQuestions(join('eval', 'questions.jsonl'));
 
 if (!process.argv.includes('--yes')) {
   console.error(
-    `This sends ${questions.length} requests to the Anthropic API with the model in ANSWER_MODEL and ` +
-      'costs money.\nRun again with --yes to confirm.',
+    `This sends ${questions.length} requests to the configured answer model (ANSWER_PROVIDER: claude ` +
+      'costs money, ollama runs locally and takes a while).\nRun again with --yes to confirm.',
   );
   process.exit(1);
 }
 
 let model;
+let label;
 try {
+  label = describeAnswerModel();
   model = createAnswerModel();
 } catch (error) {
   if (error instanceof ConfigurationError) {
@@ -49,7 +56,7 @@ try {
   const date = new Date().toISOString().slice(0, 10);
   const fmt = (n: number | null): string => (n === null ? 'n/a' : n.toFixed(3));
 
-  console.log(`\nAnswer model: ${process.env.ANSWER_MODEL}   embedder: ${embedder.model}`);
+  console.log(`\nAnswer model: ${label.provider} / ${label.model}   embedder: ${embedder.model}`);
   console.log(`commit: ${commit}${dirty ? ' (dirty)' : ''}   date: ${date}`);
   console.log(
     `Questions: ${metrics.questions} (${metrics.answerable} answerable, ${metrics.unanswerable} unanswerable)`,
@@ -71,7 +78,8 @@ try {
   console.log(`Refusal reasons: ${[...reasons].map(([r, n]) => `${r}=${n}`).join(', ') || 'none'}`);
 
   await mkdir(join('eval', 'results'), { recursive: true });
-  const file = join('eval', 'results', `answers-${date}-${process.env.ANSWER_MODEL}.json`);
+  const safeModel = label.model.replace(/[^A-Za-z0-9._-]+/g, '_');
+  const file = join('eval', 'results', `answers-${date}-${label.provider}-${safeModel}.json`);
   await writeFile(
     file,
     `${JSON.stringify(
@@ -79,7 +87,8 @@ try {
         date,
         commit,
         dirty,
-        answerModel: process.env.ANSWER_MODEL,
+        answerProvider: label.provider,
+        answerModel: label.model,
         embedder: embedder.model,
         metrics,
         perQuestion: cases.map((c) => ({

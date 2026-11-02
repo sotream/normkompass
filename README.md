@@ -36,8 +36,8 @@ pnpm eval:retrieval    # recall@5 and MRR over eval/questions.jsonl; writes eval
 
 The API (`apps/api`) exposes `GET /health`, `POST /search` with `{"question": "...", "limit": 5}` (ranked
 chunks with source, path, URL and Stand) and `POST /ask` with `{"question": "..."}`, which returns
-`{answer, citations[{source, path, url, quote}], refused, stand}`. `/ask` needs `ANTHROPIC_API_KEY` and
-`ANSWER_MODEL` in `.env`; without them it answers 503 and sends nothing to the network.
+`{answer, citations[{source, path, url, quote}], refused, stand}`. `/ask` needs a configured answer model (see
+"Answer providers"); without it the endpoint answers 503 and sends nothing to the network.
 
 `pnpm ingest` fetches five laws from gesetze-im-internet.de one request at a time
 (about 10 seconds), caches them, and reports units, skipped norms and the "Stand" of each
@@ -121,13 +121,31 @@ data and the prompt tells the model to ignore instructions inside them; the chec
 The strict refusal rule trades recall for trust: an answer whose quotes are copied sloppily is refused even
 if its content is right. How often that happens depends on the model and has to be measured.
 
+## Answer providers
+
+`ANSWER_PROVIDER` selects the model behind `/ask` and the answer eval:
+
+- `claude` (default): the Anthropic API. Set `ANTHROPIC_API_KEY` and `ANSWER_MODEL`.
+- `ollama`: a model running locally in [Ollama](https://ollama.com). Set `OLLAMA_MODEL` (a model you have
+  pulled) and optionally `OLLAMA_URL` (default `http://localhost:11434`). Question and source text are sent
+  only to that URL, so nothing leaves the machine. There is no default model in the code for either provider.
+
+Citation verification and the refusal rule are identical for every provider. Results always name the
+provider and model; a local model's numbers say nothing about Claude and the other way round.
+
+```sh
+ollama pull llama3.1:8b                    # example; about 5 GB
+# .env: ANSWER_PROVIDER=ollama and OLLAMA_MODEL=llama3.1:8b
+pnpm eval:answers                          # 89 requests, runs locally
+```
+
 ## Answer evaluation
 
 `pnpm eval:answers` runs all 89 questions through the full pipeline with the real model and reports
 citation validity (the share of proposed citations that pass verification), how often an answer cites an
 expected norm, and refusal precision and recall (with "refused" as the positive class). It sends 89
-requests to the Anthropic API and costs money, so it is a manual command that needs `ANTHROPIC_API_KEY`
-and `ANSWER_MODEL`.
+requests to the configured model. With `claude` that costs money, so it is a manual command; with `ollama`
+it is free but takes a while.
 
 **Not measured yet:** this full run has not been executed, so there are no numbers for a real model here,
 and none are claimed. CI runs the same pipeline on fixtures with a scripted stand-in model that never
