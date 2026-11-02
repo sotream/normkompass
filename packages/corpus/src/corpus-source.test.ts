@@ -33,12 +33,12 @@ describe('CorpusSource interface', () => {
   });
 
   it('shares one unit shape with the statute parser', async () => {
-    const mdUnit = (await unitsOf(markdown))[0] as CorpusUnit;
+    const mdUnit = (await unitsOf(markdown))[0]!;
     const xml = readFileSync(
       join(import.meta.dirname, '../test/fixtures/statutes/ddg.xml'),
       'utf-8',
     );
-    const lawUnit = parseStatute(xml, { slug: 'ddg' }).units[0] as CorpusUnit;
+    const lawUnit = parseStatute(xml, { slug: 'ddg' }).units[0]!;
     const shape = (u: CorpusUnit) =>
       Object.keys(u)
         .filter((k) => k !== 'stand')

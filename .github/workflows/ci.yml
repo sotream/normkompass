@@ -12,6 +12,24 @@ permissions:
 jobs:
   check:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: pgvector/pgvector:0.8.7-pg18-trixie
+        env:
+          POSTGRES_USER: normkompass
+          POSTGRES_PASSWORD: ci-only-throwaway
+          POSTGRES_DB: normkompass
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U normkompass -d normkompass"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgres://normkompass:ci-only-throwaway@localhost:5432/normkompass
+      # The CI eval uses a fake embedder; skip the large GPU runtime download.
+      ONNXRUNTIME_NODE_INSTALL_CUDA: skip
     steps:
       - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v6
@@ -22,6 +40,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm format
       - run: pnpm lint
+      - run: pnpm build
       - run: pnpm typecheck
       - run: pnpm test
       - run: pnpm spec

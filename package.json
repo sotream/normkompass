@@ -10,7 +10,7 @@
     "@eslint/js": "^10.0.1",
     "@fission-ai/openspec": "1.16.0",
     "@swc/core": "^1.16.21",
-    "@types/node": "^26.6.6",
+    "@types/node": "^24.19.2",
     "eslint": "^10.14.0",
     "prettier": "^3.9.10",
     "typescript": "~6.0.3",
@@ -25,6 +25,9 @@
     "test": "vitest run",
     "build": "pnpm -r build",
     "spec": "openspec validate --all --strict --no-interactive",
-    "ingest": "pnpm --filter @normkompass/corpus build && node packages/corpus/dist/cli/ingest.js"
+    "ingest": "pnpm --filter @normkompass/corpus build && node packages/corpus/dist/cli/ingest.js",
+    "index": "pnpm -r --filter @normkompass/corpus --filter @normkompass/search build && node packages/search/dist/cli/index.js",
+    "eval:retrieval": "pnpm -r --filter @normkompass/corpus --filter @normkompass/search --filter @normkompass/eval build && node packages/eval/dist/cli/run.js",
+    "eval:validate": "pnpm -r --filter @normkompass/corpus --filter @normkompass/search --filter @normkompass/eval build && node packages/eval/dist/cli/run.js --validate-only"
   }
 }

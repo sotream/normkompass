@@ -154,7 +154,7 @@ export function parseStatute(raw: string, options: ParseStatuteOptions): SplitRe
       report.skippedStructural++;
       continue;
     }
-    if (title === '(weggefallen)' || /^\(XXXX\)/.test(enbez) || isRepealedText(bodyText)) {
+    if (title === '(weggefallen)' || enbez.startsWith('(XXXX)') || isRepealedText(bodyText)) {
       report.skippedRepealed++;
       continue;
     }
