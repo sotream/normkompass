@@ -11,8 +11,9 @@ answer, the service refuses instead of guessing.
 
 Reference implementation **in development**. Implemented so far: the project scaffold,
 corpus ingest with a structure-aware parser for the demo laws, a hybrid search index, and a
-retrieval evaluation. There is no answer generation, quote checking or refusal yet, so the
-service cannot answer questions. It is not a finished product.
+retrieval evaluation, and answer generation with code-checked citations and refusal. The answer
+quality with a real language model has **not been measured yet** (see "Answer evaluation"). It is not a
+finished product.
 
 ## Not legal advice
 
@@ -33,8 +34,10 @@ pnpm index             # embeds all units and stores them in Postgres (first run
 pnpm eval:retrieval    # recall@5 and MRR over eval/questions.jsonl; writes eval/results/
 ```
 
-The API (`apps/api`) exposes `GET /health` and `POST /search` with `{"question": "...", "limit": 5}`,
-which returns ranked chunks with source, path, URL and Stand. It does not generate answers.
+The API (`apps/api`) exposes `GET /health`, `POST /search` with `{"question": "...", "limit": 5}` (ranked
+chunks with source, path, URL and Stand) and `POST /ask` with `{"question": "..."}`, which returns
+`{answer, citations[{source, path, url, quote}], refused, stand}`. `/ask` needs `ANTHROPIC_API_KEY` and
+`ANSWER_MODEL` in `.env`; without them it answers 503 and sends nothing to the network.
 
 `pnpm ingest` fetches five laws from gesetze-im-internet.de one request at a time
 (about 10 seconds), caches them, and reports units, skipped norms and the "Stand" of each
@@ -96,3 +99,38 @@ meaningful. No ablation of vector-only versus full-text-only search has been run
 CI runs a smaller eval on fixtures with a deterministic fake embedder (14 questions, thresholds
 recall@5 >= 0.7 and MRR >= 0.5; measured 0.857 and 0.665) against a Postgres service. It guards
 against regressions in the search code and says nothing about quality with a real model.
+
+## Answers and citations
+
+`POST /ask` retrieves the 8 best chunks, gives them to Claude (through the Anthropic SDK) as numbered
+sources, and asks for a JSON object with an answer and citations that refer to sources by number. The
+code, not the model, then checks the result:
+
+- a citation must point to one of the retrieved chunks, and its `quote` must be a non-empty, verbatim
+  substring of that chunk's text (exact match, including whitespace and case);
+- `source`, `path` and `url` are taken from the stored chunk, never from the model;
+- an answer needs at least one verified citation;
+- if any single citation fails, the whole response is a refusal, with no partial answer.
+
+A refusal is `refused: true`, an empty `answer`, no citations and `stand: null`. It is returned when
+nothing was retrieved (the model is not called), when the model declines, when its output cannot be
+parsed, when verification fails, and when the model call fails. For an answer, `stand` lists the Stand of
+each cited law. The model id comes only from configuration. Corpus text and the question are passed as
+data and the prompt tells the model to ignore instructions inside them; the checks above do not depend on it.
+
+The strict refusal rule trades recall for trust: an answer whose quotes are copied sloppily is refused even
+if its content is right. How often that happens depends on the model and has to be measured.
+
+## Answer evaluation
+
+`pnpm eval:answers` runs all 89 questions through the full pipeline with the real model and reports
+citation validity (the share of proposed citations that pass verification), how often an answer cites an
+expected norm, and refusal precision and recall (with "refused" as the positive class). It sends 89
+requests to the Anthropic API and costs money, so it is a manual command that needs `ANTHROPIC_API_KEY`
+and `ANSWER_MODEL`.
+
+**Not measured yet:** this full run has not been executed, so there are no numbers for a real model here,
+and none are claimed. CI runs the same pipeline on fixtures with a scripted stand-in model that never
+touches the network. It checks that the code and the metrics behave correctly (a faithful model scores
+1.0, a model that misquotes or answers unanswerable questions is detected). It says nothing about how
+Claude performs.

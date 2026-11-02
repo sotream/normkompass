@@ -10,6 +10,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
+    "@normkompass/answer": "workspace:*",
     "@normkompass/corpus": "workspace:*",
     "@normkompass/search": "workspace:*"
   }

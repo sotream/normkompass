@@ -12,7 +12,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { evaluateRetrieval } from './evaluate.js';
 import { loadQuestions, validateAgainstCorpus, validateStructure } from './questions.js';
 
-const CI_LIMITS = { minAnswerable: 10, maxAnswerable: 30, minUnanswerable: 0, maxUnanswerable: 0 };
+const CI_LIMITS = { minAnswerable: 10, maxAnswerable: 30, minUnanswerable: 3, maxUnanswerable: 5 };
 
 /** Thresholds for the fake-embedder CI subset; a drop below them fails CI. */
 export const CI_THRESHOLDS = { recallAt5: 0.7, mrr: 0.5 };
