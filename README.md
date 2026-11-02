@@ -159,18 +159,28 @@ expected norm, and refusal precision and recall (with "refused" as the positive 
 requests to the configured model. With `claude` that costs money, so it is a manual command; with `ollama`
 it is free but takes a while.
 
-### Result: local model (not Claude)
+### Results: other models (not Claude)
 
-| Date       | Commit               | Answer model         | Embedder              | Citation validity | Cites expected norm    | Refusal precision | Refusal recall |
-| ---------- | -------------------- | -------------------- | --------------------- | ----------------- | ---------------------- | ----------------- | -------------- |
-| 2026-11-02 | `abef35d` (see note) | ollama `llama3.1:8b` | multilingual-e5-small | 0.486 (69/142)    | 0.867 (of 30 answered) | 0.237             | 1.000          |
+| Date       | Commit               | Answer model                                                                  | Embedder              | Citation validity | Cites expected norm    | Refusal precision | Refusal recall |
+| ---------- | -------------------- | ----------------------------------------------------------------------------- | --------------------- | ----------------- | ---------------------- | ----------------- | -------------- |
+| 2026-11-02 | `abef35d` (see note) | ollama `llama3.1:8b`                                                          | multilingual-e5-small | 0.486 (69/142)    | 0.867 (of 30 answered) | 0.237             | 1.000          |
+| 2026-11-02 | `7971384`            | openai-compatible `gemini-3.5-flash-lite` @ generativelanguage.googleapis.com | multilingual-e5-small | 0.955 (85/89)     | 0.971 (of 68 answered) | 0.667             | 1.000          |
 
-This is a small local model run on a laptop, **not Claude**. Reading the numbers plainly: the pipeline never
+Neither row is Claude. The first is a small local model run on a laptop. Reading its numbers plainly: the pipeline never
 accepted a bad citation, but the model is a poor fit for the task. Of the 75 answerable questions only 30
 were answered; 45 were refused, and all 14 unanswerable questions were refused (hence recall 1.0 and a low
 precision of 0.237). Refusal reasons across all 89 questions: `citation-rejected` 44, `model-refused` 7,
 `no-citations` 6, `model-error` 2. Most refusals come from the strict rule that any citation failing
 verification (usually a quote that is not verbatim) rejects the whole answer.
+
+The second row is Google's `gemini-3.5-flash-lite` through its free tier (a hosted third-party model; question and
+source text were sent to Google). It is much better on this task: 68 of 75 answerable questions were answered,
+85 of 89 proposed citations were valid, and all 14 unanswerable questions were refused. The remaining weakness
+is over-refusal: 7 answerable questions were refused (4 because a quote was not verbatim, 3 because the model
+declined), which is what the precision of 0.667 reflects. No request failed (`model-error` 0). This is one run of
+one hosted model on 89 questions; a hosted model can change or be retired without notice, and runs are not
+guaranteed repeatable, so read it as a single data point and not a ranking. The commit `7971384` is the
+implementation branch before squashing, so it does not exist on `main` under that hash.
 
 Note on the commit: the recorded `abef35d` is a docs-only commit made before the provider code was merged
 to `main` (as `595c501`). The run was made from a local build of that provider code, but the recorded
