@@ -149,9 +149,9 @@ it is free but takes a while.
 
 ### Result: local model (not Claude)
 
-| Date | Commit | Answer model | Embedder | Citation validity | Cites expected norm | Refusal precision | Refusal recall |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| 2026-11-02 | `abef35d` (see note) | ollama `llama3.1:8b` | multilingual-e5-small | 0.486 (69/142) | 0.867 (of 30 answered) | 0.237 | 1.000 |
+| Date       | Commit               | Answer model         | Embedder              | Citation validity | Cites expected norm    | Refusal precision | Refusal recall |
+| ---------- | -------------------- | -------------------- | --------------------- | ----------------- | ---------------------- | ----------------- | -------------- |
+| 2026-11-02 | `abef35d` (see note) | ollama `llama3.1:8b` | multilingual-e5-small | 0.486 (69/142)    | 0.867 (of 30 answered) | 0.237             | 1.000          |
 
 This is a small local model run on a laptop, **not Claude**. Reading the numbers plainly: the pipeline never
 accepted a bad citation, but the model is a poor fit for the task. Of the 75 answerable questions only 30
