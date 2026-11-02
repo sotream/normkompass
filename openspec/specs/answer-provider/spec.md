@@ -1,7 +1,7 @@
 # answer-provider Specification
 
 ## Purpose
-Define how the answer pipeline selects and configures its answer model provider (Claude or a local Ollama model), so that provider choice is explicit configuration and results are always labeled with the provider and model used.
+Define how the answer pipeline selects and configures its answer model provider (Claude, a local Ollama model or a hosted OpenAI-compatible endpoint), so that provider choice is explicit configuration and results are always labeled with the provider and model used.
 
 ## Requirements
 
