@@ -133,7 +133,7 @@ if its content is right. How often that happens depends on the model and has to 
   compatibility endpoint). Set `ANSWER_BASE_URL`, `ANSWER_API_KEY` and `ANSWER_MODEL`, and optionally
   `ANSWER_MIN_INTERVAL_MS` to space requests inside a free tier's rate limit. Question and source text
   (public law and the eval questions) **are sent to that host**, a third party, so do not use it with data that
-  must stay private. Rate-limit and "temporarily unavailable" answers are retried a few times.
+  must stay private. Transient failures (429, 5xx, dropped connections) are retried with exponential backoff and jitter; a 429 also widens the spacing between requests.
 
 There is no default model in the code for any provider. Keys go only in the git-ignored `.env`.
 

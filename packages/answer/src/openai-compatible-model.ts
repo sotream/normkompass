@@ -14,14 +14,16 @@ export interface OpenAiCompatibleConfig {
   maxRetries?: number;
 }
 
-export const DEFAULT_MAX_RETRIES = 3;
-/** Wait before a retry when the endpoint does not say how long to wait, multiplied by the attempt number. */
-const RETRY_WAIT_MS = 20_000;
-const MAX_RETRY_WAIT_MS = 60_000;
-/** A request that has not answered after this long is abandoned (and counts as a failure). */
+export const DEFAULT_MAX_RETRIES = 6;
+/** First backoff ceiling; it doubles with every attempt (full jitter: the wait is random up to the ceiling). */
+const BACKOFF_BASE_MS = 4_000;
+const BACKOFF_CAP_MS = 60_000;
+/** A server-requested wait (Retry-After) is honored up to this long; longer means the call fails. */
+const MAX_SERVER_WAIT_MS = 120_000;
+/** A request that has not answered after this long is abandoned and counts as a failed attempt. */
 const REQUEST_TIMEOUT_MS = 120_000;
-/** "Too many requests" and "temporarily unavailable" (hosted free tiers shed load) are worth retrying. */
-const RETRYABLE = new Set([429, 503]);
+/** Overloaded or rate-limited answers are worth retrying; other client errors (bad key, unknown model) are not. */
+const RETRYABLE = new Set([408, 429, 500, 502, 503, 504]);
 
 const realSleep = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -36,18 +38,25 @@ export function endpointHost(baseUrl: string): string {
 
 /**
  * Answer model backed by any endpoint with an OpenAI-style chat completions API. Question and sources are
- * sent only to the configured base URL. Requests are spaced by a minimum interval, and a rate-limit or
- * temporary-unavailability answer (HTTP 429, 503) is retried a bounded number of times. Failures never include the key.
+ * sent only to the configured base URL. Requests are spaced by a minimum interval. Transient failures
+ * (HTTP 408, 429, 5xx, a dropped connection, a timeout) are retried a bounded number of times with
+ * exponential backoff and full jitter, never sooner than the server's Retry-After. A rate-limit answer
+ * (429) also widens the spacing between later requests; it shrinks again after successes. Failures never
+ * include the key or the response body.
  */
 export class OpenAiCompatibleAnswerModel implements AnswerModel {
   private lastStart = Number.NEGATIVE_INFINITY;
+  private interval: number;
 
   constructor(
     private readonly config: OpenAiCompatibleConfig,
     private readonly fetchImpl: typeof fetch = fetch,
     private readonly sleep: (ms: number) => Promise<void> = realSleep,
     private readonly now: () => number = Date.now,
-  ) {}
+    private readonly random: () => number = Math.random,
+  ) {
+    this.interval = config.minIntervalMs ?? 0;
+  }
 
   async generate({ question, sources }: { question: string; sources: Source[] }): Promise<string> {
     const url = `${this.config.baseUrl.replace(/\/+$/, '')}/chat/completions`;
@@ -67,37 +76,63 @@ export class OpenAiCompatibleAnswerModel implements AnswerModel {
 
     for (let attempt = 0; ; attempt++) {
       await this.waitForTurn();
-      const res = await this.fetchImpl(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.config.apiKey}`,
-        },
-        body,
-        signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
-      });
-      if (RETRYABLE.has(res.status) && attempt < maxRetries) {
-        await this.sleep(retryWait(res, attempt + 1));
+      let res: Response;
+      try {
+        res = await this.fetchImpl(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${this.config.apiKey}`,
+          },
+          body,
+          signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+        });
+      } catch (error) {
+        // Dropped connection or timeout: transient, same backoff.
+        if (attempt >= maxRetries) throw error;
+        await this.sleep(this.backoff(attempt, null));
         continue;
       }
-      if (!res.ok) throw new Error(`Answer endpoint request failed with status ${res.status}`);
-      const json = (await res.json()) as { choices?: { message?: { content?: unknown } }[] };
-      const content = json.choices?.[0]?.message?.content;
-      if (typeof content !== 'string') throw new Error('Answer endpoint response has no content');
-      return content;
+      if (res.ok) {
+        this.interval = Math.max(this.config.minIntervalMs ?? 0, this.interval / 2);
+        const json = (await res.json()) as { choices?: { message?: { content?: unknown } }[] };
+        const content = json.choices?.[0]?.message?.content;
+        if (typeof content !== 'string') throw new Error('Answer endpoint response has no content');
+        return content;
+      }
+      if (res.status === 429) {
+        this.interval = Math.min(Math.max(this.interval * 2, BACKOFF_BASE_MS), BACKOFF_CAP_MS);
+      }
+      if (RETRYABLE.has(res.status) && attempt < maxRetries) {
+        const serverWait = retryAfterMs(res);
+        if (serverWait !== null && serverWait > MAX_SERVER_WAIT_MS) {
+          throw new Error(`Answer endpoint asked to wait too long (status ${res.status})`);
+        }
+        await this.sleep(this.backoff(attempt, serverWait));
+        continue;
+      }
+      const hint = res.status === 404 ? ' (is ANSWER_MODEL available to this key?)' : '';
+      throw new Error(`Answer endpoint request failed with status ${res.status}${hint}`);
     }
   }
 
+  /** Full-jitter exponential backoff, but never less than what the server asked for. */
+  private backoff(attempt: number, serverWait: number | null): number {
+    const ceiling = Math.min(BACKOFF_CAP_MS, BACKOFF_BASE_MS * 2 ** attempt);
+    return Math.max(serverWait ?? 0, Math.round(this.random() * ceiling));
+  }
+
   private async waitForTurn(): Promise<void> {
-    const interval = this.config.minIntervalMs ?? 0;
-    const wait = this.lastStart + interval - this.now();
+    const wait = this.lastStart + this.interval - this.now();
     if (wait > 0) await this.sleep(wait);
     this.lastStart = this.now();
   }
 }
 
-function retryWait(res: Response, attempt: number): number {
-  const seconds = Number(res.headers.get('retry-after'));
-  const asked = Number.isFinite(seconds) && seconds > 0 ? seconds * 1000 : RETRY_WAIT_MS * attempt;
-  return Math.min(asked, MAX_RETRY_WAIT_MS);
+/** Retry-After in seconds (the form these endpoints use), as milliseconds; null if absent or unusable. */
+function retryAfterMs(res: Response): number | null {
+  const header = res.headers.get('retry-after');
+  if (header === null) return null;
+  const seconds = Number(header);
+  return Number.isFinite(seconds) && seconds >= 0 ? seconds * 1000 : null;
 }

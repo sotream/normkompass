@@ -36,6 +36,7 @@ function setup(responses: (Response | Error)[], minIntervalMs = 0, maxRetries?: 
     f,
     sleep,
     () => clock,
+    () => 0.5,
   );
   return { f, model, waits };
 }
@@ -71,7 +72,7 @@ describe('OpenAiCompatibleAnswerModel', () => {
   });
 
   it('fails when the endpoint is unreachable', async () => {
-    const { model } = setup([new TypeError('fetch failed')]);
+    const { model } = setup([new TypeError('fetch failed')], 0, 0);
     await expect(model.generate({ question: 'F?', sources })).rejects.toThrow(/fetch failed/);
   });
 
@@ -80,23 +81,55 @@ describe('OpenAiCompatibleAnswerModel', () => {
     await expect(model.generate({ question: 'F?', sources })).rejects.toThrow(/no content/);
   });
 
-  it('retries a rate-limit answer and uses the successful attempt', async () => {
-    const { f, model, waits } = setup([limited('2'), ok('{"refused":true}')]);
+  it('honors Retry-After as a floor and uses the successful attempt', async () => {
+    const { f, model, waits } = setup([limited('30'), ok('{"refused":true}')]);
     expect(await model.generate({ question: 'F?', sources })).toBe('{"refused":true}');
     expect(f).toHaveBeenCalledTimes(2);
-    expect(waits).toEqual([2000]);
+    expect(waits[0]).toBe(30_000);
   });
 
-  it('retries a temporary-unavailability answer too', async () => {
-    const { f, model } = setup([new Response('busy', { status: 503 }), ok('{"refused":true}')]);
-    expect(await model.generate({ question: 'F?', sources })).toBe('{"refused":true}');
+  it('backs off exponentially with jitter on repeated overload', async () => {
+    const busy = (): Response => new Response('busy', { status: 503 });
+    const { f, model, waits } = setup([busy(), busy(), busy(), ok('x')]);
+    await model.generate({ question: 'F?', sources });
+    expect(f).toHaveBeenCalledTimes(4);
+    // random() is fixed at 0.5: half of 4 s, 8 s, 16 s.
+    expect(waits).toEqual([2000, 4000, 8000]);
+  });
+
+  it('retries a dropped connection', async () => {
+    const { f, model } = setup([new TypeError('fetch failed'), ok('x')]);
+    expect(await model.generate({ question: 'F?', sources })).toBe('x');
     expect(f).toHaveBeenCalledTimes(2);
+  });
+
+  it('does not retry a client error such as an unknown model', async () => {
+    const { f, model } = setup([new Response('gone', { status: 404 })]);
+    await expect(model.generate({ question: 'F?', sources })).rejects.toThrow(
+      /status 404.*ANSWER_MODEL/,
+    );
+    expect(f).toHaveBeenCalledOnce();
   });
 
   it('gives up after the retry bound', async () => {
-    const { f, model } = setup([limited('1'), limited('1'), limited('1')], 0, 2);
+    const { f, model } = setup([limited(), limited(), limited()], 0, 2);
     await expect(model.generate({ question: 'F?', sources })).rejects.toThrow(/status 429/);
     expect(f).toHaveBeenCalledTimes(3);
+  });
+
+  it('fails instead of waiting when the server asks for a very long wait', async () => {
+    const { f, model } = setup([limited('3600')]);
+    await expect(model.generate({ question: 'F?', sources })).rejects.toThrow(/too long/);
+    expect(f).toHaveBeenCalledOnce();
+  });
+
+  it('widens the spacing after a 429 and narrows it again after successes', async () => {
+    const { model, waits } = setup([limited(), ok('a'), ok('b'), ok('c')], 1000);
+    await model.generate({ question: 'F?', sources });
+    await model.generate({ question: 'F?', sources });
+    await model.generate({ question: 'F?', sources });
+    // waits: [backoff 2 s, rest of the widened 4 s spacing 2 s, then 2 s and 1 s as successes narrow it]
+    expect(waits).toEqual([2000, 2000, 2000, 1000]);
   });
 
   it('keeps the minimum interval between requests', async () => {
