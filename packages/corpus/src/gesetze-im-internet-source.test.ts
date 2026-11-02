@@ -25,17 +25,18 @@ describe('GesetzeImInternetSource', () => {
     const fetchImpl: typeof fetch = async (input, init) => {
       inFlight++;
       maxInFlight = Math.max(maxInFlight, inFlight);
-      const url = String(input);
+      const url = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url;
       const slug = /\/([^/]+)\/xml\.zip$/.exec(url)?.[1] ?? '';
       requests.push({ url, userAgent: new Headers(init?.headers).get('User-Agent') });
       events.push(`fetch:${slug}`);
       await Promise.resolve();
       const body = zipSync({ [`${slug}.xml`]: strToU8(await xmlFor(slug)) });
       inFlight--;
-      return new Response(body as unknown as BodyInit, { status: 200 });
+      return new Response(body, { status: 200 });
     };
-    const sleep = async (ms: number): Promise<void> => {
+    const sleep = (ms: number): Promise<void> => {
       events.push(`sleep:${ms}`);
+      return Promise.resolve();
     };
     return { events, requests, fetchImpl, sleep, maxInFlight: () => maxInFlight };
   }
@@ -134,8 +135,8 @@ describe('GesetzeImInternetSource', () => {
     const source = new GesetzeImInternetSource({
       cacheDir,
       laws,
-      fetchImpl: async () => new Response('nope', { status: 503 }),
-      sleep: async () => {},
+      fetchImpl: () => Promise.resolve(new Response('nope', { status: 503 })),
+      sleep: () => Promise.resolve(),
     });
     await expect(ingest(source)).rejects.toThrow(/status 503/);
     expect(await readdir(cacheDir)).toEqual([]);

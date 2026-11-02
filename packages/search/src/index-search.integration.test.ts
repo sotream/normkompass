@@ -1,0 +1,124 @@
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { createTestDb, DATABASE_URL, fixtureUnits } from './testing.js';
+import { HashingEmbedder, type Embedder } from './embedder.js';
+import { indexUnits } from './indexer.js';
+import { HybridSearch } from './search.js';
+import type { Pool } from './db.js';
+
+class OtherModel extends HashingEmbedder implements Embedder {
+  override readonly model = 'fake-other';
+}
+
+describe.skipIf(!DATABASE_URL)('index and hybrid search (Postgres)', () => {
+  let pool: Pool;
+  let drop: () => Promise<void>;
+  const units = fixtureUnits();
+  const embedder = new HashingEmbedder();
+
+  beforeAll(async () => {
+    ({ pool, drop } = await createTestDb());
+  });
+  afterAll(async () => {
+    await drop();
+  });
+
+  const count = async (sql: string): Promise<number> =>
+    Number((await pool.query<{ n: string }>(sql)).rows[0]!.n);
+
+  it('stores every unit as a chunk with metadata and Stand', async () => {
+    const res = await indexUnits(pool, embedder, units);
+    expect(res.chunks).toBeGreaterThanOrEqual(units.length);
+    expect(await count('SELECT count(DISTINCT unit_id) AS n FROM chunks')).toBe(units.length);
+    const row = (
+      await pool.query("SELECT * FROM chunks WHERE unit_id = 'ustg_1980/§ 14/Abs. 1' AND part = 1")
+    ).rows[0];
+    expect(row).toMatchObject({
+      source: 'UStG',
+      label: '§ 14 Abs. 1 UStG',
+      url: 'https://www.gesetze-im-internet.de/ustg_1980/__14.html',
+    });
+    expect(row.stand).toMatch(/^zuletzt geändert/);
+    expect(row.text.startsWith('(1) Rechnung ist jedes Dokument')).toBe(true);
+  });
+
+  it('is idempotent', async () => {
+    const before = await count('SELECT count(*) AS n FROM chunks');
+    const again = await indexUnits(pool, embedder, units);
+    expect(again.embedded).toBe(0);
+    expect(await count('SELECT count(*) AS n FROM chunks')).toBe(before);
+    expect(await count('SELECT count(*) AS n FROM embeddings_256')).toBe(before);
+  });
+
+  it('replaces changed units and removes vanished ones', async () => {
+    const [first, ...rest] = units;
+    const changed = [{ ...first!, text: first!.text + ' Zusatz' }, ...rest.slice(1)];
+    const res = await indexUnits(pool, embedder, changed);
+    expect(res.embedded).toBe(1);
+    expect(res.removed).toBeGreaterThanOrEqual(1);
+    await indexUnits(pool, embedder, units);
+    expect(await count('SELECT count(DISTINCT unit_id) AS n FROM chunks')).toBe(units.length);
+  });
+
+  it('splits over-long units into parts that join to the original text', async () => {
+    const long = units.find((u) => u.text.length > 1500)!;
+    expect(long).toBeDefined();
+    const parts = (
+      await pool.query<{ text: string; part: number; parts: number; path: string[] }>(
+        'SELECT text, part, parts, path FROM chunks WHERE unit_id = $1 ORDER BY part',
+        [long.id],
+      )
+    ).rows;
+    expect(parts.length).toBeGreaterThan(1);
+    expect(parts.map((p) => p.part)).toEqual(parts.map((_, i) => i + 1));
+    expect(parts.every((p) => p.parts === parts.length)).toBe(true);
+    expect(parts.map((p) => p.text).join('')).toBe(long.text);
+    expect(parts.every((p) => p.path.join('/') === long.path.join('/'))).toBe(true);
+  });
+
+  it('keeps embeddings of two models side by side', async () => {
+    await indexUnits(pool, new OtherModel(), units);
+    const models = (
+      await pool.query<{ model: string }>(
+        'SELECT DISTINCT model FROM embeddings_256 ORDER BY model',
+      )
+    ).rows.map((r) => r.model);
+    expect(models).toEqual(['fake-hash-256', 'fake-other']);
+    const hits = await new HybridSearch(pool, new OtherModel()).search('Rechnung', { limit: 3 });
+    expect(hits.length).toBeGreaterThan(0);
+  });
+
+  it('returns metadata and original text for each hit', async () => {
+    const hits = await new HybridSearch(pool, embedder).search(
+      'Wann ist eine Rechnung auszustellen?',
+    );
+    expect(hits).toHaveLength(5);
+    for (const h of hits) {
+      expect(h).toMatchObject({ source: expect.any(String), label: expect.any(String) });
+      expect(h.url).toMatch(/^https:\/\/www\.gesetze-im-internet\.de\//);
+      expect(h.stand).toBeTruthy();
+      expect(h.text.length).toBeGreaterThan(0);
+    }
+    expect(hits.some((h) => h.ftsRank !== null)).toBe(true);
+    expect(hits.some((h) => h.vectorRank !== null)).toBe(true);
+  });
+
+  it('matches inflected forms through German full-text search', async () => {
+    const hits = await new HybridSearch(pool, embedder).search('Rechnungen', { limit: 10 });
+    const fts = hits.filter((h) => h.ftsRank !== null);
+    expect(fts.some((h) => h.unitId.startsWith('ustg_1980/§ 14/'))).toBe(true);
+  });
+
+  it('adds known parts of a compound to the full-text query', async () => {
+    const search = new HybridSearch(pool, embedder);
+    const terms = await search.queryTerms('Unternehmerleistung');
+    expect(terms).toEqual(['unternehmerleistung', 'unternehmer', 'leistung']);
+    const hits = await search.search('Unternehmerleistung', { limit: 10 });
+    expect(hits.some((h) => h.ftsRank !== null && h.text.includes('Unternehmer'))).toBe(true);
+  });
+
+  it('searches an unknown word unchanged without failing', async () => {
+    const search = new HybridSearch(pool, embedder);
+    expect(await search.queryTerms('Zzzxyzquark')).toEqual(['zzzxyzquark']);
+    await expect(search.search('Zzzxyzquark')).resolves.toBeDefined();
+  });
+});

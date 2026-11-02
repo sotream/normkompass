@@ -17,10 +17,10 @@ phase 5 chooses it by eval, so the index must make switching models cheap.
   Implementations: local multilingual-e5 via transformers.js (default for CI and eval), and a
   deterministic hashing fake for unit tests. E5 models need "query: " and "passage: " prefixes,
   which belong to the implementation.
-- **Model switching**: embeddings are stored per model name in a separate table keyed by
-  (chunk, model), with a vector column whose dimension is fixed per model through a
-  per-model table or a generic dimension-checked insert. Decision for implementation: one
-  table per model dimension created by migration, to keep pgvector indexes usable.
+- **Model switching**: embeddings are stored per model name in a table keyed by
+  (chunk, model). One table exists per vector dimension and is created on demand, so the
+  vector column stays typed. At about 4,600 chunks the search is an exact scan; an ANN index
+  (HNSW) is deferred until the corpus size makes it necessary.
 - **Full-text search**: Postgres `german` configuration on "<title> <text>", stored as a generated `tsvector` with a GIN index.
 - **Hybrid ranking**: take top 50 from vector search and top 50 from full-text search, merge with RRF (k = 60), return top N.
 - **German compounds**: query terms are additionally split into parts using the corpus
