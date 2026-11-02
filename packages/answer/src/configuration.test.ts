@@ -17,6 +17,7 @@ describe('configuration hygiene', () => {
     const env = readFileSync(join(root, '.env.example'), 'utf-8');
     expect(env).toMatch(/^ANTHROPIC_API_KEY=$/m);
     expect(env).not.toMatch(/sk-ant-/);
+    expect(env).toMatch(/^ANSWER_API_KEY=$/m);
   });
 
   it('has no Claude model id in production source code', () => {

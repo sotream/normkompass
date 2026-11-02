@@ -9,7 +9,7 @@ second, stronger data point. It must never be mistaken for Claude's results.
 
 - Add a third answer provider, `openai-compatible`, that talks to any endpoint implementing the OpenAI-style chat completions API (for example Google Gemini's compatibility endpoint, Mistral, Groq, OpenRouter, DeepSeek). Base URL, API key and model come from configuration.
 - Keep `claude` as the default; citation verification and the refusal rule are unchanged and apply to every provider.
-- Respect provider rate limits during the answer eval: a configurable pause between requests and a bounded retry on "too many requests".
+- Respect provider rate limits during the answer eval: a configurable pause between requests and a bounded retry on "too many requests" or "temporarily unavailable".
 - Record provider, model and endpoint host in every answer eval result; the README labels results by provider and model.
 - Document how to obtain a key for one free provider and run the eval with it.
 

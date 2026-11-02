@@ -128,7 +128,14 @@ if its content is right. How often that happens depends on the model and has to 
 - `claude` (default): the Anthropic API. Set `ANTHROPIC_API_KEY` and `ANSWER_MODEL`.
 - `ollama`: a model running locally in [Ollama](https://ollama.com). Set `OLLAMA_MODEL` (a model you have
   pulled) and optionally `OLLAMA_URL` (default `http://localhost:11434`). Question and source text are sent
-  only to that URL, so nothing leaves the machine. There is no default model in the code for either provider.
+  only to that URL, so nothing leaves the machine.
+- `openai-compatible`: any endpoint with an OpenAI-style chat completions API (for example the Google Gemini
+  compatibility endpoint). Set `ANSWER_BASE_URL`, `ANSWER_API_KEY` and `ANSWER_MODEL`, and optionally
+  `ANSWER_MIN_INTERVAL_MS` to space requests inside a free tier's rate limit. Question and source text
+  (public law and the eval questions) **are sent to that host**, a third party, so do not use it with data that
+  must stay private. Rate-limit and "temporarily unavailable" answers are retried a few times.
+
+There is no default model in the code for any provider. Keys go only in the git-ignored `.env`.
 
 Citation verification and the refusal rule are identical for every provider. Results always name the
 provider and model; a local model's numbers say nothing about Claude and the other way round.
@@ -138,6 +145,11 @@ ollama pull llama3.1:8b                    # example; about 5 GB
 # .env: ANSWER_PROVIDER=ollama and OLLAMA_MODEL=llama3.1:8b
 pnpm eval:answers                          # 89 requests, runs locally
 ```
+
+To use a free hosted model instead, create a key (for Gemini: Google AI Studio, "Get API key"), then in `.env`
+set `ANSWER_PROVIDER=openai-compatible`, `ANSWER_BASE_URL=https://generativelanguage.googleapis.com/v1beta/openai/`,
+`ANSWER_API_KEY`, `ANSWER_MODEL` (the available names change; `GET <base url>/models` lists them) and
+`ANSWER_MIN_INTERVAL_MS=6000`, and run `pnpm eval:answers`.
 
 ## Answer evaluation
 

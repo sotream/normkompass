@@ -33,14 +33,18 @@ The API key SHALL be sent only to the configured base URL and SHALL NOT appear i
 - **THEN** no log line, response or result file contains the key
 
 ### Requirement: Rate limits are respected
-The OpenAI-compatible provider SHALL wait at least a configured interval between requests and SHALL retry a "too many requests" response a bounded number of times, waiting between attempts.
+The OpenAI-compatible provider SHALL wait at least a configured interval between requests and SHALL retry a "too many requests" or "temporarily unavailable" response a bounded number of times, waiting between attempts, and SHALL abandon a request that gets no answer within a time limit.
 
 #### Scenario: Limit hit then cleared
 - **WHEN** the endpoint answers "too many requests" and a later attempt succeeds within the bound
 - **THEN** the answer is produced from the successful attempt
 
+#### Scenario: Endpoint overloaded
+- **WHEN** the endpoint answers "temporarily unavailable" and a later attempt succeeds within the bound
+- **THEN** the answer is produced from the successful attempt
+
 #### Scenario: Limit persists
-- **WHEN** the endpoint keeps answering "too many requests" beyond the bound
+- **WHEN** the endpoint keeps answering "too many requests" or "temporarily unavailable" beyond the bound
 - **THEN** the call fails, the response is a refusal, and the failure is counted as a model error in the eval
 
 ### Requirement: Results record the endpoint
