@@ -161,26 +161,34 @@ it is free but takes a while.
 
 ### Results: other models (not Claude)
 
-| Date       | Commit               | Answer model                                                                  | Embedder              | Citation validity | Cites expected norm    | Refusal precision | Refusal recall |
-| ---------- | -------------------- | ----------------------------------------------------------------------------- | --------------------- | ----------------- | ---------------------- | ----------------- | -------------- |
-| 2026-11-02 | `abef35d` (see note) | ollama `llama3.1:8b`                                                          | multilingual-e5-small | 0.486 (69/142)    | 0.867 (of 30 answered) | 0.237             | 1.000          |
-| 2026-11-02 | `7971384`            | openai-compatible `gemini-3.5-flash-lite` @ generativelanguage.googleapis.com | multilingual-e5-small | 0.955 (85/89)     | 0.971 (of 68 answered) | 0.667             | 1.000          |
+| Date       | Commit               | Answer model                                                                          | Embedder              | Citation validity | Cites expected norm             | Refusal precision | Refusal recall |
+| ---------- | -------------------- | ------------------------------------------------------------------------------------- | --------------------- | ----------------- | ------------------------------- | ----------------- | -------------- |
+| 2026-11-02 | `abef35d` (see note) | ollama `llama3.1:8b`                                                                  | multilingual-e5-small | 0.486 (69/142)    | 0.867 (of 30 answered)          | 0.237             | 1.000          |
+| 2026-11-02 | `7971384`            | openai-compatible `gemini-3.5-flash-lite` @ generativelanguage.googleapis.com, 4 runs | multilingual-e5-small | 0.940–0.976       | 0.956–0.971 (of 66–69 answered) | 0.609–0.700       | 1.000          |
+| 2026-11-02 | `7971384`            | openai-compatible `gemini-3.1-flash-lite` @ generativelanguage.googleapis.com, 1 run  | multilingual-e5-small | 0.851 (80/94)     | 0.966 (of 59 answered)          | 0.467             | 1.000          |
 
-Neither row is Claude. The first is a small local model run on a laptop. Reading its numbers plainly: the pipeline never
-accepted a bad citation, but the model is a poor fit for the task. Of the 75 answerable questions only 30
-were answered; 45 were refused, and all 14 unanswerable questions were refused (hence recall 1.0 and a low
+None of these rows is Claude. The first is a small local model run on a laptop. Reading its numbers plainly: the
+pipeline never accepted a bad citation, but the model is a poor fit for the task. Of the 75 answerable questions
+only 30 were answered; 45 were refused, and all 14 unanswerable questions were refused (hence recall 1.0 and a low
 precision of 0.237). Refusal reasons across all 89 questions: `citation-rejected` 44, `model-refused` 7,
 `no-citations` 6, `model-error` 2. Most refusals come from the strict rule that any citation failing
 verification (usually a quote that is not verbatim) rejects the whole answer.
 
-The second row is Google's `gemini-3.5-flash-lite` through its free tier (a hosted third-party model; question and
-source text were sent to Google). It is much better on this task: 68 of 75 answerable questions were answered,
-85 of 89 proposed citations were valid, and all 14 unanswerable questions were refused. The remaining weakness
-is over-refusal: 7 answerable questions were refused (4 because a quote was not verbatim, 3 because the model
-declined), which is what the precision of 0.667 reflects. No request failed (`model-error` 0). This is one run of
-one hosted model on 89 questions; a hosted model can change or be retired without notice, and runs are not
-guaranteed repeatable, so read it as a single data point and not a ranking. The commit `7971384` is the
-implementation branch before squashing, so it does not exist on `main` under that hash.
+The Gemini rows are Google models through the free tier (hosted third parties; question and source text were sent
+to Google). `gemini-3.5-flash-lite` was run four times to see the spread: citation validity 0.955, 0.940, 0.954,
+0.976; 66 to 69 of 75 answerable questions answered; refusal precision 0.609 to 0.700; all 14 unanswerable
+questions refused every time. The main weakness is over-refusal: about 6 to 9 answerable questions are refused per
+run, partly because a quote was not verbatim and partly because the model declined. No request failed. The raw
+per-run files are in `eval/results/` (`...-run2.json` and so on; the unsuffixed file is run 1).
+`gemini-3.1-flash-lite` was clearly worse in its one run (more non-verbatim quotes, fewer answers). Hosted models
+can change or be retired without notice and runs are not guaranteed repeatable, so these are data points for this
+corpus and not a ranking. The commit `7971384` is the implementation branch before squashing, so it does not exist
+on `main` under that hash.
+
+Not measured, on purpose or for lack of access: `gemini-3.8-flash` and `gemini-3-flash-preview` (so overloaded or
+slow on the free tier that no run finished in a reasonable time), `gemma-4-26b-a4b-it` (stopped, too slow on the
+free tier), `gemma-4-31b-it` (the endpoint returned an internal error), and every model of Mistral and Groq (no
+key; Groq's free tier also appears too small for a full run in a day). **Claude has not been measured** (see below).
 
 Note on the commit: the recorded `abef35d` is a docs-only commit made before the provider code was merged
 to `main` (as `595c501`). The run was made from a local build of that provider code, but the recorded
