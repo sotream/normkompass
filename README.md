@@ -27,7 +27,7 @@ Requirements: Node 24, pnpm, Docker.
 pnpm install
 cp .env.example .env   # then set POSTGRES_PASSWORD
 docker compose up -d   # Postgres with pgvector
-pnpm lint && pnpm typecheck && pnpm test
+pnpm build && pnpm lint && pnpm typecheck && pnpm test
 pnpm ingest            # downloads the demo laws into .cache/ and prints a per-law summary
 pnpm index             # embeds all units and stores them in Postgres (first run: model download, ~8 min)
 pnpm eval:retrieval    # recall@5 and MRR over eval/questions.jsonl; writes eval/results/
