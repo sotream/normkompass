@@ -1,14 +1,18 @@
-{"id":"c01","question":"Welche Steuern gelten nach der Abgabenordnung als Realsteuern?","answerable":true,"expected":["ao_1977/§ 3/Abs. 2"],"source":"§ 3 Abs. 2 AO","needs_review":false}
-{"id":"c02","question":"Für welche Steuern gilt die Abgabenordnung?","answerable":true,"expected":["ao_1977/§ 1/Abs. 1"],"source":"§ 1 Abs. 1 AO","needs_review":false}
-{"id":"c03","question":"Was sind Steuern im Sinne der Abgabenordnung?","answerable":true,"expected":["ao_1977/§ 3/Abs. 1"],"source":"§ 3 Abs. 1 AO","needs_review":false}
-{"id":"c04","question":"Für welche Stellen gilt das Bundesdatenschutzgesetz?","answerable":true,"expected":["bdsg_2018/§ 1/Abs. 1"],"source":"§ 1 Abs. 1 BDSG","needs_review":false}
-{"id":"c05","question":"Was sind nichtöffentliche Stellen?","answerable":true,"expected":["bdsg_2018/§ 2/Abs. 4"],"source":"§ 2 Abs. 4 BDSG","needs_review":false}
-{"id":"c06","question":"Was sind öffentliche Stellen der Länder?","answerable":true,"expected":["bdsg_2018/§ 2/Abs. 2"],"source":"§ 2 Abs. 2 BDSG","needs_review":false}
-{"id":"c07","question":"Für welche Diensteanbieter gilt das Digitale-Dienste-Gesetz?","answerable":true,"expected":["ddg/§ 1/Abs. 1"],"source":"§ 1 Abs. 1 DDG","needs_review":false}
-{"id":"c08","question":"Was geschieht bei Meinungsverschiedenheiten über das Sitzland des Diensteanbieters?","answerable":true,"expected":["ddg/§ 2/Abs. 8"],"source":"§ 2 Abs. 8 DDG","needs_review":false}
-{"id":"c09","question":"Welche Angaben muss eine Rechnung über Kleinbeträge enthalten?","answerable":true,"expected":["ustdv_1980/§ 33"],"source":"§ 33 UStDV","needs_review":false}
-{"id":"c10","question":"Wann kann eine Rechnung berichtigt werden?","answerable":true,"expected":["ustdv_1980/§ 31/Abs. 5"],"source":"§ 31 Abs. 5 UStDV","needs_review":false}
-{"id":"c11","question":"Was ist eine elektronische Rechnung?","answerable":true,"expected":["ustg_1980/§ 14/Abs. 1"],"source":"§ 14 Abs. 1 UStG","needs_review":false}
-{"id":"c12","question":"Welche Umsätze unterliegen der Umsatzsteuer?","answerable":true,"expected":["ustg_1980/§ 1/Abs. 1"],"source":"§ 1 Abs. 1 UStG","needs_review":false}
-{"id":"c13","question":"Wie wird die Verbindungsstrecke zwischen zwei Orten im Ausland behandelt, die über das Inland führt?","answerable":true,"expected":["ustdv_1980/§ 2"],"source":"§ 2 UStDV","needs_review":false}
-{"id":"c14","question":"Innerhalb welcher Frist muss eine Rechnung über eine Leistung an einen anderen Unternehmer ausgestellt werden?","answerable":true,"expected":["ustg_1980/§ 14/Abs. 2"],"source":"§ 14 Abs. 2 UStG","needs_review":false}
+{"id": "c01", "question": "Welche Steuern gelten nach der Abgabenordnung als Realsteuern?", "answerable": true, "expected": ["ao_1977/§ 3/Abs. 2"], "source": "§ 3 Abs. 2 AO", "needs_review": false}
+{"id": "c02", "question": "Für welche Steuern gilt die Abgabenordnung?", "answerable": true, "expected": ["ao_1977/§ 1/Abs. 1"], "source": "§ 1 Abs. 1 AO", "needs_review": false}
+{"id": "c03", "question": "Was sind Steuern im Sinne der Abgabenordnung?", "answerable": true, "expected": ["ao_1977/§ 3/Abs. 1"], "source": "§ 3 Abs. 1 AO", "needs_review": false}
+{"id": "c04", "question": "Für welche Stellen gilt das Bundesdatenschutzgesetz?", "answerable": true, "expected": ["bdsg_2018/§ 1/Abs. 1"], "source": "§ 1 Abs. 1 BDSG", "needs_review": false}
+{"id": "c05", "question": "Was sind nichtöffentliche Stellen?", "answerable": true, "expected": ["bdsg_2018/§ 2/Abs. 4"], "source": "§ 2 Abs. 4 BDSG", "needs_review": false}
+{"id": "c06", "question": "Was sind öffentliche Stellen der Länder?", "answerable": true, "expected": ["bdsg_2018/§ 2/Abs. 2"], "source": "§ 2 Abs. 2 BDSG", "needs_review": false}
+{"id": "c07", "question": "Für welche Diensteanbieter gilt das Digitale-Dienste-Gesetz?", "answerable": true, "expected": ["ddg/§ 1/Abs. 1"], "source": "§ 1 Abs. 1 DDG", "needs_review": false}
+{"id": "c08", "question": "Was geschieht bei Meinungsverschiedenheiten über das Sitzland des Diensteanbieters?", "answerable": true, "expected": ["ddg/§ 2/Abs. 8"], "source": "§ 2 Abs. 8 DDG", "needs_review": false}
+{"id": "c09", "question": "Welche Angaben muss eine Rechnung über Kleinbeträge enthalten?", "answerable": true, "expected": ["ustdv_1980/§ 33"], "source": "§ 33 UStDV", "needs_review": false}
+{"id": "c10", "question": "Wann kann eine Rechnung berichtigt werden?", "answerable": true, "expected": ["ustdv_1980/§ 31/Abs. 5"], "source": "§ 31 Abs. 5 UStDV", "needs_review": false}
+{"id": "c11", "question": "Was ist eine elektronische Rechnung?", "answerable": true, "expected": ["ustg_1980/§ 14/Abs. 1"], "source": "§ 14 Abs. 1 UStG", "needs_review": false}
+{"id": "c12", "question": "Welche Umsätze unterliegen der Umsatzsteuer?", "answerable": true, "expected": ["ustg_1980/§ 1/Abs. 1"], "source": "§ 1 Abs. 1 UStG", "needs_review": false}
+{"id": "c13", "question": "Wie wird die Verbindungsstrecke zwischen zwei Orten im Ausland behandelt, die über das Inland führt?", "answerable": true, "expected": ["ustdv_1980/§ 2"], "source": "§ 2 UStDV", "needs_review": false}
+{"id": "c14", "question": "Innerhalb welcher Frist muss eine Rechnung über eine Leistung an einen anderen Unternehmer ausgestellt werden?", "answerable": true, "expected": ["ustg_1980/§ 14/Abs. 2"], "source": "§ 14 Abs. 2 UStG", "needs_review": false}
+{"id": "c15", "question": "Wie hoch ist das Elterngeld für Selbständige?", "answerable": false, "expected": [], "absent_terms": ["Elterngeld"], "needs_review": false}
+{"id": "c16", "question": "Wie hoch ist der gesetzliche Mindestlohn pro Stunde?", "answerable": false, "expected": [], "absent_terms": ["Mindestlohn"], "needs_review": false}
+{"id": "c17", "question": "Welche Fristen gelten für die Anfechtung eines Testaments?", "answerable": false, "expected": [], "absent_terms": ["Testament"], "needs_review": false}
+{"id": "c18", "question": "Wie lang ist die Kündigungsfrist bei einem Mietvertrag?", "answerable": false, "expected": [], "absent_terms": ["Mietvertrag"], "needs_review": false}
