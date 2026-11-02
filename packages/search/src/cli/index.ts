@@ -1,8 +1,8 @@
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { GesetzeImInternetSource, type CorpusUnit } from '@normkompass/corpus';
-import { createPool, migrate } from '../db.js';
-import { createEmbedder } from '../embedder.js';
+import { createPool, migrate, readModelRecord, recordModel } from '../db.js';
+import { LocalEmbedder, createEmbedder } from '../embedder.js';
 import { indexUnits } from '../indexer.js';
 
 if (existsSync('.env')) process.loadEnvFile('.env');
@@ -18,7 +18,10 @@ const source = new GesetzeImInternetSource({
 const units: CorpusUnit[] = [];
 for await (const doc of source.loadDocuments()) units.push(...source.split(doc).units);
 
-const embedder = createEmbedder(process.env.EMBEDDER);
+const flag = process.argv.indexOf('--embedder');
+const embedder = createEmbedder(
+  (flag >= 0 ? process.argv[flag + 1] : undefined) ?? process.env.EMBEDDER,
+);
 const pool = createPool({ connectionString });
 try {
   await migrate(pool);
@@ -29,10 +32,23 @@ try {
       if (done === total || done % 320 === 0) console.log(`  embedded ${done}/${total}`);
     },
   });
+  const seconds = Math.round((Date.now() - started) / 1000);
   console.log(
-    `Done in ${Math.round((Date.now() - started) / 1000)}s: ${result.chunks} chunks, ` +
-      `${result.embedded} embedded, ${result.removed} removed.`,
+    `Done in ${seconds}s: ${result.chunks} chunks, ${result.embedded} embedded, ${result.removed} removed.`,
   );
+  // The time is only comparable when everything was embedded in this run.
+  const complete = result.embedded === result.chunks;
+  const existing = await readModelRecord(pool, embedder.model);
+  await recordModel(pool, {
+    model: embedder.model,
+    dimension: embedder.dimension,
+    indexingSeconds: complete ? seconds : (existing?.indexingSeconds ?? null),
+    weightsBytes:
+      embedder instanceof LocalEmbedder
+        ? await embedder.weightsBytes()
+        : (existing?.weightsBytes ?? null),
+    chunks: result.chunks,
+  });
 } finally {
   await pool.end();
 }
