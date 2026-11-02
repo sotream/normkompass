@@ -5,3 +5,4 @@ export * from './verify.js';
 export * from './pipeline.js';
 export * from './claude-model.js';
 export * from './scripted-model.js';
+export * from './ollama-model.js';

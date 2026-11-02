@@ -1,5 +1,6 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { OUTPUT_SCHEMA, SYSTEM_PROMPT, buildUserMessage } from './prompt.js';
+import { DEFAULT_OLLAMA_URL, OllamaAnswerModel } from './ollama-model.js';
 import type { AnswerModel, Source } from './types.js';
 
 export class ConfigurationError extends Error {
@@ -41,8 +42,47 @@ export class ClaudeAnswerModel implements AnswerModel {
   }
 }
 
-/** Builds the Claude model from environment variables; throws ConfigurationError if incomplete. */
-export function createAnswerModel(env: NodeJS.ProcessEnv = process.env): ClaudeAnswerModel {
+export type AnswerProvider = 'claude' | 'ollama';
+
+/** An empty value in .env means "not set". */
+const setting = (value: string | undefined): string | undefined =>
+  value === undefined || value === '' ? undefined : value;
+
+function providerOf(env: NodeJS.ProcessEnv): AnswerProvider {
+  const provider = setting(env.ANSWER_PROVIDER) ?? 'claude';
+  if (provider !== 'claude' && provider !== 'ollama') {
+    throw new ConfigurationError(
+      `Unknown ANSWER_PROVIDER "${provider}": use "claude" or "ollama" (see .env.example).`,
+    );
+  }
+  return provider;
+}
+
+/** Provider and model name for labeling results; throws ConfigurationError like createAnswerModel. */
+export function describeAnswerModel(env: NodeJS.ProcessEnv = process.env): {
+  provider: AnswerProvider;
+  model: string;
+} {
+  const provider = providerOf(env);
+  const model = setting(provider === 'ollama' ? env.OLLAMA_MODEL : env.ANSWER_MODEL);
+  if (!model) {
+    throw new ConfigurationError(
+      `Answer generation is not configured: set ${provider === 'ollama' ? 'OLLAMA_MODEL' : 'ANSWER_MODEL'} (see .env.example).`,
+    );
+  }
+  return { provider, model };
+}
+
+/**
+ * Builds the configured answer model. The default provider is Claude, which needs ANTHROPIC_API_KEY and
+ * ANSWER_MODEL; "ollama" needs OLLAMA_MODEL. Throws ConfigurationError before any request is made.
+ */
+export function createAnswerModel(env: NodeJS.ProcessEnv = process.env): AnswerModel {
+  const provider = providerOf(env);
+  if (provider === 'ollama') {
+    const { model } = describeAnswerModel(env);
+    return new OllamaAnswerModel({ url: setting(env.OLLAMA_URL) ?? DEFAULT_OLLAMA_URL, model });
+  }
   const apiKey = env.ANTHROPIC_API_KEY;
   const model = env.ANSWER_MODEL;
   if (!apiKey || !model) {
