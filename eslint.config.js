@@ -33,7 +33,7 @@ export default defineConfig(
 
   // Command-line entry points print to the console by design.
   {
-    files: ['**/src/cli/**/*.ts', 'packages/eval/src/**/run*.ts'],
+    files: ['**/src/cli/**/*.ts', 'packages/eval/src/**/run*.ts', 'examples/**/src/run.ts'],
     rules: { 'no-console': 'off' },
   },
 

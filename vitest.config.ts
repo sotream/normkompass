@@ -14,5 +14,11 @@ export default defineConfig({
       '@normkompass/eval': src('./packages/eval/src/index.ts'),
     },
   },
-  test: { include: ['apps/**/src/**/*.test.ts', 'packages/**/src/**/*.test.ts'] },
+  test: {
+    include: [
+      'apps/**/src/**/*.test.ts',
+      'packages/**/src/**/*.test.ts',
+      'examples/**/src/**/*.test.ts',
+    ],
+  },
 });

@@ -27,6 +27,7 @@
     "spec": "openspec validate --all --strict --no-interactive",
     "ingest": "pnpm --filter @normkompass/corpus build && node packages/corpus/dist/cli/ingest.js",
     "index": "pnpm -r --filter @normkompass/corpus --filter @normkompass/search build && node packages/search/dist/cli/index.js",
+    "example": "pnpm -r --filter @normkompass/corpus --filter @normkompass/search --filter @normkompass/example-own-corpus build && node examples/own-corpus/dist/run.js",
     "eval:compare": "pnpm -r --filter @normkompass/eval build && node packages/eval/dist/cli/compare.js",
     "eval:retrieval": "pnpm -r --filter @normkompass/corpus --filter @normkompass/search --filter @normkompass/eval build && node packages/eval/dist/cli/run.js",
     "eval:validate": "pnpm -r --filter @normkompass/corpus --filter @normkompass/search --filter @normkompass/eval build && node packages/eval/dist/cli/run.js --validate-only",
