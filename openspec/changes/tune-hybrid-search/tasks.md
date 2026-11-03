@@ -1,6 +1,6 @@
 ## 1. Eval set review
 
-- [ ] 1.1 Review the seven `needs_review` questions against the corpus text; reword or re-target the inexact or ambiguous ones and add the ambiguity check to the eval set validation
+- [ ] 1.1 Review the seven `needs_review` questions against the corpus text and reword the inexact or ambiguous ones (an automatic ambiguity check was tried and dropped: it missed the one real ambiguity and flagged many harmless questions)
 - [ ] 1.2 Re-run the existing configurations on the corrected set and update the README table and ADR 0002 baseline
 
 ## 2. Tuning
