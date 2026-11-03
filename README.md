@@ -9,11 +9,11 @@ answer, the service refuses instead of guessing.
 
 ## Status
 
-Reference implementation **in development**. Implemented so far: the project scaffold,
-corpus ingest with a structure-aware parser for the demo laws, a hybrid search index, and a
-retrieval evaluation, and answer generation with code-checked citations and refusal. The answer
-quality with a real language model has **not been measured yet** (see "Answer evaluation"). It is not a
-finished product.
+Reference implementation, all planned v1 phases implemented: project scaffold, corpus ingest with a
+structure-aware parser for the demo laws, hybrid search with a retrieval evaluation and an embedding
+comparison (ADR 0002), and answer generation with code-checked citations and refusal. It is not a finished
+product. See "Honest limits" for what is not known or not done, in particular that Claude itself has not
+been measured and that hybrid search currently scores below vector-only search on the eval.
 
 ## Not legal advice
 
@@ -84,9 +84,27 @@ A returned unit counts as a hit if it is the expected unit or its parent Absatz 
 fraction of expected units hit in the top 5, MRR uses the first hit within the top 10. The 14
 unanswerable questions are not used for these two metrics; refusal is evaluated with answer generation.
 
-| Date       | Commit    | Embedding model                     | Questions | recall@5 | MRR   |
-| ---------- | --------- | ----------------------------------- | --------- | -------- | ----- |
-| 2026-11-02 | `aa6514c` | multilingual-e5-small (local, int8) | 75        | 0.880    | 0.742 |
+| Date       | Commit    | Embedding model       | Search                                         | recall@5 | MRR   | Index time | Weights |
+| ---------- | --------- | --------------------- | ---------------------------------------------- | -------- | ----- | ---------- | ------- |
+| 2026-11-03 | `90c020e` | multilingual-e5-small | hybrid (default)                               | 0.880    | 0.742 | 229 s      | 118 MB  |
+| 2026-11-02 | `559c39c` | multilingual-e5-base  | hybrid                                         | 0.907    | 0.736 | 364 s      | 279 MB  |
+| 2026-11-02 | `559c39c` | multilingual-e5-large | hybrid                                         | 0.907    | 0.768 | 5246 s     | 562 MB  |
+| 2026-11-03 | `559c39c` | bge-m3                | hybrid                                         | 0.880    | 0.744 | 16719 s    | 570 MB  |
+| 2026-11-03 | `90c020e` | multilingual-e5-small | vector only                                    | 0.960    | 0.879 | 229 s      | 118 MB  |
+| 2026-11-03 | `90c020e` | multilingual-e5-small | full-text only                                 | 0.613    | 0.384 | 229 s      | 118 MB  |
+| 2026-11-03 | `90c020e` | multilingual-e5-small | hybrid + reranker (bge-reranker-v2-m3, top 20) | 0.987    | 0.950 | see note   | 118 MB  |
+
+All rows: 75 questions, local 8-bit models. Compound splitting switched off gave identical numbers (only one
+question is affected). Paired bootstrap intervals for every difference are in
+[ADR 0002](docs/adr/0002-embeddings-and-reranker.md); the four embedding models are not significantly
+different from each other, so the smallest one is the default. Vector-only beats hybrid significantly
+(MRR +0.137). The reranker improves both metrics significantly but took about 53 seconds per question on
+an Apple M1, so it is off by default. Index times are single runs on a laptop that was not idle (the small
+model took 1141 s in one run and 229 s in another): read them as orders of magnitude. The result file of the
+reranker row stores 1141 s from that earlier run; the table value is the later one. Models not evaluated:
+cloud embedding models (no key). Run a comparison with `pnpm index --embedder <name>` and
+`pnpm eval:retrieval --embedder <name> [--mode vector|fts] [--rerank] [--no-compound]`, where the names are
+`local-e5`, `local-e5-base`, `local-e5-large`, `local-bge-m3` and `fake`.
 
 The commit is the head of the pull request branch the numbers were measured on (a squash merge gives it a
 new hash). The full run is manual (`pnpm eval:retrieval`) and the raw result is in `eval/results/`.
@@ -94,11 +112,54 @@ new hash). The full run is manual (`pnpm eval:retrieval`) and the raw result is 
 Weak spots, as measured: 9 of 75 questions have no expected unit in the top 5 and 4 of them none in the
 top 10. Among the misses are general questions about the scope of a whole law, for example "Für welche Steuern gilt die Abgabenordnung?" (§ 1 Abs. 1 AO) and "Für welche Diensteanbieter gilt das Digitale-Dienste-Gesetz?" (§ 1 Abs. 1 DDG); the reason has not been analyzed. The set is
 small and was not tuned against, so differences of a few points between configurations are not
-meaningful. No ablation of vector-only versus full-text-only search has been run yet.
+meaningful.
 
 CI runs a smaller eval on fixtures with a deterministic fake embedder (14 questions, thresholds
 recall@5 >= 0.7 and MRR >= 0.5; measured 0.857 and 0.665) against a Postgres service. It guards
 against regressions in the search code and says nothing about quality with a real model.
+
+## Bring your own corpus
+
+Everything except the demo parser works on the `CorpusSource` interface (`packages/corpus`): `name`,
+`loadDocuments()` (read the raw material) and `split()` (turn one document into units with a stable id, a
+structural path, a citation label, a title and a URL). Index the units with `indexUnits`, search with
+`HybridSearch`, and score with the functions in `packages/eval` against your own questions.
+
+`examples/own-corpus` is a complete, small example: a folder of `.txt` files where a line starting with `# `
+begins a section and each section is one citable unit. It is tested in CI (the adapter, and indexing plus a
+search query against Postgres). Run it, with Postgres from `docker compose up -d`:
+
+```sh
+pnpm example "Wie viele Urlaubstage habe ich?"   # fake embedder, no model download
+EMBEDDER=local-e5 pnpm example "..."              # real embeddings
+```
+
+It writes to its own Postgres schema, so it never mixes into the law index. The example documents are
+invented text, not a real policy. The Markdown source under `packages/corpus/test` stays a test fixture.
+
+## Honest limits
+
+- **Claude has not been measured.** No real Claude run exists, so there is no number for answer quality with
+  Claude. Results for other models are in "Answer evaluation" and say nothing about Claude.
+- **Hybrid search currently scores below vector-only search** on this eval (MRR 0.742 versus 0.879; see
+  "Retrieval results" and ADR 0002). The full-text side needs work; it is the default anyway because the
+  brief asks for it, and it has not been re-tuned.
+- **The reranker is not part of the service.** It improves the eval a lot, but takes about 53 seconds per
+  question on the development laptop, so it is off by default and not wired into `/ask`.
+- **The question set is small and written by the author.** 75 answerable and 14 unanswerable questions;
+  seven are flagged `needs_review` and not reviewed by anyone else. Differences of a few points between
+  configurations are not meaningful, and four embedding models could not be told apart.
+- **Compound-word handling is untested by the eval.** Only one of 75 questions contains a compound that the
+  splitting touches.
+- **One corpus, one language, one snapshot.** Five German federal laws, taken on 2026-11-02 with the "Stand"
+  shown per law. The service makes no promise that the law shown is current or complete, and nothing is
+  synchronized automatically.
+- **Citations are precise to Absatz or Nummer, not to Satz.** Sentences are not split.
+- **Not legal advice.** See the section above.
+- **Cloud embedding models were not evaluated** (no API key was provided), and no cost or latency figures
+  exist for hosted generation beyond the labeled runs.
+- **Out of scope for v1:** a user interface, authentication, multi-tenancy, scheduled updates, deployment
+  configuration, and EU law (DSGVO, EUR-Lex).
 
 ## Answers and citations
 
