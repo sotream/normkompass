@@ -3,6 +3,11 @@
 - Status: Accepted
 - Date: 2026-11-03
 
+> **Update (2026-11-03):** three of the questions used for these numbers were later reworded and the search
+> default was changed; see [ADR 0003](0003-hybrid-tuning-and-default-mode.md). The tables below are the
+> measurements as first made, on the earlier question set; the conclusions about the embedding models still
+> hold on the corrected set, and current numbers are in the README.
+
 ## Context
 
 Phase 3 measured one embedding model (multilingual-e5-small) and nothing else, so no claim about

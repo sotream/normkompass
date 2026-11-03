@@ -13,7 +13,7 @@ Reference implementation, all planned v1 phases implemented: project scaffold, c
 structure-aware parser for the demo laws, hybrid search with a retrieval evaluation and an embedding
 comparison (ADR 0002), and answer generation with code-checked citations and refusal. It is not a finished
 product. See "Honest limits" for what is not known or not done, in particular that Claude itself has not
-been measured and that hybrid search currently scores below vector-only search on the eval.
+been measured and that the default search is vector-only, because hybrid search scored below it on the eval (ADR 0003).
 
 ## How this was built
 
@@ -86,15 +86,16 @@ specs live in `openspec/`, decisions in `docs/adr/`. Validate with `pnpm spec`.
 Chunks are the corpus units (Absatz, Nummer, or a whole norm). A unit longer than 1500 characters is
 split into parts at line or word boundaries; the parts keep the unit path. Each chunk is embedded
 with its citation label and title as a prefix ("§ 14 Abs. 1 UStG Ausstellung von Rechnungen ..."),
-while the stored text stays the original wording. Search takes the top 50 from vector similarity and
-from Postgres full-text search (`german` configuration, query words OR-ed) and merges them with
-Reciprocal Rank Fusion (k = 60). Query words that are German compounds are also split into parts known
-from the corpus vocabulary (for example "Umsatzsteuervoranmeldung" also searches "Umsatzsteuer" and
-"Voranmeldung"). At about 4,600 chunks the vector search is an exact scan without an ANN index.
+while the stored text stays the original wording. The default search is vector-only: cosine similarity over the
+chunk embeddings, an exact scan (about 4,600 chunks, no ANN index). Two other modes exist and are measured:
+full-text only (Postgres `german` configuration, query words OR-ed) and hybrid, which merges the vector and the
+full-text top 50 with weighted Reciprocal Rank Fusion (k = 60, full-text weight as an option). In hybrid and
+full-text modes, query words that are German compounds are also split into parts known from the corpus
+vocabulary. Vector-only is the default because no hybrid variant beat it on the eval (ADR 0003).
 
 Embeddings come from `multilingual-e5-small`, run locally with transformers.js, so no text leaves the
-machine after the one-time model download. The choice of the final embedding model and whether to add
-a reranker are open and will be decided by an ADR based on the eval.
+machine after the one-time model download. It was kept after comparing four local models
+([ADR 0002](docs/adr/0002-embeddings-and-reranker.md)); a local reranker exists but is off by default.
 
 ## Retrieval results
 
@@ -102,7 +103,9 @@ a reranker are open and will be decided by an ADR based on the eval.
 answerable question lists the expected units and the place in the corpus it was derived from. A script
 checks that every expected unit exists and that the words of each unanswerable question's topic
 (`absent_terms`) occur nowhere in the corpus; it flagged seven wrong guesses while the set was written.
-Seven questions are flagged `needs_review` and have not been reviewed by a second person.
+Seven questions are flagged `needs_review`; they were checked once by the author of the questions, who
+reworded three of them (see [ADR 0003](docs/adr/0003-hybrid-tuning-and-default-mode.md)), and have not been
+reviewed by anyone else.
 
 A returned unit counts as a hit if it is the expected unit or its parent Absatz or §. Recall@5 is the
 fraction of expected units hit in the top 5, MRR uses the first hit within the top 10. The 14
@@ -110,36 +113,42 @@ unanswerable questions are not used for these two metrics; refusal is evaluated 
 
 | Date       | Commit    | Embedding model       | Search                                         | recall@5 | MRR   | Index time | Weights |
 | ---------- | --------- | --------------------- | ---------------------------------------------- | -------- | ----- | ---------- | ------- |
-| 2026-11-03 | `90c020e` | multilingual-e5-small | hybrid (default)                               | 0.880    | 0.742 | 229 s      | 118 MB  |
-| 2026-11-02 | `559c39c` | multilingual-e5-base  | hybrid                                         | 0.907    | 0.736 | 364 s      | 279 MB  |
-| 2026-11-02 | `559c39c` | multilingual-e5-large | hybrid                                         | 0.907    | 0.768 | 5246 s     | 562 MB  |
-| 2026-11-03 | `559c39c` | bge-m3                | hybrid                                         | 0.880    | 0.744 | 16719 s    | 570 MB  |
-| 2026-11-03 | `90c020e` | multilingual-e5-small | vector only                                    | 0.960    | 0.879 | 229 s      | 118 MB  |
-| 2026-11-03 | `90c020e` | multilingual-e5-small | full-text only                                 | 0.613    | 0.384 | 229 s      | 118 MB  |
-| 2026-11-03 | `90c020e` | multilingual-e5-small | hybrid + reranker (bge-reranker-v2-m3, top 20) | 0.987    | 0.950 | see note   | 118 MB  |
+| 2026-11-03 | `5c9212a` | multilingual-e5-small | vector only (default)                          | 0.960    | 0.889 | 229 s      | 118 MB  |
+| 2026-11-03 | `5c9212a` | multilingual-e5-small | hybrid (weight 1)                              | 0.907    | 0.748 | 229 s      | 118 MB  |
+| 2026-11-03 | `5c9212a` | multilingual-e5-small | full-text only                                 | 0.627    | 0.396 | 229 s      | 118 MB  |
+| 2026-11-03 | `5c9212a` | multilingual-e5-base  | hybrid                                         | 0.920    | 0.736 | 364 s      | 279 MB  |
+| 2026-11-03 | `5c9212a` | multilingual-e5-large | hybrid                                         | 0.920    | 0.779 | 5246 s     | 562 MB  |
+| 2026-11-03 | `5c9212a` | bge-m3                | hybrid                                         | 0.893    | 0.746 | 16719 s    | 570 MB  |
+| 2026-11-03 | `4a0f7f6` | multilingual-e5-small | vector + reranker (bge-reranker-v2-m3, top 20) | 0.987    | 0.958 | 229 s      | 118 MB  |
 
-All rows: 75 questions, local 8-bit models. Compound splitting switched off gave identical numbers (only one
-question is affected). Paired bootstrap intervals for every difference are in
-[ADR 0002](docs/adr/0002-embeddings-and-reranker.md); the four embedding models are not significantly
-different from each other, so the smallest one is the default. Vector-only beats hybrid significantly
-(MRR +0.137). The reranker improves both metrics significantly but took about 53 seconds per question on
-an Apple M1, so it is off by default. Index times are single runs on a laptop that was not idle (the small
-model took 1141 s in one run and 229 s in another): read them as orders of magnitude. The result file of the
-reranker row stores 1141 s from that earlier run; the table value is the later one. Models not evaluated:
-cloud embedding models (no key). Run a comparison with `pnpm index --embedder <name>` and
-`pnpm eval:retrieval --embedder <name> [--mode vector|fts] [--rerank] [--no-compound]`, where the names are
-`local-e5`, `local-e5-base`, `local-e5-large`, `local-bge-m3` and `fake`.
+All rows: 75 questions (the set as corrected in ADR 0003), local 8-bit models. The four embedding models were
+compared in hybrid mode and are not significantly different from each other, so the smallest is the default;
+they were not re-run in vector mode. Compound splitting switched off gives identical numbers in hybrid mode
+(only one question is affected). Vector-only beats hybrid significantly (MRR +0.141, 95% bootstrap interval
+[+0.071, +0.215]). The reranker improves MRR significantly over vector-only (+0.068) but recall@5 only by an
+amount that is not significant (+0.027, [0.000, +0.067]), and the first run took about 53 seconds per question
+on an Apple M1, so it is off by default and not part of the API. Index times are single runs on a laptop that
+was not idle (the small model took 1141 s in one run and 229 s in another): read them as orders of
+magnitude. Models not evaluated: cloud embedding models (no key). Run a comparison with
+`pnpm index --embedder <name>` and
+`pnpm eval:retrieval --embedder <name> [--mode vector|hybrid|fts] [--rerank] [--no-compound] [--fts-weight w] [--fts-max-share s] [--split dev|heldout]`,
+where the names are `local-e5`, `local-e5-base`, `local-e5-large`, `local-bge-m3` and `fake`. Raw results are in
+`eval/results/`; `pnpm eval:compare a.json b.json` gives the paired bootstrap.
+
+Tuning the hybrid mode, on the 38 development questions only and then on the 37 held-out ones (ADR 0003): the
+best of five declared variants (full-text weight 0.01) matched vector-only exactly (held-out MRR 0.900 for both),
+while the earlier hybrid default reached 0.697.
 
 The commit is the head of the pull request branch the numbers were measured on (a squash merge gives it a
 new hash). The full run is manual (`pnpm eval:retrieval`) and the raw result is in `eval/results/`.
 
-Weak spots, as measured: 9 of 75 questions have no expected unit in the top 5 and 4 of them none in the
-top 10. Among the misses are general questions about the scope of a whole law, for example "Für welche Steuern gilt die Abgabenordnung?" (§ 1 Abs. 1 AO) and "Für welche Diensteanbieter gilt das Digitale-Dienste-Gesetz?" (§ 1 Abs. 1 DDG); the reason has not been analyzed. The set is
+Weak spots, as measured with the default: 3 of 75 questions have no expected unit in the top 5 (q022, q030,
+q057) and one of them none in the top 10. Among the misses are general questions about the scope of a whole law, for example "Für welche Steuern gilt die Abgabenordnung?" (§ 1 Abs. 1 AO) and "Für welche Diensteanbieter gilt das Digitale-Dienste-Gesetz?" (§ 1 Abs. 1 DDG); the reason has not been analyzed. The set is
 small and was not tuned against, so differences of a few points between configurations are not
 meaningful.
 
 CI runs a smaller eval on fixtures with a deterministic fake embedder (14 questions, thresholds
-recall@5 >= 0.7 and MRR >= 0.5; measured 0.857 and 0.665) against a Postgres service. It guards
+recall@5 >= 0.7 and MRR >= 0.5; measured 0.786 and 0.649 in the default mode, 0.857 and 0.665 in hybrid mode) against a Postgres service. It guards
 against regressions in the search code and says nothing about quality with a real model.
 
 ## Bring your own corpus
@@ -165,13 +174,14 @@ invented text, not a real policy. The Markdown source under `packages/corpus/tes
 
 - **Claude has not been measured.** No real Claude run exists, so there is no number for answer quality with
   Claude. Results for other models are in "Answer evaluation" and say nothing about Claude.
-- **Hybrid search currently scores below vector-only search** on this eval (MRR 0.742 versus 0.879; see
-  "Retrieval results" and ADR 0002). The full-text side needs work; it is the default anyway because the
-  brief asks for it, and it has not been re-tuned.
-- **The reranker is not part of the service.** It improves the eval a lot, but takes about 53 seconds per
-  question on the development laptop, so it is off by default and not wired into `/ask`.
+- **The default search is vector-only, not hybrid.** On this eval the full-text side did not help, and the
+  tuned hybrid only matched vector-only (ADR 0003). That is a finding about this corpus and these questions;
+  questions that quote exact terms or citations were not tested, and why full-text hurts was not analyzed.
+- **The reranker is not part of the service.** It improves MRR significantly (recall@5 not significantly), but
+  took about 53 seconds per question on the development laptop, so it is off by default and not wired into
+  `/ask`.
 - **The question set is small and written by the author.** 75 answerable and 14 unanswerable questions;
-  seven are flagged `needs_review` and not reviewed by anyone else. Differences of a few points between
+  seven are flagged `needs_review`, three of them reworded after one review by their own author, and none reviewed by anyone else. Differences of a few points between
   configurations are not meaningful, and four embedding models could not be told apart.
 - **Compound-word handling is untested by the eval.** Only one of 75 questions contains a compound that the
   splitting touches.
