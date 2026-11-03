@@ -15,6 +15,30 @@ comparison (ADR 0002), and answer generation with code-checked citations and ref
 product. See "Honest limits" for what is not known or not done, in particular that Claude itself has not
 been measured and that hybrid search currently scores below vector-only search on the eval.
 
+## How this was built
+
+The code, specs and documents in this repository were written by Claude (Anthropic's model, used through
+Claude Code), directed by the repository owner with a human in the loop. Work follows
+[OpenSpec](https://github.com/Fission-AI/OpenSpec): every change started as a spec pull request that the
+owner read and merged before any implementation existed, and the implementation arrived as a separate pull
+request that the owner merged after review. The owner set the goals, the constraints and the acceptance
+criteria and decided at each gate. Commits are made under the owner's account.
+
+If you want to judge the engineering and the product thinking rather than take this page's word for it, these
+are the places where it is visible and checkable:
+
+- **Specs before code.** `openspec/changes/archive/` holds every proposal, design and task list, and
+  `openspec/specs/` the resulting behavior. The pull request history shows the spec-then-implementation order.
+- **Decisions with stated rules.** [ADR 0001](docs/adr/0001-corpus-and-licensing.md) (what may be
+  processed, with cited sources) and [ADR 0002](docs/adr/0002-embeddings-and-reranker.md) (the decision rule
+  and where it was and was not fixed before the numbers were seen).
+- **Results that are not flattering are kept.** The tables show a weak local model, hybrid search scoring
+  below vector-only search, and a reranker that is too slow to use; "Honest limits" lists what is unknown.
+- **A strict product rule enforced in code.** An answer needs a citation whose quote is a verbatim substring of
+  the retrieved text; any failed citation turns the whole answer into a refusal.
+- **Scope.** What was deliberately left out (no UI, no auth, no promise of current law) is stated, not
+  hidden.
+
 ## Not legal advice
 
 Output of this project is not legal advice and makes no promise that the law
