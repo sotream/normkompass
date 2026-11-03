@@ -22,6 +22,12 @@ export interface SearchHit {
 /** Which rankings are used: both merged (default), only vector similarity, or only full-text. */
 export type SearchMode = 'hybrid' | 'vector' | 'fts';
 
+/**
+ * Vector-only is the default because on the project's eval no hybrid variant beat it (ADR 0003); "hybrid"
+ * (vector and full-text merged by weighted RRF) and "fts" remain available as explicit modes.
+ */
+export const DEFAULT_SEARCH_MODE: SearchMode = 'vector';
+
 export interface SearchOptions {
   limit?: number;
   /** Candidates taken from each of the two searches before merging. */
@@ -106,7 +112,7 @@ export class HybridSearch {
   async search(question: string, options: SearchOptions = {}): Promise<SearchHit[]> {
     const limit = options.limit ?? 5;
     const candidates = options.candidates ?? 50;
-    const mode = options.mode ?? 'hybrid';
+    const mode = options.mode ?? DEFAULT_SEARCH_MODE;
     if (options.rerank && !this.reranker)
       throw new Error('rerank requested but no reranker is configured');
     const empty = { rows: [] as Row[] };

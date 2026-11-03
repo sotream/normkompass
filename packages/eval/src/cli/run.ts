@@ -4,6 +4,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { GesetzeImInternetSource, type CorpusUnit } from '@normkompass/corpus';
 import {
+  DEFAULT_SEARCH_MODE,
   HybridSearch,
   LocalReranker,
   createEmbedder,
@@ -27,7 +28,7 @@ const argValue = (name: string): string | undefined => {
   const i = process.argv.indexOf(name);
   return i >= 0 ? process.argv[i + 1] : undefined;
 };
-const mode = (argValue('--mode') ?? 'hybrid') as SearchMode;
+const mode = (argValue('--mode') ?? DEFAULT_SEARCH_MODE) as SearchMode;
 if (!['hybrid', 'vector', 'fts'].includes(mode)) {
   console.error('--mode must be hybrid, vector or fts');
   process.exit(1);
@@ -112,7 +113,7 @@ try {
 
   await mkdir(join('eval', 'results'), { recursive: true });
   const variant = [
-    mode === 'hybrid' ? '' : `-${mode}`,
+    mode === DEFAULT_SEARCH_MODE ? '' : `-${mode}`,
     rerank ? '-rerank' : '',
     compoundSplitting ? '' : '-nocompound',
     ftsWeight === undefined ? '' : `-w${ftsWeight}`,

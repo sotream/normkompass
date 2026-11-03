@@ -91,6 +91,7 @@ describe.skipIf(!DATABASE_URL)('index and hybrid search (Postgres)', () => {
   it('returns metadata and original text for each hit', async () => {
     const hits = await new HybridSearch(pool, embedder).search(
       'Wann ist eine Rechnung auszustellen?',
+      { mode: 'hybrid' },
     );
     expect(hits).toHaveLength(5);
     for (const h of hits) {
@@ -104,7 +105,10 @@ describe.skipIf(!DATABASE_URL)('index and hybrid search (Postgres)', () => {
   });
 
   it('matches inflected forms through German full-text search', async () => {
-    const hits = await new HybridSearch(pool, embedder).search('Rechnungen', { limit: 10 });
+    const hits = await new HybridSearch(pool, embedder).search('Rechnungen', {
+      limit: 10,
+      mode: 'hybrid',
+    });
     const fts = hits.filter((h) => h.ftsRank !== null);
     expect(fts.some((h) => h.unitId.startsWith('ustg_1980/§ 14/'))).toBe(true);
   });
@@ -113,7 +117,7 @@ describe.skipIf(!DATABASE_URL)('index and hybrid search (Postgres)', () => {
     const search = new HybridSearch(pool, embedder);
     const terms = await search.queryTerms('Unternehmerleistung');
     expect(terms).toEqual(['unternehmerleistung', 'unternehmer', 'leistung']);
-    const hits = await search.search('Unternehmerleistung', { limit: 10 });
+    const hits = await search.search('Unternehmerleistung', { limit: 10, mode: 'hybrid' });
     expect(hits.some((h) => h.ftsRank !== null && h.text.includes('Unternehmer'))).toBe(true);
   });
 
@@ -187,7 +191,9 @@ describe.skipIf(!DATABASE_URL)('index and hybrid search (Postgres)', () => {
     const search = new HybridSearch(pool, embedder);
     const q = 'Wann ist eine Rechnung auszustellen?';
     const vectorOnly = (await search.search(q, { limit: 5, mode: 'vector' })).map((h) => h.chunkId);
-    const tiny = (await search.search(q, { limit: 5, ftsWeight: 0.0001 })).map((h) => h.chunkId);
+    const tiny = (await search.search(q, { limit: 5, mode: 'hybrid', ftsWeight: 0.0001 })).map(
+      (h) => h.chunkId,
+    );
     expect(tiny).toEqual(vectorOnly);
   });
 
@@ -205,5 +211,11 @@ describe.skipIf(!DATABASE_URL)('index and hybrid search (Postgres)', () => {
     const search = new HybridSearch(pool, embedder);
     const hits = await search.search('Rechnung', { limit: 5, mode: 'fts', ftsMaxDocShare: 0 });
     expect(hits.length).toBeGreaterThan(0);
+  });
+
+  it('searches vector-only by default', async () => {
+    const hits = await new HybridSearch(pool, embedder).search('Rechnung ausstellen');
+    expect(hits.length).toBeGreaterThan(0);
+    expect(hits.every((h) => h.ftsRank === null && h.vectorRank !== null)).toBe(true);
   });
 });
