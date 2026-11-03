@@ -1,0 +1,392 @@
+{
+  "date": "2026-11-03",
+  "commit": "559c39c",
+  "dirty": false,
+  "embedder": "bge-m3",
+  "mode": "hybrid",
+  "rerank": null,
+  "compoundSplitting": true,
+  "indexingSeconds": 16719,
+  "weightsBytes": 569694530,
+  "dimension": 1024,
+  "questions": 75,
+  "recallAt5": 0.88,
+  "mrr": 0.7440899470899472,
+  "perQuestion": [
+    {
+      "id": "q001",
+      "firstHitRank": 3,
+      "recallAt5": 1
+    },
+    {
+      "id": "q002",
+      "firstHitRank": 2,
+      "recallAt5": 1
+    },
+    {
+      "id": "q003",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q004",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q005",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q006",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q007",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q008",
+      "firstHitRank": 6,
+      "recallAt5": 0
+    },
+    {
+      "id": "q009",
+      "firstHitRank": 2,
+      "recallAt5": 1
+    },
+    {
+      "id": "q010",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q011",
+      "firstHitRank": 3,
+      "recallAt5": 1
+    },
+    {
+      "id": "q012",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q013",
+      "firstHitRank": 2,
+      "recallAt5": 1
+    },
+    {
+      "id": "q014",
+      "firstHitRank": 9,
+      "recallAt5": 0
+    },
+    {
+      "id": "q015",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q016",
+      "firstHitRank": 2,
+      "recallAt5": 1
+    },
+    {
+      "id": "q017",
+      "firstHitRank": 8,
+      "recallAt5": 0
+    },
+    {
+      "id": "q018",
+      "firstHitRank": 2,
+      "recallAt5": 1
+    },
+    {
+      "id": "q019",
+      "firstHitRank": 2,
+      "recallAt5": 1
+    },
+    {
+      "id": "q020",
+      "firstHitRank": 4,
+      "recallAt5": 1
+    },
+    {
+      "id": "q021",
+      "firstHitRank": 3,
+      "recallAt5": 1
+    },
+    {
+      "id": "q022",
+      "firstHitRank": 8,
+      "recallAt5": 0
+    },
+    {
+      "id": "q023",
+      "firstHitRank": 2,
+      "recallAt5": 1
+    },
+    {
+      "id": "q024",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q025",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q026",
+      "firstHitRank": 2,
+      "recallAt5": 1
+    },
+    {
+      "id": "q027",
+      "firstHitRank": 4,
+      "recallAt5": 1
+    },
+    {
+      "id": "q028",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q029",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q030",
+      "firstHitRank": 6,
+      "recallAt5": 0
+    },
+    {
+      "id": "q031",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q032",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q033",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q034",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q035",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q036",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q037",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q038",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q039",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q040",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q041",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q042",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q043",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q044",
+      "firstHitRank": null,
+      "recallAt5": 0
+    },
+    {
+      "id": "q045",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q046",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q047",
+      "firstHitRank": 2,
+      "recallAt5": 1
+    },
+    {
+      "id": "q048",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q049",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q050",
+      "firstHitRank": 5,
+      "recallAt5": 1
+    },
+    {
+      "id": "q051",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q052",
+      "firstHitRank": 9,
+      "recallAt5": 0
+    },
+    {
+      "id": "q053",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q054",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q055",
+      "firstHitRank": 5,
+      "recallAt5": 1
+    },
+    {
+      "id": "q056",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q057",
+      "firstHitRank": 2,
+      "recallAt5": 1
+    },
+    {
+      "id": "q058",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q059",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q060",
+      "firstHitRank": 2,
+      "recallAt5": 1
+    },
+    {
+      "id": "q061",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q062",
+      "firstHitRank": 8,
+      "recallAt5": 0
+    },
+    {
+      "id": "q063",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q064",
+      "firstHitRank": 7,
+      "recallAt5": 0
+    },
+    {
+      "id": "q065",
+      "firstHitRank": 3,
+      "recallAt5": 1
+    },
+    {
+      "id": "q066",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q067",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q068",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q069",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q070",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q071",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q072",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q073",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q074",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q075",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    }
+  ]
+}
