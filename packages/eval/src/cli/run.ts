@@ -15,6 +15,8 @@ import { evaluateRetrieval } from '../evaluate.js';
 import {
   FULL_SET_LIMITS,
   loadQuestions,
+  selectSplit,
+  type Split,
   validateAgainstCorpus,
   validateStructure,
 } from '../questions.js';
@@ -32,6 +34,23 @@ if (!['hybrid', 'vector', 'fts'].includes(mode)) {
 }
 const rerank = process.argv.includes('--rerank');
 const compoundSplitting = !process.argv.includes('--no-compound');
+const split = (argValue('--split') ?? 'all') as Split;
+if (!['all', 'dev', 'heldout'].includes(split)) {
+  console.error('--split must be all, dev or heldout');
+  process.exit(1);
+}
+const numberFlag = (name: string): number | undefined => {
+  const v = argValue(name);
+  if (v === undefined) return undefined;
+  const n = Number(v);
+  if (!Number.isFinite(n) || n < 0) {
+    console.error(`${name} must be a non-negative number`);
+    process.exit(1);
+  }
+  return n;
+};
+const ftsWeight = numberFlag('--fts-weight');
+const ftsMaxDocShare = numberFlag('--fts-max-share');
 
 const questions = await loadQuestions(join('eval', 'questions.jsonl'));
 const source = new GesetzeImInternetSource({
@@ -66,9 +85,9 @@ try {
   const reranker = rerank ? new LocalReranker() : undefined;
   const { metrics, results } = await evaluateRetrieval(
     new HybridSearch(pool, embedder, reranker),
-    questions,
+    selectSplit(questions, split),
     10,
-    { mode, rerank, compoundSplitting },
+    { mode, rerank, compoundSplitting, ftsWeight, ftsMaxDocShare },
   );
   const cost = await readModelRecord(pool, embedder.model);
   const git = (...args: string[]): string =>
@@ -78,7 +97,7 @@ try {
   const date = new Date().toISOString().slice(0, 10);
 
   console.log(
-    `\nModel: ${embedder.model}   mode: ${mode}${rerank ? ' + rerank' : ''}${compoundSplitting ? '' : ' (no compound splitting)'}   commit: ${commit}${dirty ? ' (dirty)' : ''}   date: ${date}`,
+    `\nModel: ${embedder.model}   mode: ${mode}${rerank ? ' + rerank' : ''}${compoundSplitting ? '' : ' (no compound splitting)'}${ftsWeight === undefined ? '' : ` fts-weight ${ftsWeight}`}${ftsMaxDocShare === undefined ? '' : ` fts-max-share ${ftsMaxDocShare}`}   split: ${split}   commit: ${commit}${dirty ? ' (dirty)' : ''}   date: ${date}`,
   );
   console.log(`Questions: ${metrics.questions}`);
   console.log(`recall@5: ${metrics.recallAt5.toFixed(3)}`);
@@ -96,6 +115,9 @@ try {
     mode === 'hybrid' ? '' : `-${mode}`,
     rerank ? '-rerank' : '',
     compoundSplitting ? '' : '-nocompound',
+    ftsWeight === undefined ? '' : `-w${ftsWeight}`,
+    ftsMaxDocShare === undefined ? '' : `-share${ftsMaxDocShare}`,
+    split === 'all' ? '' : `-${split}`,
   ].join('');
   const file = join('eval', 'results', `${date}-${embedder.model}${variant}.json`);
   await writeFile(
@@ -109,6 +131,9 @@ try {
         mode,
         rerank: rerank ? reranker?.model : null,
         compoundSplitting,
+        split,
+        ftsWeight: ftsWeight ?? null,
+        ftsMaxDocShare: ftsMaxDocShare ?? null,
         indexingSeconds: cost?.indexingSeconds ?? null,
         weightsBytes: cost?.weightsBytes ?? null,
         dimension: embedder.dimension,

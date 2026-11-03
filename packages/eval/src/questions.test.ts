@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   FULL_SET_LIMITS,
   loadQuestions,
+  selectSplit,
   validateAgainstCorpus,
   validateStructure,
   type Question,
@@ -88,5 +89,28 @@ describe('validateAgainstCorpus', () => {
         units,
       ),
     ).toEqual([]);
+  });
+});
+
+describe('selectSplit', () => {
+  const q = (id: string): Question => ({
+    id,
+    question: 'F?',
+    answerable: true,
+    expected: ['x'],
+    source: 's',
+    needs_review: false,
+  });
+  const all = ['q001', 'q002', 'q003', 'q004', 'q005'].map(q);
+
+  it('puts odd question numbers in the development part and even ones in the held-out part', () => {
+    expect(selectSplit(all, 'dev').map((x) => x.id)).toEqual(['q001', 'q003', 'q005']);
+    expect(selectSplit(all, 'heldout').map((x) => x.id)).toEqual(['q002', 'q004']);
+  });
+
+  it('keeps every question for "all" and never shares a question between the parts', () => {
+    expect(selectSplit(all, 'all')).toHaveLength(5);
+    const dev = new Set(selectSplit(all, 'dev').map((x) => x.id));
+    expect(selectSplit(all, 'heldout').some((x) => dev.has(x.id))).toBe(false);
   });
 });

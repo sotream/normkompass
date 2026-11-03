@@ -36,3 +36,29 @@ describe('HashingEmbedder', () => {
     expect(a).toHaveLength(e.dimension);
   });
 });
+
+describe('weighted rrfMerge', () => {
+  const vector = [
+    { id: 'a', rank: 1 },
+    { id: 'b', rank: 2 },
+  ];
+  const fts = [
+    { id: 'b', rank: 1 },
+    { id: 'a', rank: 2 },
+  ];
+
+  it('treats both lists equally by default', () => {
+    const s = rrfMerge([vector, fts]);
+    expect(s.get('a')).toBeCloseTo(s.get('b') ?? 0);
+  });
+
+  it('lets a lower full-text weight keep the vector order', () => {
+    const s = rrfMerge([vector, fts], 60, [1, 0.25]);
+    expect(s.get('a') ?? 0).toBeGreaterThan(s.get('b') ?? 0);
+  });
+
+  it('lets a higher full-text weight flip it', () => {
+    const s = rrfMerge([vector, fts], 60, [1, 4]);
+    expect(s.get('b') ?? 0).toBeGreaterThan(s.get('a') ?? 0);
+  });
+});

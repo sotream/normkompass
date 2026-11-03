@@ -182,4 +182,28 @@ describe.skipIf(!DATABASE_URL)('index and hybrid search (Postgres)', () => {
     });
     expect(await readModelRecord(pool, 'unknown')).toBeNull();
   });
+
+  it('a lower full-text weight moves the result toward vector-only order', async () => {
+    const search = new HybridSearch(pool, embedder);
+    const q = 'Wann ist eine Rechnung auszustellen?';
+    const vectorOnly = (await search.search(q, { limit: 5, mode: 'vector' })).map((h) => h.chunkId);
+    const tiny = (await search.search(q, { limit: 5, ftsWeight: 0.0001 })).map((h) => h.chunkId);
+    expect(tiny).toEqual(vectorOnly);
+  });
+
+  it('drops very common query terms from the full-text query when asked', async () => {
+    const search = new HybridSearch(pool, embedder);
+    // "unternehmer" is in many chunks; the other word is in none, so only it survives the filter.
+    const q = 'Unternehmer Zzzxyzquark';
+    const all = await search.search(q, { limit: 5, mode: 'fts' });
+    const strict = await search.search(q, { limit: 5, mode: 'fts', ftsMaxDocShare: 0.01 });
+    expect(all.length).toBeGreaterThan(0);
+    expect(strict).toHaveLength(0);
+  });
+
+  it('keeps the full query when every term would be dropped', async () => {
+    const search = new HybridSearch(pool, embedder);
+    const hits = await search.search('Rechnung', { limit: 5, mode: 'fts', ftsMaxDocShare: 0 });
+    expect(hits.length).toBeGreaterThan(0);
+  });
 });
