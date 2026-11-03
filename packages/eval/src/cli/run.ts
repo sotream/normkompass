@@ -3,7 +3,14 @@ import { existsSync } from 'node:fs';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { GesetzeImInternetSource, type CorpusUnit } from '@normkompass/corpus';
-import { HybridSearch, createEmbedder, createPool } from '@normkompass/search';
+import {
+  HybridSearch,
+  LocalReranker,
+  createEmbedder,
+  createPool,
+  readModelRecord,
+  type SearchMode,
+} from '@normkompass/search';
 import { evaluateRetrieval } from '../evaluate.js';
 import {
   FULL_SET_LIMITS,
@@ -14,6 +21,17 @@ import {
 
 if (existsSync('.env')) process.loadEnvFile('.env');
 const validateOnly = process.argv.includes('--validate-only');
+const argValue = (name: string): string | undefined => {
+  const i = process.argv.indexOf(name);
+  return i >= 0 ? process.argv[i + 1] : undefined;
+};
+const mode = (argValue('--mode') ?? 'hybrid') as SearchMode;
+if (!['hybrid', 'vector', 'fts'].includes(mode)) {
+  console.error('--mode must be hybrid, vector or fts');
+  process.exit(1);
+}
+const rerank = process.argv.includes('--rerank');
+const compoundSplitting = !process.argv.includes('--no-compound');
 
 const questions = await loadQuestions(join('eval', 'questions.jsonl'));
 const source = new GesetzeImInternetSource({
@@ -42,10 +60,17 @@ if (!connectionString) {
   console.error('DATABASE_URL is not set (see .env.example).');
   process.exit(1);
 }
-const embedder = createEmbedder(process.env.EMBEDDER);
+const embedder = createEmbedder(argValue('--embedder') ?? process.env.EMBEDDER);
 const pool = createPool({ connectionString });
 try {
-  const { metrics, results } = await evaluateRetrieval(new HybridSearch(pool, embedder), questions);
+  const reranker = rerank ? new LocalReranker() : undefined;
+  const { metrics, results } = await evaluateRetrieval(
+    new HybridSearch(pool, embedder, reranker),
+    questions,
+    10,
+    { mode, rerank, compoundSplitting },
+  );
+  const cost = await readModelRecord(pool, embedder.model);
   const git = (...args: string[]): string =>
     execFileSync('git', args, { encoding: 'utf-8' }).trim();
   const commit = git('rev-parse', '--short', 'HEAD');
@@ -53,7 +78,7 @@ try {
   const date = new Date().toISOString().slice(0, 10);
 
   console.log(
-    `\nModel: ${embedder.model}   commit: ${commit}${dirty ? ' (dirty)' : ''}   date: ${date}`,
+    `\nModel: ${embedder.model}   mode: ${mode}${rerank ? ' + rerank' : ''}${compoundSplitting ? '' : ' (no compound splitting)'}   commit: ${commit}${dirty ? ' (dirty)' : ''}   date: ${date}`,
   );
   console.log(`Questions: ${metrics.questions}`);
   console.log(`recall@5: ${metrics.recallAt5.toFixed(3)}`);
@@ -67,7 +92,12 @@ try {
   }
 
   await mkdir(join('eval', 'results'), { recursive: true });
-  const file = join('eval', 'results', `${date}-${embedder.model}.json`);
+  const variant = [
+    mode === 'hybrid' ? '' : `-${mode}`,
+    rerank ? '-rerank' : '',
+    compoundSplitting ? '' : '-nocompound',
+  ].join('');
+  const file = join('eval', 'results', `${date}-${embedder.model}${variant}.json`);
   await writeFile(
     file,
     `${JSON.stringify(
@@ -76,6 +106,12 @@ try {
         commit,
         dirty,
         embedder: embedder.model,
+        mode,
+        rerank: rerank ? reranker?.model : null,
+        compoundSplitting,
+        indexingSeconds: cost?.indexingSeconds ?? null,
+        weightsBytes: cost?.weightsBytes ?? null,
+        dimension: embedder.dimension,
         questions: metrics.questions,
         recallAt5: metrics.recallAt5,
         mrr: metrics.mrr,

@@ -3,7 +3,8 @@ import { createTestDb, DATABASE_URL, fixtureUnits } from './testing.js';
 import { HashingEmbedder, type Embedder } from './embedder.js';
 import { indexUnits } from './indexer.js';
 import { HybridSearch } from './search.js';
-import type { Pool } from './db.js';
+import { OverlapReranker } from './reranker.js';
+import { readModelRecord, recordModel, type Pool } from './db.js';
 
 class OtherModel extends HashingEmbedder implements Embedder {
   override readonly model = 'fake-other';
@@ -120,5 +121,65 @@ describe.skipIf(!DATABASE_URL)('index and hybrid search (Postgres)', () => {
     const search = new HybridSearch(pool, embedder);
     expect(await search.queryTerms('Zzzxyzquark')).toEqual(['zzzxyzquark']);
     await expect(search.search('Zzzxyzquark')).resolves.toBeDefined();
+  });
+
+  it('vector-only mode returns no full-text ranks', async () => {
+    const hits = await new HybridSearch(pool, embedder).search('Rechnung ausstellen', {
+      limit: 5,
+      mode: 'vector',
+    });
+    expect(hits.length).toBeGreaterThan(0);
+    expect(hits.every((h) => h.ftsRank === null && h.vectorRank !== null)).toBe(true);
+  });
+
+  it('full-text-only mode returns no vector ranks and does not need the embedder', async () => {
+    const failing: Embedder = {
+      model: 'none',
+      dimension: 256,
+      embed: () => Promise.reject(new Error('embedder must not be called')),
+    };
+    const hits = await new HybridSearch(pool, failing).search('Rechnung ausstellen', {
+      limit: 5,
+      mode: 'fts',
+    });
+    expect(hits.length).toBeGreaterThan(0);
+    expect(hits.every((h) => h.vectorRank === null && h.ftsRank !== null)).toBe(true);
+  });
+
+  it('can switch compound splitting off', async () => {
+    const search = new HybridSearch(pool, embedder);
+    expect(await search.queryTerms('Unternehmerleistung', false)).toEqual(['unternehmerleistung']);
+  });
+
+  it('does not rerank unless asked and fails clearly without a reranker', async () => {
+    const plain = new HybridSearch(pool, embedder);
+    await expect(plain.search('Rechnung', { rerank: true })).rejects.toThrow(/no reranker/);
+    const withReranker = new HybridSearch(pool, embedder, new OverlapReranker());
+    const off = await withReranker.search('Rechnung ausstellen', { limit: 5 });
+    const baseline = await plain.search('Rechnung ausstellen', { limit: 5 });
+    expect(off.map((h) => h.chunkId)).toEqual(baseline.map((h) => h.chunkId));
+  });
+
+  it('reranks the top candidates by the reranker score when asked', async () => {
+    const search = new HybridSearch(pool, embedder, new OverlapReranker());
+    const hits = await search.search('Rechnung ausstellen', { limit: 5, rerank: true });
+    expect(hits).toHaveLength(5);
+    const scores = hits.map((h) => h.score);
+    expect(scores).toEqual([...scores].sort((a, b) => b - a));
+  });
+
+  it('records what indexing a model cost', async () => {
+    await recordModel(pool, {
+      model: 'fake-hash-256',
+      dimension: 256,
+      indexingSeconds: 12,
+      weightsBytes: null,
+      chunks: 5,
+    });
+    expect(await readModelRecord(pool, 'fake-hash-256')).toMatchObject({
+      indexingSeconds: 12,
+      weightsBytes: null,
+    });
+    expect(await readModelRecord(pool, 'unknown')).toBeNull();
   });
 });

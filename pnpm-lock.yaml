@@ -231,6 +231,15 @@ importers:
         specifier: ^7.3.1
         version: 7.3.1
 
+  examples/own-corpus:
+    dependencies:
+      '@normkompass/corpus':
+        specifier: workspace:*
+        version: link:../../packages/corpus
+      '@normkompass/search':
+        specifier: workspace:*
+        version: link:../../packages/search
+
   packages/answer:
     dependencies:
       '@anthropic-ai/sdk':

@@ -5,3 +5,4 @@ export * from './db.js';
 export * from './indexer.js';
 export * from './search.js';
 export * from './testing.js';
+export * from './reranker.js';

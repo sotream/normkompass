@@ -1,15 +1,21 @@
 {
-  "date": "2026-11-02",
-  "commit": "aa6514c",
+  "date": "2026-11-03",
+  "commit": "559c39c",
   "dirty": false,
-  "embedder": "multilingual-e5-small",
+  "embedder": "bge-m3",
+  "mode": "hybrid",
+  "rerank": null,
+  "compoundSplitting": true,
+  "indexingSeconds": 16719,
+  "weightsBytes": 569694530,
+  "dimension": 1024,
   "questions": 75,
   "recallAt5": 0.88,
-  "mrr": 0.7422910052910054,
+  "mrr": 0.7440899470899472,
   "perQuestion": [
     {
       "id": "q001",
-      "firstHitRank": 1,
+      "firstHitRank": 3,
       "recallAt5": 1
     },
     {
@@ -44,12 +50,12 @@
     },
     {
       "id": "q008",
-      "firstHitRank": 9,
+      "firstHitRank": 6,
       "recallAt5": 0
     },
     {
       "id": "q009",
-      "firstHitRank": 3,
+      "firstHitRank": 2,
       "recallAt5": 1
     },
     {
@@ -59,23 +65,23 @@
     },
     {
       "id": "q011",
-      "firstHitRank": 1,
-      "recallAt5": 1
-    },
-    {
-      "id": "q012",
-      "firstHitRank": 2,
-      "recallAt5": 1
-    },
-    {
-      "id": "q013",
       "firstHitRank": 3,
       "recallAt5": 1
     },
     {
-      "id": "q014",
-      "firstHitRank": 4,
+      "id": "q012",
+      "firstHitRank": 1,
       "recallAt5": 1
+    },
+    {
+      "id": "q013",
+      "firstHitRank": 2,
+      "recallAt5": 1
+    },
+    {
+      "id": "q014",
+      "firstHitRank": 9,
+      "recallAt5": 0
     },
     {
       "id": "q015",
@@ -84,22 +90,22 @@
     },
     {
       "id": "q016",
-      "firstHitRank": 1,
+      "firstHitRank": 2,
       "recallAt5": 1
     },
     {
       "id": "q017",
-      "firstHitRank": 7,
+      "firstHitRank": 8,
       "recallAt5": 0
     },
     {
       "id": "q018",
-      "firstHitRank": 1,
+      "firstHitRank": 2,
       "recallAt5": 1
     },
     {
       "id": "q019",
-      "firstHitRank": 3,
+      "firstHitRank": 2,
       "recallAt5": 1
     },
     {
@@ -109,17 +115,17 @@
     },
     {
       "id": "q021",
-      "firstHitRank": 2,
+      "firstHitRank": 3,
       "recallAt5": 1
     },
     {
       "id": "q022",
-      "firstHitRank": null,
+      "firstHitRank": 8,
       "recallAt5": 0
     },
     {
       "id": "q023",
-      "firstHitRank": 1,
+      "firstHitRank": 2,
       "recallAt5": 1
     },
     {
@@ -129,7 +135,7 @@
     },
     {
       "id": "q025",
-      "firstHitRank": 2,
+      "firstHitRank": 1,
       "recallAt5": 1
     },
     {
@@ -139,8 +145,8 @@
     },
     {
       "id": "q027",
-      "firstHitRank": 6,
-      "recallAt5": 0
+      "firstHitRank": 4,
+      "recallAt5": 1
     },
     {
       "id": "q028",
@@ -154,7 +160,7 @@
     },
     {
       "id": "q030",
-      "firstHitRank": null,
+      "firstHitRank": 6,
       "recallAt5": 0
     },
     {
@@ -239,7 +245,7 @@
     },
     {
       "id": "q047",
-      "firstHitRank": 3,
+      "firstHitRank": 2,
       "recallAt5": 1
     },
     {
@@ -254,18 +260,18 @@
     },
     {
       "id": "q050",
-      "firstHitRank": 8,
-      "recallAt5": 0
+      "firstHitRank": 5,
+      "recallAt5": 1
     },
     {
       "id": "q051",
-      "firstHitRank": 2,
+      "firstHitRank": 1,
       "recallAt5": 1
     },
     {
       "id": "q052",
-      "firstHitRank": 5,
-      "recallAt5": 1
+      "firstHitRank": 9,
+      "recallAt5": 0
     },
     {
       "id": "q053",
@@ -279,7 +285,7 @@
     },
     {
       "id": "q055",
-      "firstHitRank": 2,
+      "firstHitRank": 5,
       "recallAt5": 1
     },
     {
@@ -289,8 +295,8 @@
     },
     {
       "id": "q057",
-      "firstHitRank": null,
-      "recallAt5": 0
+      "firstHitRank": 2,
+      "recallAt5": 1
     },
     {
       "id": "q058",
@@ -314,7 +320,7 @@
     },
     {
       "id": "q062",
-      "firstHitRank": 7,
+      "firstHitRank": 8,
       "recallAt5": 0
     },
     {
@@ -324,12 +330,12 @@
     },
     {
       "id": "q064",
-      "firstHitRank": 5,
-      "recallAt5": 1
+      "firstHitRank": 7,
+      "recallAt5": 0
     },
     {
       "id": "q065",
-      "firstHitRank": 4,
+      "firstHitRank": 3,
       "recallAt5": 1
     },
     {
@@ -364,7 +370,7 @@
     },
     {
       "id": "q072",
-      "firstHitRank": 2,
+      "firstHitRank": 1,
       "recallAt5": 1
     },
     {
