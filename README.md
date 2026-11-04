@@ -295,3 +295,8 @@ and none are claimed. CI runs the same pipeline on fixtures with a scripted stan
 touches the network. It checks that the code and the metrics behave correctly (a faithful model scores
 1.0, a model that misquotes or answers unanswerable questions is detected). It says nothing about how
 Claude performs.
+
+## License
+
+MIT, see [LICENSE](LICENSE). The demo corpus is not covered by it: the laws from gesetze-im-internet.de are
+not protected by copyright (§ 5 UrhG), see [ADR 0001](docs/adr/0001-corpus-and-licensing.md).
