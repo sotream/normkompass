@@ -30,6 +30,7 @@
     "index": "pnpm -r --filter @normkompass/corpus --filter @normkompass/search build && node packages/search/dist/cli/index.js",
     "example": "pnpm -r --filter @normkompass/corpus --filter @normkompass/search --filter @normkompass/example-own-corpus build && node examples/own-corpus/dist/run.js",
     "eval": "pnpm eval:retrieval",
+    "eval:diagnose": "pnpm -r --filter @normkompass/corpus --filter @normkompass/search --filter @normkompass/answer --filter @normkompass/eval build && node packages/eval/dist/cli/diagnose.js",
     "eval:compare": "pnpm -r --filter @normkompass/corpus --filter @normkompass/search --filter @normkompass/answer --filter @normkompass/eval build && node packages/eval/dist/cli/compare.js",
     "eval:retrieval": "pnpm -r --filter @normkompass/corpus --filter @normkompass/search --filter @normkompass/answer --filter @normkompass/eval build && node packages/eval/dist/cli/run.js",
     "eval:validate": "pnpm -r --filter @normkompass/corpus --filter @normkompass/search --filter @normkompass/answer --filter @normkompass/eval build && node packages/eval/dist/cli/run.js --validate-only",

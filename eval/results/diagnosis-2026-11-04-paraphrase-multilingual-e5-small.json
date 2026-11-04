@@ -1,0 +1,814 @@
+{
+  "date": "2026-11-04",
+  "commit": "8c0a6a5",
+  "dirty": true,
+  "embedder": "multilingual-e5-small",
+  "questionFile": "eval/questions.jsonl",
+  "summary": {
+    "questions": 75,
+    "both": 46,
+    "vectorOnly": 26,
+    "ftsOnly": 1,
+    "neither": 2,
+    "ftsFailures": 28,
+    "rarityPrefersExpected": 24,
+    "rarityTies": 2,
+    "rarityPrefersWrong": 2
+  },
+  "rows": [
+    {
+      "id": "q001",
+      "question": "Welche Umsätze unterliegen der Umsatzsteuer?",
+      "expected": ["ustg_1980/§ 1/Abs. 1"],
+      "vectorRank": 1,
+      "ftsRank": 17,
+      "ftsOutranking": ["ustg_1980/§ 4/Nr. 8", "ustg_1980/§ 4", "ustg_1980/Anlage 5"],
+      "expectedOverlap": 9.512305484906294,
+      "ftsTopOverlap": 3.236196221396466
+    },
+    {
+      "id": "q002",
+      "question": "Wann gilt ein Landfahrzeug als neu?",
+      "expected": ["ustg_1980/§ 1b/Abs. 3"],
+      "vectorRank": 1,
+      "ftsRank": 5,
+      "ftsOutranking": [
+        "ustg_1980/§ 18/Abs. 10",
+        "ustg_1980/§ 18/Abs. 10/Nr. 1",
+        "ustg_1980/§ 13c/Abs. 1"
+      ],
+      "expectedOverlap": 8.354953838846264,
+      "ftsTopOverlap": 8.354953838846264
+    },
+    {
+      "id": "q003",
+      "question": "Welche Entnahmen und unentgeltlichen Zuwendungen werden einer Lieferung gegen Entgelt gleichgestellt?",
+      "expected": ["ustg_1980/§ 3/Abs. 1b"],
+      "vectorRank": 1,
+      "ftsRank": 5,
+      "ftsOutranking": ["ustg_1980/§ 22/Abs. 2", "ustg_1980/§ 3/Abs. 6a", "ustg_1980/§ 13b/Abs. 2"],
+      "expectedOverlap": 32.279673260370096,
+      "ftsTopOverlap": 11.358937535454578
+    },
+    {
+      "id": "q004",
+      "question": "Wann gilt die Leistung eines Unternehmers als Werkleistung, wenn er statt des herzustellenden Gegenstands einen gleichartigen Gegenstand überlässt?",
+      "expected": ["ustg_1980/§ 3/Abs. 10"],
+      "vectorRank": 1,
+      "ftsRank": 5,
+      "ftsOutranking": ["ustg_1980/§ 3/Abs. 11a", "ustg_1980/§ 3/Abs. 14", "ustg_1980/§ 15/Abs. 1"],
+      "expectedOverlap": 39.54322552903224,
+      "ftsTopOverlap": 8.099709043672865
+    },
+    {
+      "id": "q005",
+      "question": "Was gilt bei der Lieferung von Gas, Elektrizität, Wärme oder Kälte an einen Unternehmer, dessen Haupttätigkeit in deren Lieferung besteht?",
+      "expected": ["ustg_1980/§ 3g/Abs. 1"],
+      "vectorRank": 1,
+      "ftsRank": 1,
+      "ftsOutranking": [],
+      "expectedOverlap": 41.571170700479264,
+      "ftsTopOverlap": null
+    },
+    {
+      "id": "q006",
+      "question": "Unter welchen Voraussetzungen kann das Bundesministerium der Finanzen durch Rechtsverordnung anordnen, dass die Einfuhrumsatzsteuer ganz oder teilweise erstattet oder erlassen wird?",
+      "expected": ["ustg_1980/§ 5/Abs. 3"],
+      "vectorRank": 1,
+      "ftsRank": 1,
+      "ftsOutranking": [],
+      "expectedOverlap": 44.49200635893822,
+      "ftsTopOverlap": null
+    },
+    {
+      "id": "q007",
+      "question": "Bis wann ist der Verzicht auf die Steuerbefreiung bei der Lieferung von Grundstücken im Zwangsversteigerungsverfahren zulässig?",
+      "expected": ["ustg_1980/§ 9/Abs. 3"],
+      "vectorRank": 1,
+      "ftsRank": 3,
+      "ftsOutranking": ["ustg_1980/§ 3/Abs. 6a", "ustg_1980/§ 4"],
+      "expectedOverlap": 20.061843370634335,
+      "ftsTopOverlap": 3.5046883691074475
+    },
+    {
+      "id": "q008",
+      "question": "Was gilt für Rechnungen, wenn der Unternehmer ein Entgelt für eine noch nicht ausgeführte Leistung vereinnahmt?",
+      "expected": ["ustg_1980/§ 14/Abs. 5"],
+      "vectorRank": 1,
+      "ftsRank": 32,
+      "ftsOutranking": [
+        "ustg_1980/§ 13/Abs. 1",
+        "ustg_1980/§ 13/Abs. 1/Nr. 1",
+        "ustg_1980/§ 22/Abs. 2"
+      ],
+      "expectedOverlap": 25.74735312965756,
+      "ftsTopOverlap": 19.494158798034732
+    },
+    {
+      "id": "q009",
+      "question": "Was schuldet ein Unternehmer, der in einer Rechnung einen höheren Steuerbetrag gesondert ausgewiesen hat, als er nach dem Gesetz schuldet?",
+      "expected": ["ustg_1980/§ 14c/Abs. 1"],
+      "vectorRank": 1,
+      "ftsRank": 14,
+      "ftsOutranking": ["ustg_1980/§ 15/Abs. 1", "ustdv_1980/§ 59", "ustg_1980/§ 14c/Abs. 2"],
+      "expectedOverlap": 31.27792883591316,
+      "ftsTopOverlap": 17.911261014217125
+    },
+    {
+      "id": "q010",
+      "question": "Wann ist der Vorsteuerabzug bei einem Wirtschaftsgut zu berichtigen, das nur einmalig zur Ausführung eines Umsatzes verwendet wird?",
+      "expected": ["ustg_1980/§ 15a/Abs. 2"],
+      "vectorRank": 1,
+      "ftsRank": 1,
+      "ftsOutranking": [],
+      "expectedOverlap": 31.10163417357949,
+      "ftsTopOverlap": null
+    },
+    {
+      "id": "q011",
+      "question": "Was ist der Besteuerungszeitraum, wenn ein nicht im Gemeinschaftsgebiet ansässiger Unternehmer von § 18 Abs. 4c Gebrauch macht?",
+      "expected": ["ustg_1980/§ 16/Abs. 1a"],
+      "vectorRank": 1,
+      "ftsRank": 9,
+      "ftsOutranking": [
+        "ustg_1980/§ 18j/Abs. 2",
+        "ustg_1980/§ 18/Abs. 4e",
+        "ustg_1980/§ 18/Abs. 4c"
+      ],
+      "expectedOverlap": 21.455303131405355,
+      "ftsTopOverlap": 13.69723583491913
+    },
+    {
+      "id": "q012",
+      "question": "Was muss der Unternehmer tun, wenn die Entgelte für unterschiedlich besteuerte Leistungen gemeinsam geändert werden, zum Beispiel durch Jahresboni?",
+      "expected": ["ustg_1980/§ 17/Abs. 4"],
+      "vectorRank": 1,
+      "ftsRank": 12,
+      "ftsOutranking": ["ustg_1980/§ 3/Abs. 11a", "ustg_1980/§ 22/Abs. 2", "ustg_1980/§ 13/Abs. 1"],
+      "expectedOverlap": 26.906152415696397,
+      "ftsTopOverlap": 6.060565183757761
+    },
+    {
+      "id": "q013",
+      "question": "Wer kann die Fristen für die Umsatzsteuervoranmeldung und Vorauszahlungen um einen Monat verlängern?",
+      "expected": ["ustg_1980/§ 18/Abs. 6"],
+      "vectorRank": 4,
+      "ftsRank": 19,
+      "ftsOutranking": ["ao_1977/§ 235/Abs. 5", "ao_1977/§ 149/Abs. 4", "ao_1977/§ 152/Abs. 5"],
+      "expectedOverlap": 22.44398146465848,
+      "ftsTopOverlap": 2.6881412558621194
+    },
+    {
+      "id": "q014",
+      "question": "Innerhalb welcher Frist muss ein Unternehmer dem Bundeszentralamt für Steuern anzeigen, dass sein Jahresumsatz im Gemeinschaftsgebiet 100 000 Euro überschreitet?",
+      "expected": ["ustg_1980/§ 19a/Abs. 4"],
+      "vectorRank": 1,
+      "ftsRank": 40,
+      "ftsOutranking": [
+        "ustg_1980/§ 19a/Abs. 1",
+        "ao_1977/§ 398a/Abs. 1",
+        "ustg_1980/§ 18/Abs. 4c"
+      ],
+      "expectedOverlap": 20.924210220986634,
+      "ftsTopOverlap": 26.87063268527538
+    },
+    {
+      "id": "q015",
+      "question": "Wie oft muss der Fiskalvertreter Voranmeldungen abgeben?",
+      "expected": ["ustg_1980/§ 22b/Abs. 2"],
+      "vectorRank": 1,
+      "ftsRank": 1,
+      "ftsOutranking": [],
+      "expectedOverlap": 10.21125182921189,
+      "ftsTopOverlap": null
+    },
+    {
+      "id": "q016",
+      "question": "Kann ein Wiederverkäufer auf die Differenzbesteuerung verzichten?",
+      "expected": ["ustg_1980/§ 25a/Abs. 8"],
+      "vectorRank": 1,
+      "ftsRank": 5,
+      "ftsOutranking": [
+        "ustg_1980/§ 25a/Abs. 7",
+        "ustg_1980/§ 25a/Abs. 1",
+        "ustg_1980/§ 25a/Abs. 2"
+      ],
+      "expectedOverlap": 15.68923346980837,
+      "ftsTopOverlap": 9.335783091857989
+    },
+    {
+      "id": "q017",
+      "question": "Unter welcher Voraussetzung haftet der Betreiber eines elektronischen Marktplatzes nicht für die Steuer auf Lieferungen des liefernden Unternehmers?",
+      "expected": ["ustg_1980/§ 25e/Abs. 2"],
+      "vectorRank": 1,
+      "ftsRank": 25,
+      "ftsOutranking": [
+        "ustg_1980/§ 22f/Abs. 1",
+        "ustdv_1980/§ 17a/Abs. 1",
+        "ustg_1980/§ 15/Abs. 1"
+      ],
+      "expectedOverlap": 21.688030678852478,
+      "ftsTopOverlap": 15.16022691375732
+    },
+    {
+      "id": "q018",
+      "question": "Wann kann das Finanzamt die Umsatzsteuer-Identifikationsnummer begrenzen?",
+      "expected": ["ustg_1980/§ 27a/Abs. 1a"],
+      "vectorRank": 1,
+      "ftsRank": 4,
+      "ftsOutranking": [
+        "ustg_1980/§ 27a/Abs. 2",
+        "ustg_1980/§ 27a/Abs. 1",
+        "ustg_1980/§ 18a/Abs. 7"
+      ],
+      "expectedOverlap": 15.258626680632045,
+      "ftsTopOverlap": 5.68242287648052
+    },
+    {
+      "id": "q019",
+      "question": "Wie werden Streckenanteile bei grenzüberschreitenden Beförderungen im Passagier- und Fährverkehr mit Wasserfahrzeugen behandelt?",
+      "expected": ["ustdv_1980/§ 7/Abs. 1"],
+      "vectorRank": 3,
+      "ftsRank": 4,
+      "ftsOutranking": ["ustdv_1980/§ 7/Abs. 2", "ustg_1980/§ 3b/Abs. 1", "ustdv_1980/§ 7/Abs. 3"],
+      "expectedOverlap": 30.451140335399117,
+      "ftsTopOverlap": 30.451140335399117
+    },
+    {
+      "id": "q020",
+      "question": "Wie muss der Unternehmer bei Ausfuhrlieferungen den Ausfuhrnachweis führen?",
+      "expected": ["ustdv_1980/§ 8/Abs. 1"],
+      "vectorRank": 2,
+      "ftsRank": 36,
+      "ftsOutranking": ["ustg_1980/§ 15/Abs. 1", "ustdv_1980/§ 9/Abs. 1", "ustdv_1980/§ 10/Abs. 1"],
+      "expectedOverlap": 9.269483338296318,
+      "ftsTopOverlap": 2.0531301018898436
+    },
+    {
+      "id": "q021",
+      "question": "Wie kann die Ausfuhr nachgewiesen werden, wenn sie elektronisch angemeldet wurde, der Unternehmer den Ausfuhrnachweis aber nicht führen kann?",
+      "expected": ["ustdv_1980/§ 10/Abs. 3"],
+      "vectorRank": 1,
+      "ftsRank": 12,
+      "ftsOutranking": ["ustdv_1980/§ 9/Abs. 1", "ustg_1980/§ 15/Abs. 1", "ao_1977/§ 87a/Abs. 1"],
+      "expectedOverlap": 19.504896465485086,
+      "ftsTopOverlap": 15.995297829795975
+    },
+    {
+      "id": "q022",
+      "question": "Was muss der Unternehmer zusätzlich aufzeichnen, wenn der Abnehmer ein Unternehmer ist und es um Lieferungen nach § 6 Absatz 1 Satz 1 Nummer 3 des Gesetzes geht?",
+      "expected": ["ustdv_1980/§ 13/Abs. 4"],
+      "vectorRank": 7,
+      "ftsRank": null,
+      "ftsOutranking": ["ao_1977/§ 379/Abs. 2", "ddg/§ 33/Abs. 5", "ustdv_1980/§ 59"],
+      "expectedOverlap": 18.279099548092354,
+      "ftsTopOverlap": 9.058068809309553
+    },
+    {
+      "id": "q023",
+      "question": "Wie ist der Gelangensnachweis bei innergemeinschaftlichen Lieferungen zu führen, wenn keine Gelangensvermutung besteht?",
+      "expected": ["ustdv_1980/§ 17b/Abs. 1"],
+      "vectorRank": 1,
+      "ftsRank": 8,
+      "ftsOutranking": ["ustg_1980/§ 25a/Abs. 7", "ustg_1980/§ 3/Abs. 6a", "ustg_1980/§ 6a/Abs. 1"],
+      "expectedOverlap": 16.228411929840327,
+      "ftsTopOverlap": 10.272799391698904
+    },
+    {
+      "id": "q024",
+      "question": "Welche Angaben sollen für den buchmäßigen Nachweis der Voraussetzungen der Steuervergütung aufgezeichnet werden?",
+      "expected": ["ustdv_1980/§ 24/Abs. 3"],
+      "vectorRank": 1,
+      "ftsRank": 1,
+      "ftsOutranking": [],
+      "expectedOverlap": 23.30243972870549,
+      "ftsTopOverlap": null
+    },
+    {
+      "id": "q025",
+      "question": "Unter welchen Bedingungen kann eine Rechnung berichtigt werden?",
+      "expected": ["ustdv_1980/§ 31/Abs. 5"],
+      "vectorRank": 1,
+      "ftsRank": 6,
+      "ftsOutranking": ["ustg_1980/§ 14/Abs. 1", "ustg_1980/§ 14b/Abs. 1", "ustg_1980/§ 14/Abs. 6"],
+      "expectedOverlap": 11.733251804324851,
+      "ftsTopOverlap": 8.314734026134431
+    },
+    {
+      "id": "q026",
+      "question": "Wie hoch ist die Sondervorauszahlung, wenn der Unternehmer Voranmeldungen monatlich übermitteln muss und die Frist verlängert wird?",
+      "expected": ["ustdv_1980/§ 47/Abs. 1"],
+      "vectorRank": 1,
+      "ftsRank": 11,
+      "ftsOutranking": ["ustdv_1980/§ 48/Abs. 1", "ustg_1980/§ 15/Abs. 1", "ustg_1980/§ 14/Abs. 2"],
+      "expectedOverlap": 19.982887549969284,
+      "ftsTopOverlap": 19.982887549969284
+    },
+    {
+      "id": "q027",
+      "question": "Binnen welcher Frist ist die Vergütung nach Ablauf des Kalenderjahres zu beantragen, wenn der Unternehmer im übrigen Gemeinschaftsgebiet ansässig ist?",
+      "expected": ["ustdv_1980/§ 61/Abs. 2"],
+      "vectorRank": 3,
+      "ftsRank": 13,
+      "ftsOutranking": [
+        "ustg_1980/§ 18j/Abs. 2",
+        "ustg_1980/§ 18k/Abs. 2",
+        "ustg_1980/§ 13b/Abs. 7"
+      ],
+      "expectedOverlap": 35.14718105439273,
+      "ftsTopOverlap": 17.894853052617968
+    },
+    {
+      "id": "q028",
+      "question": "Wie müssen die Aufzeichnungen des Unternehmers beschaffen sein, damit ein sachverständiger Dritter einen Überblick über Umsätze und abziehbare Vorsteuern erhält?",
+      "expected": ["ustdv_1980/§ 63/Abs. 1"],
+      "vectorRank": 1,
+      "ftsRank": 7,
+      "ftsOutranking": ["ustg_1980/Anlage 5", "ustg_1980/§ 15/Abs. 1", "ustg_1980/§ 4"],
+      "expectedOverlap": 48.588563064867735,
+      "ftsTopOverlap": 8.832547579977687
+    },
+    {
+      "id": "q029",
+      "question": "Was soll der Unternehmer bei steuerfreien Reiseleistungen regelmäßig aufzeichnen?",
+      "expected": ["ustdv_1980/§ 72/Abs. 2"],
+      "vectorRank": 1,
+      "ftsRank": 2,
+      "ftsOutranking": ["ustg_1980/§ 15/Abs. 1"],
+      "expectedOverlap": 20.577153088387615,
+      "ftsTopOverlap": 3.1338287901767585
+    },
+    {
+      "id": "q030",
+      "question": "Für welche Steuern gilt die Abgabenordnung?",
+      "expected": ["ao_1977/§ 1/Abs. 1"],
+      "vectorRank": 7,
+      "ftsRank": null,
+      "ftsOutranking": ["ao_1977/§ 235/Abs. 5", "ustdv_1980/§ 61/Abs. 5", "ao_1977/§ 163/Abs. 1"],
+      "expectedOverlap": 3.1198425482020187,
+      "ftsTopOverlap": 3.1198425482020187
+    },
+    {
+      "id": "q031",
+      "question": "Welches Finanzamt ist für die Umsatzsteuer von Personen zuständig, die keine Unternehmer sind?",
+      "expected": ["ao_1977/§ 21/Abs. 2"],
+      "vectorRank": 1,
+      "ftsRank": 5,
+      "ftsOutranking": ["ao_1977/§ 138e/Abs. 3", "ustg_1980/§ 27/Abs. 19", "ustg_1980/§ 3a/Abs. 3"],
+      "expectedOverlap": 15.332226844490666,
+      "ftsTopOverlap": 5.163612465786898
+    },
+    {
+      "id": "q032",
+      "question": "Wann darf ein Pfändungs- und Überweisungsbeschluss nicht erlassen werden?",
+      "expected": ["ao_1977/§ 46/Abs. 6"],
+      "vectorRank": 1,
+      "ftsRank": 1,
+      "ftsOutranking": [],
+      "expectedOverlap": 16.41826306475664,
+      "ftsTopOverlap": null
+    },
+    {
+      "id": "q033",
+      "question": "Wie können Überschüsse aus der Verwertung unentgeltlich erworbenen Altmaterials geschätzt werden?",
+      "expected": ["ao_1977/§ 64/Abs. 5"],
+      "vectorRank": 1,
+      "ftsRank": 1,
+      "ftsOutranking": [],
+      "expectedOverlap": 35.18409138172617,
+      "ftsTopOverlap": null
+    },
+    {
+      "id": "q034",
+      "question": "Was gilt, wenn sich ein Mitglied eines Ausschusses für ausgeschlossen hält?",
+      "expected": ["ao_1977/§ 82/Abs. 3"],
+      "vectorRank": 1,
+      "ftsRank": 1,
+      "ftsOutranking": [],
+      "expectedOverlap": 19.745659374308115,
+      "ftsTopOverlap": null
+    },
+    {
+      "id": "q035",
+      "question": "Kann die Finanzbehörde verlangen, dass ein Beteiligter die Richtigkeit von Tatsachen an Eides statt versichert?",
+      "expected": ["ao_1977/§ 95/Abs. 1"],
+      "vectorRank": 1,
+      "ftsRank": 2,
+      "ftsOutranking": ["ao_1977/§ 95/Abs. 3"],
+      "expectedOverlap": 36.909440133938226,
+      "ftsTopOverlap": 29.11301960796805
+    },
+    {
+      "id": "q036",
+      "question": "Wann ist die Bekanntgabe eines Verwaltungsakts zugleich mit Wirkung für und gegen andere Beteiligte zulässig?",
+      "expected": ["ao_1977/§ 122/Abs. 6"],
+      "vectorRank": 1,
+      "ftsRank": 2,
+      "ftsOutranking": ["ao_1977/§ 122/Abs. 7"],
+      "expectedOverlap": 28.765226748519872,
+      "ftsTopOverlap": 8.505848732376307
+    },
+    {
+      "id": "q037",
+      "question": "Wie muss die Buchführung beschaffen sein?",
+      "expected": ["ao_1977/§ 145/Abs. 1"],
+      "vectorRank": 1,
+      "ftsRank": 1,
+      "ftsOutranking": [],
+      "expectedOverlap": 17.341500735674025,
+      "ftsTopOverlap": null
+    },
+    {
+      "id": "q038",
+      "question": "Was muss ein Steuerpflichtiger tun, wenn er nachträglich erkennt, dass eine abgegebene Erklärung unrichtig oder unvollständig ist?",
+      "expected": ["ao_1977/§ 153/Abs. 1"],
+      "vectorRank": 1,
+      "ftsRank": 1,
+      "ftsOutranking": [],
+      "expectedOverlap": 31.868131931579736,
+      "ftsTopOverlap": null
+    },
+    {
+      "id": "q039",
+      "question": "Wann endet die Festsetzungsfrist, wenn eine geschäftsunfähige Person ohne gesetzlichen Vertreter ist?",
+      "expected": ["ao_1977/§ 171/Abs. 11"],
+      "vectorRank": 1,
+      "ftsRank": 3,
+      "ftsOutranking": ["ao_1977/§ 138e/Abs. 3", "ustdv_1980/§ 59"],
+      "expectedOverlap": 22.921128966258358,
+      "ftsTopOverlap": 7.5976711129347985
+    },
+    {
+      "id": "q040",
+      "question": "Wann kann eine abgekürzte Außenprüfung durchgeführt werden?",
+      "expected": ["ao_1977/§ 203/Abs. 1"],
+      "vectorRank": 1,
+      "ftsRank": 2,
+      "ftsOutranking": ["ao_1977/§ 171/Abs. 4"],
+      "expectedOverlap": 15.002322089348866,
+      "ftsTopOverlap": 5.620349615021502
+    },
+    {
+      "id": "q041",
+      "question": "Wann beginnt die Zahlungsverjährung für Ansprüche aus dem Steuerschuldverhältnis?",
+      "expected": ["ao_1977/§ 229/Abs. 1"],
+      "vectorRank": 2,
+      "ftsRank": 1,
+      "ftsOutranking": [],
+      "expectedOverlap": 4.722360017791545,
+      "ftsTopOverlap": null
+    },
+    {
+      "id": "q042",
+      "question": "Wann darf die Vollstreckung beginnen?",
+      "expected": ["ao_1977/§ 254/Abs. 1"],
+      "vectorRank": 1,
+      "ftsRank": 1,
+      "ftsOutranking": [],
+      "expectedOverlap": 10.113855615158304,
+      "ftsTopOverlap": null
+    },
+    {
+      "id": "q043",
+      "question": "Kann ein Dritter, der nicht im Besitz der Sache ist, der Pfändung der Sache widersprechen?",
+      "expected": ["ao_1977/§ 293/Abs. 1"],
+      "vectorRank": 1,
+      "ftsRank": 2,
+      "ftsOutranking": ["ao_1977/§ 133"],
+      "expectedOverlap": 25.580922020945778,
+      "ftsTopOverlap": 8.336883630851478
+    },
+    {
+      "id": "q044",
+      "question": "Wer kann im Einspruchsverfahren hinzugezogen werden?",
+      "expected": ["ao_1977/§ 360/Abs. 1"],
+      "vectorRank": 2,
+      "ftsRank": null,
+      "ftsOutranking": ["ao_1977/§ 82/Abs. 1", "ao_1977/§ 359", "ao_1977/§ 363/Abs. 2"],
+      "expectedOverlap": 7.794232341289631,
+      "ftsTopOverlap": 3.6616606977199515
+    },
+    {
+      "id": "q045",
+      "question": "Für welche Stellen gilt das Bundesdatenschutzgesetz?",
+      "expected": ["bdsg_2018/§ 1/Abs. 1"],
+      "vectorRank": 2,
+      "ftsRank": 7,
+      "ftsOutranking": ["ao_1977/§ 32i/Abs. 3", "bdsg_2018/§ 25/Abs. 2", "ao_1977/§ 138b/Abs. 1"],
+      "expectedOverlap": 6.844270803278078,
+      "ftsTopOverlap": 4.805126943362974
+    },
+    {
+      "id": "q046",
+      "question": "Unterliegt die oder der Bundesbeauftragte bei der Erfüllung der Aufgaben Weisungen?",
+      "expected": ["bdsg_2018/§ 10/Abs. 1"],
+      "vectorRank": 1,
+      "ftsRank": 2,
+      "ftsOutranking": ["bdsg_2018/§ 57/Abs. 7"],
+      "expectedOverlap": 18.055319543965187,
+      "ftsTopOverlap": 2.885696717472128
+    },
+    {
+      "id": "q047",
+      "question": "Welchen Zugang müssen öffentliche Stellen des Bundes der oder dem Bundesbeauftragten gewähren?",
+      "expected": ["bdsg_2018/§ 16/Abs. 4"],
+      "vectorRank": 1,
+      "ftsRank": 18,
+      "ftsOutranking": ["ao_1977/§ 6/Abs. 1c", "bdsg_2018/§ 2/Abs. 3", "bdsg_2018/§ 4/Abs. 1"],
+      "expectedOverlap": 16.185859355719185,
+      "ftsTopOverlap": 8.099360967980235
+    },
+    {
+      "id": "q048",
+      "question": "Kann das Bundesverwaltungsgericht die Verhandlung aussetzen, wenn ein Verfahren über die Gültigkeit eines Beschlusses der Europäischen Kommission beim Gerichtshof der Europäischen Union anhängig ist?",
+      "expected": ["bdsg_2018/§ 21/Abs. 5"],
+      "vectorRank": 1,
+      "ftsRank": 1,
+      "ftsOutranking": [],
+      "expectedOverlap": 45.126662904558025,
+      "ftsTopOverlap": null
+    },
+    {
+      "id": "q049",
+      "question": "Wann sind die Rechte der betroffenen Person auf Auskunft, Berichtigung, Einschränkung und Widerspruch bei Forschungs- oder Statistikzwecken beschränkt?",
+      "expected": ["bdsg_2018/§ 27/Abs. 2"],
+      "vectorRank": 1,
+      "ftsRank": 7,
+      "ftsOutranking": ["ao_1977/§ 138e/Abs. 3", "bdsg_2018/§ 57/Abs. 7", "bdsg_2018/§ 29/Abs. 1"],
+      "expectedOverlap": 28.569504839868895,
+      "ftsTopOverlap": 6.471513869437833
+    },
+    {
+      "id": "q050",
+      "question": "Wann ist die Benachrichtigung der betroffenen Person bei einem vorübergehenden Hinderungsgrund nachzuholen?",
+      "expected": ["bdsg_2018/§ 32/Abs. 3"],
+      "vectorRank": 1,
+      "ftsRank": 35,
+      "ftsOutranking": ["ao_1977/§ 138e/Abs. 3", "bdsg_2018/§ 32/Abs. 1", "bdsg_2018/§ 29/Abs. 1"],
+      "expectedOverlap": 20.676814712704665,
+      "ftsTopOverlap": 6.363121111038057
+    },
+    {
+      "id": "q051",
+      "question": "Welche Aufsichtsbehörde ist zuständig, wenn ein Verantwortlicher mehrere inländische Niederlassungen hat?",
+      "expected": ["bdsg_2018/§ 40/Abs. 2"],
+      "vectorRank": 1,
+      "ftsRank": 4,
+      "ftsOutranking": ["ustg_1980/§ 18j/Abs. 2", "ao_1977/§ 25", "bdsg_2018/§ 19/Abs. 2"],
+      "expectedOverlap": 23.360797917875757,
+      "ftsTopOverlap": 1.6666229075262935
+    },
+    {
+      "id": "q052",
+      "question": "Wann ist von der Auskunftserteilung an die betroffene Person abzusehen?",
+      "expected": ["bdsg_2018/§ 57/Abs. 3"],
+      "vectorRank": 1,
+      "ftsRank": 37,
+      "ftsOutranking": ["ao_1977/§ 138e/Abs. 3", "bdsg_2018/§ 32/Abs. 1", "bdsg_2018/§ 57/Abs. 7"],
+      "expectedOverlap": 13.760143456936461,
+      "ftsTopOverlap": 4.235070138968425
+    },
+    {
+      "id": "q053",
+      "question": "An wen kann sich eine betroffene Person mit einer Beschwerde wenden, wenn öffentliche Stellen ihre Daten verarbeiten und sie sich in ihren Rechten verletzt sieht?",
+      "expected": ["bdsg_2018/§ 60/Abs. 1"],
+      "vectorRank": 1,
+      "ftsRank": 9,
+      "ftsOutranking": ["ao_1977/§ 138e/Abs. 3", "bdsg_2018/§ 32/Abs. 1", "bdsg_2018/§ 46"],
+      "expectedOverlap": 46.18326969659101,
+      "ftsTopOverlap": 14.354004970296938
+    },
+    {
+      "id": "q054",
+      "question": "Was gilt bei einer Verletzung des Schutzes personenbezogener Daten, wenn die Daten von einem Verantwortlichen in einem anderen Mitgliedstaat übermittelt wurden?",
+      "expected": ["bdsg_2018/§ 65/Abs. 6"],
+      "vectorRank": 1,
+      "ftsRank": 3,
+      "ftsOutranking": ["bdsg_2018/§ 46", "bdsg_2018/§ 66/Abs. 3"],
+      "expectedOverlap": 29.828366498653708,
+      "ftsTopOverlap": 29.828366498653708
+    },
+    {
+      "id": "q055",
+      "question": "Was muss die übermittelnde Stelle beachten, wenn für die Verarbeitung personenbezogener Daten besondere Bedingungen gelten?",
+      "expected": ["bdsg_2018/§ 74/Abs. 2"],
+      "vectorRank": 1,
+      "ftsRank": 25,
+      "ftsOutranking": ["bdsg_2018/§ 22/Abs. 2", "bdsg_2018/§ 46", "bdsg_2018/§ 48/Abs. 2"],
+      "expectedOverlap": 26.615588267222474,
+      "ftsTopOverlap": 14.440771545351513
+    },
+    {
+      "id": "q056",
+      "question": "Was muss die Dokumentation von Datenübermittlungen enthalten?",
+      "expected": ["bdsg_2018/§ 79/Abs. 2"],
+      "vectorRank": 1,
+      "ftsRank": 4,
+      "ftsOutranking": [
+        "ao_1977/§ 87d/Abs. 2",
+        "ao_1977/§ 93c/Abs. 1",
+        "ao_1977/§ 93c/Abs. 1/Nr. 2"
+      ],
+      "expectedOverlap": 12.06736908579788,
+      "ftsTopOverlap": 7.566555665839591
+    },
+    {
+      "id": "q057",
+      "question": "Für welche Diensteanbieter gilt das Digitale-Dienste-Gesetz?",
+      "expected": ["ddg/§ 1/Abs. 1"],
+      "vectorRank": null,
+      "ftsRank": 5,
+      "ftsOutranking": ["ddg/§ 1/Abs. 4", "ddg/§ 19/Abs. 3", "ustdv_1980/§ 59"],
+      "expectedOverlap": 7.219567502576198,
+      "ftsTopOverlap": 11.019699173052603
+    },
+    {
+      "id": "q058",
+      "question": "Was geschieht bei Meinungsverschiedenheiten zwischen den Behörden verschiedener Mitgliedstaaten darüber, welcher Mitgliedstaat Sitzland des Diensteanbieters ist?",
+      "expected": ["ddg/§ 2/Abs. 8"],
+      "vectorRank": 1,
+      "ftsRank": 2,
+      "ftsOutranking": ["ddg/§ 2/Abs. 2"],
+      "expectedOverlap": 32.57432171332283,
+      "ftsTopOverlap": 11.275193857870246
+    },
+    {
+      "id": "q059",
+      "question": "Wozu dürfen Anbieter eines Internetzugangs über ein drahtloses lokales Netzwerk von einer Behörde nicht verpflichtet werden?",
+      "expected": ["ddg/§ 7/Abs. 2"],
+      "vectorRank": 1,
+      "ftsRank": 1,
+      "ftsOutranking": [],
+      "expectedOverlap": 47.45303586596787,
+      "ftsTopOverlap": null
+    },
+    {
+      "id": "q060",
+      "question": "Welche Anbieter müssen der nach Landesrecht zuständigen Behörde auf Verlangen Auskünfte erteilen?",
+      "expected": ["ddg/§ 10/Abs. 1"],
+      "vectorRank": 1,
+      "ftsRank": 5,
+      "ftsOutranking": ["ao_1977/§ 89/Abs. 2", "ao_1977/§ 89a/Abs. 3", "ddg/§ 10/Abs. 2"],
+      "expectedOverlap": 26.70271970742292,
+      "ftsTopOverlap": 19.05215692699268
+    },
+    {
+      "id": "q061",
+      "question": "Wie oft soll der Beirat zu einer Sitzung zusammentreten?",
+      "expected": ["ddg/§ 21/Abs. 10"],
+      "vectorRank": 1,
+      "ftsRank": 1,
+      "ftsOutranking": [],
+      "expectedOverlap": 20.131385061091386,
+      "ftsTopOverlap": null
+    },
+    {
+      "id": "q062",
+      "question": "Wie hoch ist die Steuer für jeden steuerpflichtigen Umsatz?",
+      "expected": ["ustg_1980/§ 12/Abs. 1"],
+      "vectorRank": 1,
+      "ftsRank": null,
+      "ftsOutranking": ["ustg_1980/§ 4/Nr. 8", "ustg_1980/§ 4", "ustg_1980/§ 22/Abs. 2"],
+      "expectedOverlap": 8.749037048436447,
+      "ftsTopOverlap": 1.080698688286915
+    },
+    {
+      "id": "q063",
+      "question": "Unter welcher Voraussetzung kann der Unternehmer die Vorsteuer aus Leistungen eines anderen Unternehmers abziehen?",
+      "expected": ["ustg_1980/§ 15/Abs. 1/Nr. 1"],
+      "vectorRank": 1,
+      "ftsRank": 4,
+      "ftsOutranking": [
+        "ustg_1980/§ 3/Abs. 11a",
+        "ustg_1980/§ 13b/Abs. 5",
+        "ustg_1980/§ 14/Abs. 2"
+      ],
+      "expectedOverlap": 17.853403126649724,
+      "ftsTopOverlap": 4.393942276231468
+    },
+    {
+      "id": "q064",
+      "question": "Bis wann muss die Umsatzsteuervoranmeldung übermittelt werden?",
+      "expected": ["ustg_1980/§ 18/Abs. 1"],
+      "vectorRank": 1,
+      "ftsRank": null,
+      "ftsOutranking": ["ao_1977/§ 117c/Abs. 5", "ao_1977/§ 117f/Abs. 2", "ao_1977/§ 138a/Abs. 7"],
+      "expectedOverlap": 2.655458608431761,
+      "ftsTopOverlap": 4.231786063767235
+    },
+    {
+      "id": "q065",
+      "question": "Bis zu welchem Gesamtumsatz im Vorjahr ist der Umsatz eines Kleinunternehmers steuerfrei?",
+      "expected": ["ustg_1980/§ 19/Abs. 1"],
+      "vectorRank": 2,
+      "ftsRank": 20,
+      "ftsOutranking": ["ustg_1980/§ 4/Nr. 8", "ustg_1980/§ 4", "ustg_1980/§ 19/Abs. 2"],
+      "expectedOverlap": 13.091262156156073,
+      "ftsTopOverlap": 1.080698688286915
+    },
+    {
+      "id": "q066",
+      "question": "Welche Aufbewahrungsfristen gelten für Unterlagen nach der Abgabenordnung?",
+      "expected": ["ao_1977/§ 147/Abs. 3"],
+      "vectorRank": 1,
+      "ftsRank": 1,
+      "ftsOutranking": [],
+      "expectedOverlap": 12.429589579537797,
+      "ftsTopOverlap": null
+    },
+    {
+      "id": "q067",
+      "question": "Bis wann sind Steuererklärungen für ein Kalenderjahr spätestens abzugeben?",
+      "expected": ["ao_1977/§ 149/Abs. 2"],
+      "vectorRank": 1,
+      "ftsRank": 3,
+      "ftsOutranking": ["ao_1977/§ 170/Abs. 2", "ao_1977/§ 150/Abs. 1"],
+      "expectedOverlap": 15.015075757478872,
+      "ftsTopOverlap": 10.38102435256144
+    },
+    {
+      "id": "q068",
+      "question": "Wie lang ist die Festsetzungsfrist, wenn eine Steuer hinterzogen wurde?",
+      "expected": ["ao_1977/§ 169/Abs. 2"],
+      "vectorRank": 2,
+      "ftsRank": 4,
+      "ftsOutranking": [
+        "ao_1977/§ 235/Abs. 5",
+        "ao_1977/§ 235/Abs. 5/Nr. 2",
+        "ao_1977/§ 163/Abs. 1"
+      ],
+      "expectedOverlap": 12.286985497321922,
+      "ftsTopOverlap": 12.733326823514108
+    },
+    {
+      "id": "q069",
+      "question": "Wie hoch ist der Säumniszuschlag, wenn eine Steuer nicht bis zum Ablauf des Fälligkeitstages entrichtet wird?",
+      "expected": ["ao_1977/§ 240/Abs. 1"],
+      "vectorRank": 1,
+      "ftsRank": 3,
+      "ftsOutranking": ["ao_1977/§ 235/Abs. 5", "ao_1977/§ 239/Abs. 1"],
+      "expectedOverlap": 24.774001003613073,
+      "ftsTopOverlap": 10.857317138737752
+    },
+    {
+      "id": "q070",
+      "question": "Wann dürfen personenbezogene Daten von Beschäftigten für Zwecke des Beschäftigungsverhältnisses verarbeitet werden?",
+      "expected": ["bdsg_2018/§ 26/Abs. 1"],
+      "vectorRank": 2,
+      "ftsRank": 1,
+      "ftsOutranking": [],
+      "expectedOverlap": 18.99419699360579,
+      "ftsTopOverlap": null
+    },
+    {
+      "id": "q071",
+      "question": "Ab wie vielen Personen, die ständig mit der automatisierten Verarbeitung beschäftigt sind, muss eine Datenschutzbeauftragte oder ein Datenschutzbeauftragter benannt werden?",
+      "expected": ["bdsg_2018/§ 38/Abs. 1"],
+      "vectorRank": 1,
+      "ftsRank": 2,
+      "ftsOutranking": ["ao_1977/§ 138e/Abs. 3"],
+      "expectedOverlap": 23.911058617094312,
+      "ftsTopOverlap": 6.769102869874677
+    },
+    {
+      "id": "q072",
+      "question": "Welche Informationen müssen Diensteanbieter für digitale Dienste ständig verfügbar halten?",
+      "expected": ["ddg/§ 5/Abs. 1"],
+      "vectorRank": 1,
+      "ftsRank": 5,
+      "ftsOutranking": ["ddg/§ 1/Abs. 4", "ddg/§ 18/Abs. 3", "ddg/§ 19/Abs. 3"],
+      "expectedOverlap": 29.032819841928763,
+      "ftsTopOverlap": 9.774984937871892
+    },
+    {
+      "id": "q073",
+      "question": "Was ist eine elektronische Rechnung?",
+      "expected": ["ustg_1980/§ 14/Abs. 1"],
+      "vectorRank": 1,
+      "ftsRank": 1,
+      "ftsOutranking": [],
+      "expectedOverlap": 7.605907138503681,
+      "ftsTopOverlap": null
+    },
+    {
+      "id": "q074",
+      "question": "Welcher Norm muss das strukturierte Format einer elektronischen Rechnung entsprechen?",
+      "expected": ["ustg_1980/§ 14/Abs. 1/Nr. 1"],
+      "vectorRank": 1,
+      "ftsRank": 1,
+      "ftsOutranking": [],
+      "expectedOverlap": 18.930183219672198,
+      "ftsTopOverlap": null
+    },
+    {
+      "id": "q075",
+      "question": "Innerhalb welcher Frist muss eine Rechnung über eine Leistung an einen anderen Unternehmer nach Ausführung der Leistung ausgestellt werden?",
+      "expected": ["ustg_1980/§ 14/Abs. 2", "ustg_1980/§ 14/Abs. 2/Nr. 1"],
+      "vectorRank": 1,
+      "ftsRank": 1,
+      "ftsOutranking": [],
+      "expectedOverlap": 27.041141599449613,
+      "ftsTopOverlap": null
+    }
+  ]
+}

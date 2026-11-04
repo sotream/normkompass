@@ -4,6 +4,8 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { GesetzeImInternetSource, type CorpusUnit } from '@normkompass/corpus';
 import {
+  DEFAULT_CITATION_MATCH,
+  DEFAULT_LEXICAL,
   DEFAULT_SEARCH_MODE,
   HybridSearch,
   LocalReranker,
@@ -15,10 +17,12 @@ import {
 import { evaluateRetrieval } from '../evaluate.js';
 import {
   FULL_SET_LIMITS,
+  LEXICAL_SET_LIMITS,
   loadQuestions,
   selectSplit,
   type Split,
   validateAgainstCorpus,
+  validateLexical,
   validateStructure,
 } from '../questions.js';
 
@@ -52,8 +56,22 @@ const numberFlag = (name: string): number | undefined => {
 };
 const ftsWeight = numberFlag('--fts-weight');
 const ftsMaxDocShare = numberFlag('--fts-max-share');
+const lexicalRanking = (argValue('--lexical') ?? DEFAULT_LEXICAL) as 'fts' | 'bm25';
+if (!['fts', 'bm25'].includes(lexicalRanking)) {
+  console.error('--lexical must be fts or bm25');
+  process.exit(1);
+}
+const ftsQuery = (argValue('--fts-query') ?? 'or') as 'or' | 'and';
+if (!['or', 'and'].includes(ftsQuery)) {
+  console.error('--fts-query must be or or and');
+  process.exit(1);
+}
+const citationMatch = process.argv.includes('--no-citation') ? false : DEFAULT_CITATION_MATCH;
+const citationWeight = numberFlag('--citation-weight');
 
-const questions = await loadQuestions(join('eval', 'questions.jsonl'));
+const questionFile = argValue('--questions') ?? join('eval', 'questions.jsonl');
+const lexical = questionFile.includes('lexical');
+const questions = await loadQuestions(questionFile);
 const source = new GesetzeImInternetSource({
   cacheDir: join(process.cwd(), '.cache', 'gesetze-im-internet'),
 });
@@ -61,7 +79,8 @@ const units: CorpusUnit[] = [];
 for await (const doc of source.loadDocuments()) units.push(...source.split(doc).units);
 
 const problems = [
-  ...validateStructure(questions, FULL_SET_LIMITS),
+  ...validateStructure(questions, lexical ? LEXICAL_SET_LIMITS : FULL_SET_LIMITS),
+  ...(lexical ? validateLexical(questions, units) : []),
   ...validateAgainstCorpus(questions, units),
 ];
 if (problems.length > 0) {
@@ -88,7 +107,17 @@ try {
     new HybridSearch(pool, embedder, reranker),
     selectSplit(questions, split),
     10,
-    { mode, rerank, compoundSplitting, ftsWeight, ftsMaxDocShare },
+    {
+      mode,
+      rerank,
+      compoundSplitting,
+      ftsWeight,
+      ftsMaxDocShare,
+      lexical: lexicalRanking,
+      ftsQuery,
+      citationMatch,
+      citationWeight,
+    },
   );
   const cost = await readModelRecord(pool, embedder.model);
   const git = (...args: string[]): string =>
@@ -98,7 +127,7 @@ try {
   const date = new Date().toISOString().slice(0, 10);
 
   console.log(
-    `\nModel: ${embedder.model}   mode: ${mode}${rerank ? ' + rerank' : ''}${compoundSplitting ? '' : ' (no compound splitting)'}${ftsWeight === undefined ? '' : ` fts-weight ${ftsWeight}`}${ftsMaxDocShare === undefined ? '' : ` fts-max-share ${ftsMaxDocShare}`}   split: ${split}   commit: ${commit}${dirty ? ' (dirty)' : ''}   date: ${date}`,
+    `\nModel: ${embedder.model}   mode: ${mode}${rerank ? ' + rerank' : ''}${compoundSplitting ? '' : ' (no compound splitting)'}${ftsWeight === undefined ? '' : ` fts-weight ${ftsWeight}`}${ftsMaxDocShare === undefined ? '' : ` fts-max-share ${ftsMaxDocShare}`} lexical ${lexicalRanking}${ftsQuery === 'or' ? '' : ` fts-query ${ftsQuery}`}${citationMatch ? ' citation' : ' no-citation'}   split: ${split}   commit: ${commit}${dirty ? ' (dirty)' : ''}   date: ${date}`,
   );
   console.log(`Questions: ${metrics.questions}`);
   console.log(`recall@5: ${metrics.recallAt5.toFixed(3)}`);
@@ -118,7 +147,11 @@ try {
     compoundSplitting ? '' : '-nocompound',
     ftsWeight === undefined ? '' : `-w${ftsWeight}`,
     ftsMaxDocShare === undefined ? '' : `-share${ftsMaxDocShare}`,
+    lexicalRanking === DEFAULT_LEXICAL ? '' : `-${lexicalRanking}`,
+    ftsQuery === 'or' ? '' : `-q${ftsQuery}`,
+    citationMatch === DEFAULT_CITATION_MATCH ? '' : '-nocitation',
     split === 'all' ? '' : `-${split}`,
+    lexical ? '-lexical' : '',
   ].join('');
   const file = join('eval', 'results', `${date}-${embedder.model}${variant}.json`);
   await writeFile(
@@ -133,8 +166,13 @@ try {
         rerank: rerank ? reranker?.model : null,
         compoundSplitting,
         split,
+        questionSet: lexical ? 'lexical' : 'paraphrase',
         ftsWeight: ftsWeight ?? null,
         ftsMaxDocShare: ftsMaxDocShare ?? null,
+        lexical: lexicalRanking,
+        ftsQuery,
+        citationMatch,
+        citationWeight: citationWeight ?? null,
         indexingSeconds: cost?.indexingSeconds ?? null,
         weightsBytes: cost?.weightsBytes ?? null,
         dimension: embedder.dimension,

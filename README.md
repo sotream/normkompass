@@ -13,7 +13,7 @@ Reference implementation, all planned v1 phases implemented: project scaffold, c
 structure-aware parser for the demo laws, hybrid search with a retrieval evaluation and an embedding
 comparison (ADR 0002), and answer generation with code-checked citations and refusal. It is not a finished
 product. See "Honest limits" for what is not known or not done, in particular that Claude itself has not
-been measured and that the default search is vector-only, because hybrid search scored below it on the eval (ADR 0003).
+been measured and that the default search is hybrid with BM25 and citation matching, chosen by a rule fixed before the runs (ADR 0004), after an earlier hybrid scored below vector-only (ADR 0003).
 
 ## How this was built
 
@@ -86,12 +86,15 @@ specs live in `openspec/`, decisions in `docs/adr/`. Validate with `pnpm spec`.
 Chunks are the corpus units (Absatz, Nummer, or a whole norm). A unit longer than 1500 characters is
 split into parts at line or word boundaries; the parts keep the unit path. Each chunk is embedded
 with its citation label and title as a prefix ("§ 14 Abs. 1 UStG Ausstellung von Rechnungen ..."),
-while the stored text stays the original wording. The default search is vector-only: cosine similarity over the
-chunk embeddings, an exact scan (about 4,600 chunks, no ANN index). Two other modes exist and are measured:
-full-text only (Postgres `german` configuration, query words OR-ed) and hybrid, which merges the vector and the
-full-text top 50 with weighted Reciprocal Rank Fusion (k = 60, full-text weight as an option). In hybrid and
-full-text modes, query words that are German compounds are also split into parts known from the corpus
-vocabulary. Vector-only is the default because no hybrid variant beat it on the eval (ADR 0003).
+while the stored text stays the original wording. The default search is hybrid: it merges three rankings with weighted Reciprocal Rank Fusion (k = 60): cosine
+similarity over the chunk embeddings (an exact scan; about 4,600 chunks, no ANN index), a BM25 ranking over the
+German-normalized words of each chunk (computed in the application, built at the first search), and, when the
+question names a citation such as "§ 14 Abs. 1 UStG", the chunks with that citation label. Query words that are
+German compounds are also split into parts known from the corpus vocabulary. Other configurations stay selectable
+and are measured: vector-only, Postgres full-text (query words OR-ed, or a strict AND query with fallback), a
+full-text weight, a filter for very common words. The default came from comparing them on a development half of the
+questions and confirming on a held-out half ([ADR 0003](docs/adr/0003-hybrid-tuning-and-default-mode.md),
+[ADR 0004](docs/adr/0004-lexical-retrieval.md)).
 
 Embeddings come from `multilingual-e5-small`, run locally with transformers.js, so no text leaves the
 machine after the one-time model download. It was kept after comparing four local models
@@ -111,45 +114,66 @@ A returned unit counts as a hit if it is the expected unit or its parent Absatz 
 fraction of expected units hit in the top 5, MRR uses the first hit within the top 10. The 14
 unanswerable questions are not used for these two metrics; refusal is evaluated with answer generation.
 
-| Date       | Commit    | Embedding model       | Search                                         | recall@5 | MRR   | Index time | Weights |
-| ---------- | --------- | --------------------- | ---------------------------------------------- | -------- | ----- | ---------- | ------- |
-| 2026-11-03 | `5c9212a` | multilingual-e5-small | vector only (default)                          | 0.960    | 0.889 | 229 s      | 118 MB  |
-| 2026-11-03 | `5c9212a` | multilingual-e5-small | hybrid (weight 1)                              | 0.907    | 0.748 | 229 s      | 118 MB  |
-| 2026-11-03 | `5c9212a` | multilingual-e5-small | full-text only                                 | 0.627    | 0.396 | 229 s      | 118 MB  |
-| 2026-11-03 | `5c9212a` | multilingual-e5-base  | hybrid                                         | 0.920    | 0.736 | 364 s      | 279 MB  |
-| 2026-11-03 | `5c9212a` | multilingual-e5-large | hybrid                                         | 0.920    | 0.779 | 5246 s     | 562 MB  |
-| 2026-11-03 | `5c9212a` | bge-m3                | hybrid                                         | 0.893    | 0.746 | 16719 s    | 570 MB  |
-| 2026-11-03 | `4a0f7f6` | multilingual-e5-small | vector + reranker (bge-reranker-v2-m3, top 20) | 0.987    | 0.958 | 229 s      | 118 MB  |
+Paraphrase questions (`eval/questions.jsonl`, 75 answerable):
 
-All rows: 75 questions (the set as corrected in ADR 0003), local 8-bit models. The four embedding models were
-compared in hybrid mode and are not significantly different from each other, so the smallest is the default;
-they were not re-run in vector mode. Compound splitting switched off gives identical numbers in hybrid mode
-(only one question is affected). Vector-only beats hybrid significantly (MRR +0.141, 95% bootstrap interval
-[+0.071, +0.215]). The reranker improves MRR significantly over vector-only (+0.068) but recall@5 only by an
-amount that is not significant (+0.027, [0.000, +0.067]), and the first run took about 53 seconds per question
-on an Apple M1, so it is off by default and not part of the API. Index times are single runs on a laptop that
-was not idle (the small model took 1141 s in one run and 229 s in another): read them as orders of
-magnitude. Models not evaluated: cloud embedding models (no key). Run a comparison with
-`pnpm index --embedder <name>` and
-`pnpm eval:retrieval --embedder <name> [--mode vector|hybrid|fts] [--rerank] [--no-compound] [--fts-weight w] [--fts-max-share s] [--split dev|heldout]`,
+| Date       | Commit    | Embedding model       | Search                                              | recall@5 | MRR   | Index time | Weights |
+| ---------- | --------- | --------------------- | --------------------------------------------------- | -------- | ----- | ---------- | ------- |
+| 2026-11-04 | `9d9d041` | multilingual-e5-small | hybrid: vector + BM25 + citation matching (default) | 0.960    | 0.900 | 229 s      | 118 MB  |
+| 2026-11-03 | `5c9212a` | multilingual-e5-small | vector only                                         | 0.960    | 0.889 | 229 s      | 118 MB  |
+| 2026-11-04 | `9d9d041` | multilingual-e5-small | hybrid: vector + BM25, no citation matching         | 0.960    | 0.907 | 229 s      | 118 MB  |
+| 2026-11-03 | `5c9212a` | multilingual-e5-small | hybrid: vector + Postgres full-text (older default) | 0.907    | 0.748 | 229 s      | 118 MB  |
+| 2026-11-03 | `5c9212a` | multilingual-e5-small | Postgres full-text only                             | 0.627    | 0.396 | 229 s      | 118 MB  |
+| 2026-11-03 | `5c9212a` | multilingual-e5-base  | hybrid with Postgres full-text                      | 0.920    | 0.736 | 364 s      | 279 MB  |
+| 2026-11-03 | `5c9212a` | multilingual-e5-large | hybrid with Postgres full-text                      | 0.920    | 0.779 | 5246 s     | 562 MB  |
+| 2026-11-03 | `5c9212a` | bge-m3                | hybrid with Postgres full-text                      | 0.893    | 0.746 | 16719 s    | 570 MB  |
+| 2026-11-03 | `4a0f7f6` | multilingual-e5-small | vector + reranker (bge-reranker-v2-m3, top 20)      | 0.987    | 0.958 | 229 s      | 118 MB  |
+
+Lexical questions (`eval/lexical-questions.jsonl`, 28 answerable: 10 exact terms, 9 numbers, 9 citation lookups),
+written to favor lexical matching and reported separately; they are not averaged with the table above:
+
+| Date       | Commit    | Search                                              | recall@5 | MRR   |
+| ---------- | --------- | --------------------------------------------------- | -------- | ----- |
+| 2026-11-04 | `9d9d041` | hybrid: vector + BM25 + citation matching (default) | 0.857    | 0.720 |
+| 2026-11-04 | `9d9d041` | vector only                                         | 0.679    | 0.536 |
+| 2026-11-04 | `9d9d041` | hybrid: vector + BM25, no citation matching         | 0.607    | 0.538 |
+| 2026-11-04 | `9d9d041` | hybrid: vector + Postgres full-text (older default) | 0.714    | 0.647 |
+| 2026-11-04 | `fa54502` | Postgres full-text only                             | 0.536    | 0.428 |
+
+How to read these (details and paired bootstrap intervals in [ADR 0002](docs/adr/0002-embeddings-and-reranker.md),
+[ADR 0003](docs/adr/0003-hybrid-tuning-and-default-mode.md) and [ADR 0004](docs/adr/0004-lexical-retrieval.md)):
+
+- The default is hybrid with BM25 and citation matching. On the paraphrase questions it is as good as vector-only
+  (MRR +0.011, interval [-0.034, +0.056], not significant); on the lexical questions it is clearly better (MRR
+  +0.185, [+0.081, +0.304]). The gain on the lexical questions comes almost entirely from citation matching
+  ("Was regelt § 172 Abs. 1 AO?"): by style, citation lookups score 0.596 against 0.080 for vector-only. On exact
+  terms and numbers the older Postgres hybrid was better than the default (0.883 and 0.889 against 0.850 and 0.701).
+- The choice was made on a development half of both sets and confirmed on a held-out half by a rule fixed before the
+  runs. The lexical set is small and favors lexical matching by construction, so it shows that the machinery
+  works for quoted references, not how real users ask.
+- The four embedding models were compared in the older hybrid mode and are not significantly different from each
+  other, so the smallest is the default; they were not re-run with the new default. The reranker was measured on
+  vector-only candidates: it improves MRR significantly (+0.068) but recall@5 not significantly (+0.027,
+  [0.000, +0.067]), and the first run took about 53 seconds per question on an Apple M1, so it is off by default
+  and not part of the API.
+- Compound splitting switched off gives identical numbers (only one paraphrase question is affected).
+- Index times are single runs on a laptop that was not idle (the small model took 1141 s in one run and 229 s in
+  another): read them as orders of magnitude. Cloud embedding models were not evaluated (no key).
+
+Run a comparison with `pnpm index --embedder <name>` and
+`pnpm eval:retrieval --embedder <name> [--questions eval/lexical-questions.jsonl] [--mode vector|hybrid|fts] [--lexical fts|bm25] [--no-citation] [--fts-query or|and] [--rerank] [--no-compound] [--fts-weight w] [--fts-max-share s] [--split dev|heldout]`,
 where the names are `local-e5`, `local-e5-base`, `local-e5-large`, `local-bge-m3` and `fake`. Raw results are in
-`eval/results/`; `pnpm eval:compare a.json b.json` gives the paired bootstrap.
+`eval/results/` and `pnpm eval:compare a.json b.json` gives the paired bootstrap. `pnpm eval:diagnose` shows, per
+question, where vector and full-text ranking place the expected unit. The commit shown is the head of the pull
+request branch the numbers were measured on (a squash merge gives it a new hash). The runs are manual.
 
-Tuning the hybrid mode, on the 38 development questions only and then on the 37 held-out ones (ADR 0003): the
-best of five declared variants (full-text weight 0.01) matched vector-only exactly (held-out MRR 0.900 for both),
-while the earlier hybrid default reached 0.697.
+Weak spots, as measured with the default: 3 of 75 paraphrase questions have no expected unit in the top 10 (q030,
+q044, q057); on the lexical set 4 of 28 are not in the top 5. Among the paraphrase
+misses are general questions about the scope of a whole law, for example "Für welche Steuern gilt die
+Abgabenordnung?" (§ 1 Abs. 1 AO); the reason has not been analyzed.
 
-The commit is the head of the pull request branch the numbers were measured on (a squash merge gives it a
-new hash). The full run is manual (`pnpm eval:retrieval`) and the raw result is in `eval/results/`.
-
-Weak spots, as measured with the default: 3 of 75 questions have no expected unit in the top 5 (q022, q030,
-q057) and one of them none in the top 10. Among the misses are general questions about the scope of a whole law, for example "Für welche Steuern gilt die Abgabenordnung?" (§ 1 Abs. 1 AO) and "Für welche Diensteanbieter gilt das Digitale-Dienste-Gesetz?" (§ 1 Abs. 1 DDG); the reason has not been analyzed. The set is
-small and was not tuned against, so differences of a few points between configurations are not
-meaningful.
-
-CI runs a smaller eval on fixtures with a deterministic fake embedder (14 questions, thresholds
-recall@5 >= 0.7 and MRR >= 0.5; measured 0.786 and 0.649 in the default mode, 0.857 and 0.665 in hybrid mode) against a Postgres service. It guards
-against regressions in the search code and says nothing about quality with a real model.
+CI runs a smaller eval on fixtures with a deterministic fake embedder (14 questions, thresholds recall@5 >= 0.7 and
+MRR >= 0.5; measured 0.786 and 0.652 in the default mode) against a Postgres service. It guards against regressions in
+the search code and says nothing about quality with a real model.
 
 ## Bring your own corpus
 
@@ -174,17 +198,18 @@ invented text, not a real policy. The Markdown source under `packages/corpus/tes
 
 - **Claude has not been measured.** No real Claude run exists, so there is no number for answer quality with
   Claude. Results for other models are in "Answer evaluation" and say nothing about Claude.
-- **The default search is vector-only, not hybrid.** On this eval the full-text side did not help, and the
-  tuned hybrid only matched vector-only (ADR 0003). That is a finding about this corpus and these questions;
-  questions that quote exact terms or citations were not tested, and why full-text hurts was not analyzed.
+- **The lexical gain is shown on questions written to favor it.** The default search (hybrid with BM25 and citation
+  matching) beat vector-only on a 28-question lexical set that favors lexical matching by construction and was written
+  by the author; on the paraphrase questions it only matched vector-only. How it behaves on real users' questions or
+  other corpora is not known, and the gain on exact terms and numbers is not better than the older Postgres hybrid.
 - **The reranker is not part of the service.** It improves MRR significantly (recall@5 not significantly), but
   took about 53 seconds per question on the development laptop, so it is off by default and not wired into
   `/ask`.
 - **The question set is small and written by the author.** 75 answerable and 14 unanswerable questions;
   seven are flagged `needs_review`, three of them reworded after one review by their own author, and none reviewed by anyone else. Differences of a few points between
   configurations are not meaningful, and four embedding models could not be told apart.
-- **Compound-word handling is untested by the eval.** Only one of 75 questions contains a compound that the
-  splitting touches.
+- **Compound-word handling is untested by the eval.** Only one of 75 paraphrase questions contains a compound that
+  the splitting touches.
 - **One corpus, one language, one snapshot.** Five German federal laws, taken on 2026-11-02 with the "Stand"
   shown per law. The service makes no promise that the law shown is current or complete, and nothing is
   synchronized automatically.

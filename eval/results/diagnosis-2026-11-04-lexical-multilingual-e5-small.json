@@ -1,0 +1,300 @@
+{
+  "date": "2026-11-04",
+  "commit": "fa54502",
+  "dirty": false,
+  "embedder": "multilingual-e5-small",
+  "questionFile": "eval/lexical-questions.jsonl",
+  "summary": {
+    "questions": 28,
+    "both": 14,
+    "vectorOnly": 5,
+    "ftsOnly": 1,
+    "neither": 8,
+    "ftsFailures": 13,
+    "rarityPrefersExpected": 6,
+    "rarityTies": 7,
+    "rarityPrefersWrong": 0
+  },
+  "rows": [
+    {
+      "id": "l001",
+      "question": "Welche Bruttoleistung der Photovoltaikanlage ist nach dem Marktstammdatenregister maßgeblich?",
+      "expected": ["ustg_1980/§ 12/Abs. 3"],
+      "vectorRank": 2,
+      "ftsRank": 2,
+      "ftsOutranking": ["ustg_1980/Anlage 5"],
+      "expectedOverlap": 21.19677051526871,
+      "ftsTopOverlap": 5.221216146586011
+    },
+    {
+      "id": "l002",
+      "question": "Wann wird der Umsatz mit 30 Prozent des Verkaufspreises angesetzt?",
+      "expected": ["ustg_1980/§ 25a/Abs. 3"],
+      "vectorRank": 1,
+      "ftsRank": 5,
+      "ftsOutranking": ["ustg_1980/§ 4/Nr. 8", "ustg_1980/§ 4", "ustg_1980/§ 24/Abs. 1"],
+      "expectedOverlap": 21.136106413248843,
+      "ftsTopOverlap": 0
+    },
+    {
+      "id": "l003",
+      "question": "Was regelt § 172 Abs. 1 AO?",
+      "expected": ["ao_1977/§ 172/Abs. 1"],
+      "vectorRank": null,
+      "ftsRank": null,
+      "ftsOutranking": ["ustg_1980/§ 27/Abs. 4", "ao_1977/§ 93a/Abs. 4", "ao_1977/§ 379/Abs. 2"],
+      "expectedOverlap": 0,
+      "ftsTopOverlap": 0
+    },
+    {
+      "id": "l004",
+      "question": "Was gilt für Positionspapiere des Beirats?",
+      "expected": ["ddg/§ 21/Abs. 11"],
+      "vectorRank": 1,
+      "ftsRank": 2,
+      "ftsOutranking": ["ddg/§ 21/Abs. 10"],
+      "expectedOverlap": 10.91276725944235,
+      "ftsTopOverlap": 5.350729082887572
+    },
+    {
+      "id": "l005",
+      "question": "Bei welchen Verstößen droht eine Geldbuße bis zu 6 Prozent des Gesamtumsatzes?",
+      "expected": ["ddg/§ 33/Abs. 7"],
+      "vectorRank": 1,
+      "ftsRank": 1,
+      "ftsOutranking": [],
+      "expectedOverlap": 14.546048652915033,
+      "ftsTopOverlap": null
+    },
+    {
+      "id": "l006",
+      "question": "Was bestimmt § 225 Abs. 3 AO?",
+      "expected": ["ao_1977/§ 225/Abs. 3"],
+      "vectorRank": 28,
+      "ftsRank": null,
+      "ftsOutranking": ["ustg_1980/§ 27/Abs. 4", "ustg_1980/§ 14b/Abs. 2", "ustg_1980/§ 22/Abs. 2"],
+      "expectedOverlap": 2.319905489522311,
+      "ftsTopOverlap": 0
+    },
+    {
+      "id": "l007",
+      "question": "Wie hoch muss das Mindestgebot im Verhältnis zum gewöhnlichen Verkaufswert der Sache sein?",
+      "expected": ["ao_1977/§ 300/Abs. 1"],
+      "vectorRank": 1,
+      "ftsRank": 1,
+      "ftsOutranking": [],
+      "expectedOverlap": 19.032677731986112,
+      "ftsTopOverlap": null
+    },
+    {
+      "id": "l008",
+      "question": "Welche Regelung gilt, wenn der Gesamtumsatz im vorangegangenen Kalenderjahr nicht mehr als 600 000 Euro betragen hat?",
+      "expected": ["ustg_1980/§ 24/Abs. 1"],
+      "vectorRank": 3,
+      "ftsRank": 17,
+      "ftsOutranking": ["ao_1977/§ 147a/Abs. 1", "ustg_1980/§ 18a/Abs. 9", "ustg_1980/§ 18/Abs. 2"],
+      "expectedOverlap": 24.12932901919424,
+      "ftsTopOverlap": 17.495878780270505
+    },
+    {
+      "id": "l009",
+      "question": "Worum geht es in § 292 Abs. 1 AO?",
+      "expected": ["ao_1977/§ 292/Abs. 1"],
+      "vectorRank": null,
+      "ftsRank": null,
+      "ftsOutranking": ["ustg_1980/§ 27/Abs. 4", "ao_1977/§ 93a/Abs. 4", "ao_1977/§ 379/Abs. 2"],
+      "expectedOverlap": 0,
+      "ftsTopOverlap": 0
+    },
+    {
+      "id": "l010",
+      "question": "Wann beginnt die Festsetzungsfrist, wenn eine Steuer durch Verwendung von Steuerzeichen oder Steuerstemplern zu zahlen ist?",
+      "expected": ["ao_1977/§ 170/Abs. 2"],
+      "vectorRank": 2,
+      "ftsRank": 1,
+      "ftsOutranking": [],
+      "expectedOverlap": 21.991441408584045,
+      "ftsTopOverlap": null
+    },
+    {
+      "id": "l011",
+      "question": "Wann beträgt die Verjährungsfrist 15 Jahre?",
+      "expected": ["ao_1977/§ 376/Abs. 1"],
+      "vectorRank": 3,
+      "ftsRank": 6,
+      "ftsOutranking": ["ustg_1980/§ 22/Abs. 1", "ao_1977/§ 191/Abs. 3", "ao_1977/§ 228"],
+      "expectedOverlap": 13.317394922360156,
+      "ftsTopOverlap": 4.681679453906687
+    },
+    {
+      "id": "l012",
+      "question": "Was regelt § 21 Abs. 4 DDG?",
+      "expected": ["ddg/§ 21/Abs. 4"],
+      "vectorRank": 4,
+      "ftsRank": null,
+      "ftsOutranking": ["ustg_1980/§ 27/Abs. 4", "ustg_1980/§ 22/Abs. 2", "ustg_1980/§ 4b"],
+      "expectedOverlap": 0,
+      "ftsTopOverlap": 0
+    },
+    {
+      "id": "l013",
+      "question": "Woraus besteht die Ziffernfolge des Identifikationsmerkmals?",
+      "expected": ["ao_1977/§ 139a/Abs. 1"],
+      "vectorRank": 1,
+      "ftsRank": 1,
+      "ftsOutranking": [],
+      "expectedOverlap": 13.045437177368278,
+      "ftsTopOverlap": null
+    },
+    {
+      "id": "l014",
+      "question": "Was gilt bei einem Überschuss zu Gunsten des Unternehmers von mehr als 9 000 Euro?",
+      "expected": ["ustg_1980/§ 18/Abs. 2a"],
+      "vectorRank": 1,
+      "ftsRank": 6,
+      "ftsOutranking": ["ao_1977/§ 398a/Abs. 1", "ustg_1980/§ 15/Abs. 1", "ao_1977/§ 141/Abs. 1"],
+      "expectedOverlap": 22.403084034711704,
+      "ftsTopOverlap": 9.748216869282247
+    },
+    {
+      "id": "l015",
+      "question": "Was bestimmt § 81 Abs. 2 BDSG?",
+      "expected": ["bdsg_2018/§ 81/Abs. 2"],
+      "vectorRank": 4,
+      "ftsRank": null,
+      "ftsOutranking": ["ustdv_1980/§ 63/Abs. 3", "ustg_1980/§ 27/Abs. 4", "ustg_1980/§ 15/Abs. 3"],
+      "expectedOverlap": 0,
+      "ftsTopOverlap": 0
+    },
+    {
+      "id": "l016",
+      "question": "Was zählt zu den kirchlichen Zwecken, etwa die Abhaltung von Gottesdiensten?",
+      "expected": ["ao_1977/§ 54/Abs. 2"],
+      "vectorRank": 1,
+      "ftsRank": 3,
+      "ftsOutranking": ["ao_1977/Anlage 1", "bdsg_2018/§ 49"],
+      "expectedOverlap": 23.735995459666825,
+      "ftsTopOverlap": 16.033891119615777
+    },
+    {
+      "id": "l017",
+      "question": "Wann ist ein Verspätungszuschlag festzusetzen, wenn die Steuererklärung nicht binnen 19 Monaten abgegeben wird?",
+      "expected": ["ao_1977/§ 152/Abs. 2"],
+      "vectorRank": 1,
+      "ftsRank": 1,
+      "ftsOutranking": [],
+      "expectedOverlap": 22.918784080471347,
+      "ftsTopOverlap": null
+    },
+    {
+      "id": "l018",
+      "question": "Was regelt § 13 Abs. 5 BDSG?",
+      "expected": ["bdsg_2018/§ 13/Abs. 5"],
+      "vectorRank": null,
+      "ftsRank": null,
+      "ftsOutranking": ["ustg_1980/§ 27/Abs. 4", "ddg/§ 33/Abs. 3", "ustdv_1980/§ 59"],
+      "expectedOverlap": 0,
+      "ftsTopOverlap": 0
+    },
+    {
+      "id": "l019",
+      "question": "Welche Zwangsmittel gibt es: Zwangsgeld, Ersatzvornahme, unmittelbarer Zwang?",
+      "expected": ["ao_1977/§ 328/Abs. 1"],
+      "vectorRank": 1,
+      "ftsRank": 1,
+      "ftsOutranking": [],
+      "expectedOverlap": 20.6644867592758,
+      "ftsTopOverlap": null
+    },
+    {
+      "id": "l020",
+      "question": "Wann beginnt der Zinslauf bei der Einkommen- und Körperschaftsteuer 23 Monate nach dem Zeitpunkt der Entstehung?",
+      "expected": ["ao_1977/§ 233a/Abs. 2"],
+      "vectorRank": 1,
+      "ftsRank": 2,
+      "ftsOutranking": ["ustdv_1980/§ 61/Abs. 5"],
+      "expectedOverlap": 25.106977698964283,
+      "ftsTopOverlap": 17.92108436506591
+    },
+    {
+      "id": "l021",
+      "question": "Was bestimmt § 8 Abs. 1 UStG?",
+      "expected": ["ustg_1980/§ 8/Abs. 1"],
+      "vectorRank": 27,
+      "ftsRank": 28,
+      "ftsOutranking": ["ustg_1980/§ 27/Abs. 4", "ao_1977/§ 93a/Abs. 4", "ao_1977/§ 379/Abs. 2"],
+      "expectedOverlap": 2.319905489522311,
+      "ftsTopOverlap": 0
+    },
+    {
+      "id": "l022",
+      "question": "Wann kann die Frist verlängert werden, wenn ein automationsgestütztes Risikomanagementsystem eingesetzt wird?",
+      "expected": ["ao_1977/§ 109/Abs. 4"],
+      "vectorRank": 1,
+      "ftsRank": 1,
+      "ftsOutranking": [],
+      "expectedOverlap": 22.75753153908191,
+      "ftsTopOverlap": null
+    },
+    {
+      "id": "l023",
+      "question": "Welcher Betrag gilt, wenn der Hinterziehungsbetrag 1 000 000 Euro nicht übersteigt?",
+      "expected": ["ao_1977/§ 398a/Abs. 1"],
+      "vectorRank": 2,
+      "ftsRank": 1,
+      "ftsOutranking": [],
+      "expectedOverlap": 15.525310316948426,
+      "ftsTopOverlap": null
+    },
+    {
+      "id": "l024",
+      "question": "Was regelt § 3a Abs. 8 UStG?",
+      "expected": ["ustg_1980/§ 3a/Abs. 8"],
+      "vectorRank": 9,
+      "ftsRank": null,
+      "ftsOutranking": ["ustg_1980/§ 27/Abs. 4", "ustg_1980/§ 4b", "ustdv_1980/§ 59"],
+      "expectedOverlap": 0,
+      "ftsTopOverlap": 0
+    },
+    {
+      "id": "l025",
+      "question": "Was gilt für Steuerhinterziehung bei harmonisierten Verbrauchsteuern, die von einem anderen Mitgliedstaat verwaltet werden?",
+      "expected": ["ao_1977/§ 370/Abs. 6"],
+      "vectorRank": 1,
+      "ftsRank": 2,
+      "ftsOutranking": ["ddg/§ 2/Abs. 2"],
+      "expectedOverlap": 24.737374117681732,
+      "ftsTopOverlap": 10.410524837039421
+    },
+    {
+      "id": "l026",
+      "question": "Was gilt, wenn die Umsätze im vorangegangenen Kalenderjahr 15 000 Euro nicht überstiegen haben?",
+      "expected": ["ustg_1980/§ 18a/Abs. 9"],
+      "vectorRank": 17,
+      "ftsRank": 1,
+      "ftsOutranking": [],
+      "expectedOverlap": 20.824187411707783,
+      "ftsTopOverlap": null
+    },
+    {
+      "id": "l027",
+      "question": "Was bestimmt § 379 Abs. 4 AO?",
+      "expected": ["ao_1977/§ 379/Abs. 4"],
+      "vectorRank": 9,
+      "ftsRank": null,
+      "ftsOutranking": ["ustg_1980/§ 27/Abs. 4", "ustg_1980/§ 22/Abs. 2", "ustg_1980/§ 4b"],
+      "expectedOverlap": 0,
+      "ftsTopOverlap": 0
+    },
+    {
+      "id": "l028",
+      "question": "Wann ist der Steuerpflichtige nach seinen individuellen Kenntnissen und Fähigkeiten von der elektronischen Übermittlung befreit?",
+      "expected": ["ao_1977/§ 150/Abs. 8"],
+      "vectorRank": 9,
+      "ftsRank": 8,
+      "ftsOutranking": ["ao_1977/§ 87a/Abs. 1", "ustg_1980/§ 14/Abs. 1", "ao_1977/§ 146a/Abs. 4"],
+      "expectedOverlap": 25.156507107863497,
+      "ftsTopOverlap": 6.688991106807878
+    }
+  ]
+}

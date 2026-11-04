@@ -2,9 +2,11 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import {
   FULL_SET_LIMITS,
+  LEXICAL_SET_LIMITS,
   loadQuestions,
   selectSplit,
   validateAgainstCorpus,
+  validateLexical,
   validateStructure,
   type Question,
 } from './questions.js';
@@ -112,5 +114,84 @@ describe('selectSplit', () => {
     expect(selectSplit(all, 'all')).toHaveLength(5);
     const dev = new Set(selectSplit(all, 'dev').map((x) => x.id));
     expect(selectSplit(all, 'heldout').some((x) => dev.has(x.id))).toBe(false);
+  });
+});
+
+describe('eval/lexical-questions.jsonl', () => {
+  it('has the right shape: answerable questions with a style, quoted terms and a source', async () => {
+    const questions = await loadQuestions(join(root, 'eval', 'lexical-questions.jsonl'));
+    expect(validateStructure(questions, LEXICAL_SET_LIMITS)).toEqual([]);
+    expect(questions.every((q) => q.style && q.terms && q.terms.length > 0)).toBe(true);
+    expect(new Set(questions.map((q) => q.style))).toEqual(new Set(['term', 'number', 'citation']));
+  });
+
+  it('puts every style into both the development and the held-out part', async () => {
+    const questions = await loadQuestions(join(root, 'eval', 'lexical-questions.jsonl'));
+    for (const split of ['dev', 'heldout'] as const) {
+      const styles = new Set(selectSplit(questions, split).map((q) => q.style));
+      expect(styles).toEqual(new Set(['term', 'number', 'citation']));
+    }
+  });
+});
+
+describe('validateLexical', () => {
+  const units = [
+    {
+      id: 'g/§ 1/Abs. 1',
+      label: '§ 1 Abs. 1 G',
+      title: 'Eins',
+      text: 'Gelangensbestätigung ist zu führen.',
+    },
+    {
+      id: 'g/§ 2/Abs. 1',
+      label: '§ 2 Abs. 1 G',
+      title: 'Zwei',
+      text: 'Die Gelangensbestätigung entfällt.',
+    },
+    { id: 'g/§ 3/Abs. 1', label: '§ 3 Abs. 1 G', title: 'Drei', text: 'Etwas anderes.' },
+  ];
+  const q = (over: Partial<Question>): Question => ({
+    id: 'l001',
+    question: 'Was gilt für die Gelangensbestätigung?',
+    answerable: true,
+    expected: ['g/§ 1/Abs. 1'],
+    source: 's',
+    style: 'term',
+    terms: ['Gelangensbestätigung'],
+    needs_review: false,
+    ...over,
+  });
+
+  it('flags a term that another unrelated unit contains too (ambiguous)', () => {
+    expect(validateLexical([q({})], units).join()).toMatch(/also contained in g\/§ 2\/Abs\. 1/);
+  });
+
+  it('accepts it when the other unit is listed as not expected with a reason', () => {
+    const ok = q({ not_expected: [{ id: 'g/§ 2/Abs. 1', reason: 'says the opposite' }] });
+    expect(validateLexical([ok], units)).toEqual([]);
+  });
+
+  it('requires a reason and an existing unit for not_expected', () => {
+    const bad = q({ not_expected: [{ id: 'g/§ 2/Abs. 1', reason: ' ' }] });
+    expect(validateLexical([bad], units).join()).toMatch(/must exist and give a reason/);
+  });
+
+  it('requires the question to quote its terms and the terms to be in the expected unit', () => {
+    expect(validateLexical([q({ question: 'Was gilt?' })], units).join()).toMatch(/does not quote/);
+    expect(validateLexical([q({ expected: ['g/§ 3/Abs. 1'] })], units).join()).toMatch(
+      /does not occur in an expected unit/,
+    );
+  });
+
+  it('checks a citation against the label of the expected unit', () => {
+    const ok = q({
+      style: 'citation',
+      question: 'Was regelt § 3 Abs. 1 G?',
+      terms: ['§ 3 Abs. 1 G'],
+      expected: ['g/§ 3/Abs. 1'],
+    });
+    expect(validateLexical([ok], units)).toEqual([]);
+    const wrong = { ...ok, expected: ['g/§ 1/Abs. 1'] };
+    expect(validateLexical([wrong], units).join()).toMatch(/not the label of an expected unit/);
   });
 });
