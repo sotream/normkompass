@@ -3,6 +3,9 @@
 - Status: Accepted
 - Date: 2026-11-03
 
+> **Update (2026-11-04):** the default decided here was later replaced; see [ADR 0004](0004-lexical-retrieval.md).
+> The measurements below stand as made.
+
 ## Context
 
 [ADR 0002](0002-embeddings-and-reranker.md) found that vector-only search scored significantly better than

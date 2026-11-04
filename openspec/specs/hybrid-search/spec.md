@@ -1,16 +1,16 @@
 # hybrid-search Specification
 
 ## Purpose
-Defines how a question is ranked against the index: the search modes (vector-only by default, German full-text, and hybrid merged with weighted Reciprocal Rank Fusion), compound-word handling, and the search endpoint.
+Defines how a question is ranked against the index: the search modes (hybrid by default, vector-only and German full-text), the lexical rankings and citation matching merged by weighted Reciprocal Rank Fusion, compound-word handling, and the search endpoint.
 
 ## Requirements
 
 ### Requirement: Search modes
-Search SHALL support vector-only, full-text-only and hybrid modes, SHALL use vector-only by default, and in hybrid mode SHALL combine vector similarity and German full-text search results with weighted Reciprocal Rank Fusion; every mode SHALL return the best chunks with their metadata and scores.
+Search SHALL support vector-only, full-text-only and hybrid modes; the default SHALL be the configuration chosen by the decision records (currently hybrid with a BM25 lexical ranking and citation matching); in hybrid mode it SHALL combine vector similarity, a lexical ranking and, when the question names a citation, the chunks with that citation label, by weighted Reciprocal Rank Fusion; every mode SHALL return the best chunks with their metadata and scores.
 
 #### Scenario: Default mode
 - **WHEN** a search is run without a mode
-- **THEN** it ranks by vector similarity only
+- **THEN** it uses the default configuration recorded in the latest decision record
 
 #### Scenario: Both signals contribute in hybrid mode
 - **WHEN** a question matches one chunk mainly by meaning and another mainly by exact words and the hybrid mode is selected
@@ -62,3 +62,17 @@ Any weighting of the full-text ranking against the vector ranking SHALL be an ex
 #### Scenario: Weight changed
 - **WHEN** a different full-text weight is given in the search options
 - **THEN** the ranking changes accordingly and a test shows the effect on a fixture
+
+### Requirement: The lexical ranking is diagnosed
+The project SHALL record, from a reproducible analysis, where the full-text and vector rankings place the expected unit of each answerable question and what outranks it, and the documentation SHALL state the findings and SHALL NOT state an unmeasured cause as fact.
+
+#### Scenario: Reader asks why full-text underperforms
+- **WHEN** a reader checks the documentation for the cause
+- **THEN** it cites the analysis output, and any explanation not confirmed by it is marked as a hypothesis
+
+### Requirement: Lexical ranking options are explicit
+Any lexical ranking other than the default full-text ranking SHALL be an explicit, documented search option, and a test SHALL show that it ranks a rare-term match above a common-term match on a fixture.
+
+#### Scenario: Rarity matters
+- **WHEN** a question contains a rare term and a very common term and the term-rarity ranking is selected
+- **THEN** the chunk with the rare term ranks above a chunk that only repeats the common term
