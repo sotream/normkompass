@@ -28,10 +28,13 @@ export interface SearchHit {
 export type SearchMode = 'hybrid' | 'vector' | 'fts';
 
 /**
- * Vector-only is the default because on the project's eval no hybrid variant beat it (ADR 0003); "hybrid"
- * (vector and full-text merged by weighted RRF) and "fts" remain available as explicit modes.
+ * The default configuration is hybrid search with a BM25 lexical ranking and citation matching. It was chosen
+ * by a rule fixed before the runs (ADR 0004): not worse than vector-only on held-out paraphrase questions and
+ * better on held-out lexical questions. Vector-only, plain full-text and the other options stay selectable.
  */
-export const DEFAULT_SEARCH_MODE: SearchMode = 'vector';
+export const DEFAULT_SEARCH_MODE: SearchMode = 'hybrid';
+export const DEFAULT_LEXICAL = 'bm25';
+export const DEFAULT_CITATION_MATCH = true;
 
 export interface SearchOptions {
   limit?: number;
@@ -47,14 +50,14 @@ export interface SearchOptions {
    * off by default. If every term would be dropped, the full query is kept.
    */
   ftsMaxDocShare?: number;
-  /** Which lexical ranking feeds the "fts" side: Postgres full-text (default) or BM25 computed in the application. */
+  /** Which lexical ranking feeds the "fts" side: BM25 computed in the application (default) or Postgres full-text. */
   lexical?: 'fts' | 'bm25';
   /**
    * With "and", the full-text query first requires every question word and falls back to the OR query when
    * that finds nothing (default "or"). Only for the Postgres full-text ranking.
    */
   ftsQuery?: 'or' | 'and';
-  /** Adds the chunks whose citation label the question names (for example "§ 14 Abs. 1 UStG") as a third ranking. */
+  /** Adds the chunks whose citation label the question names (for example "§ 14 Abs. 1 UStG") as a third ranking (default true). */
   citationMatch?: boolean;
   /** Weight of that ranking in the fusion (default 1). */
   citationWeight?: number;
@@ -140,10 +143,11 @@ export class HybridSearch {
     const fts =
       terms.length === 0
         ? empty
-        : options.lexical === 'bm25'
+        : (options.lexical ?? DEFAULT_LEXICAL) === 'bm25'
           ? await this.bm25Search(terms, candidates)
           : await this.ftsSearch(terms, candidates, options.ftsQuery ?? 'or', question);
-    const citations = options.citationMatch ? await this.citationSearch(question) : empty;
+    const citationMatch = options.citationMatch ?? DEFAULT_CITATION_MATCH;
+    const citations = citationMatch ? await this.citationSearch(question) : empty;
 
     const rows = new Map<string, Row>();
     const vectorRank = new Map<string, number>();
@@ -191,7 +195,7 @@ export class HybridSearch {
             score,
             vectorRank: vectorRank.get(id) ?? null,
             ftsRank: ftsRank.get(id) ?? null,
-            ...(options.citationMatch ? { citationRank: citationRank.get(id) ?? null } : {}),
+            ...(citationMatch ? { citationRank: citationRank.get(id) ?? null } : {}),
           },
         ];
       });

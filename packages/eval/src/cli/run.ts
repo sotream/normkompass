@@ -4,6 +4,8 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { GesetzeImInternetSource, type CorpusUnit } from '@normkompass/corpus';
 import {
+  DEFAULT_CITATION_MATCH,
+  DEFAULT_LEXICAL,
   DEFAULT_SEARCH_MODE,
   HybridSearch,
   LocalReranker,
@@ -54,7 +56,7 @@ const numberFlag = (name: string): number | undefined => {
 };
 const ftsWeight = numberFlag('--fts-weight');
 const ftsMaxDocShare = numberFlag('--fts-max-share');
-const lexicalRanking = (argValue('--lexical') ?? 'fts') as 'fts' | 'bm25';
+const lexicalRanking = (argValue('--lexical') ?? DEFAULT_LEXICAL) as 'fts' | 'bm25';
 if (!['fts', 'bm25'].includes(lexicalRanking)) {
   console.error('--lexical must be fts or bm25');
   process.exit(1);
@@ -64,7 +66,7 @@ if (!['or', 'and'].includes(ftsQuery)) {
   console.error('--fts-query must be or or and');
   process.exit(1);
 }
-const citationMatch = process.argv.includes('--citation');
+const citationMatch = process.argv.includes('--no-citation') ? false : DEFAULT_CITATION_MATCH;
 const citationWeight = numberFlag('--citation-weight');
 
 const questionFile = argValue('--questions') ?? join('eval', 'questions.jsonl');
@@ -125,7 +127,7 @@ try {
   const date = new Date().toISOString().slice(0, 10);
 
   console.log(
-    `\nModel: ${embedder.model}   mode: ${mode}${rerank ? ' + rerank' : ''}${compoundSplitting ? '' : ' (no compound splitting)'}${ftsWeight === undefined ? '' : ` fts-weight ${ftsWeight}`}${ftsMaxDocShare === undefined ? '' : ` fts-max-share ${ftsMaxDocShare}`}${lexicalRanking === 'fts' ? '' : ` lexical ${lexicalRanking}`}${ftsQuery === 'or' ? '' : ` fts-query ${ftsQuery}`}${citationMatch ? ' citation' : ''}   split: ${split}   commit: ${commit}${dirty ? ' (dirty)' : ''}   date: ${date}`,
+    `\nModel: ${embedder.model}   mode: ${mode}${rerank ? ' + rerank' : ''}${compoundSplitting ? '' : ' (no compound splitting)'}${ftsWeight === undefined ? '' : ` fts-weight ${ftsWeight}`}${ftsMaxDocShare === undefined ? '' : ` fts-max-share ${ftsMaxDocShare}`} lexical ${lexicalRanking}${ftsQuery === 'or' ? '' : ` fts-query ${ftsQuery}`}${citationMatch ? ' citation' : ' no-citation'}   split: ${split}   commit: ${commit}${dirty ? ' (dirty)' : ''}   date: ${date}`,
   );
   console.log(`Questions: ${metrics.questions}`);
   console.log(`recall@5: ${metrics.recallAt5.toFixed(3)}`);
@@ -145,9 +147,9 @@ try {
     compoundSplitting ? '' : '-nocompound',
     ftsWeight === undefined ? '' : `-w${ftsWeight}`,
     ftsMaxDocShare === undefined ? '' : `-share${ftsMaxDocShare}`,
-    lexicalRanking === 'fts' ? '' : `-${lexicalRanking}`,
+    lexicalRanking === DEFAULT_LEXICAL ? '' : `-${lexicalRanking}`,
     ftsQuery === 'or' ? '' : `-q${ftsQuery}`,
-    citationMatch ? '-citation' : '',
+    citationMatch === DEFAULT_CITATION_MATCH ? '' : '-nocitation',
     split === 'all' ? '' : `-${split}`,
     lexical ? '-lexical' : '',
   ].join('');

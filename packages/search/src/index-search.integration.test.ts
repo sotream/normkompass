@@ -213,10 +213,12 @@ describe.skipIf(!DATABASE_URL)('index and hybrid search (Postgres)', () => {
     expect(hits.length).toBeGreaterThan(0);
   });
 
-  it('searches vector-only by default', async () => {
+  it('searches hybrid with BM25 and citation matching by default', async () => {
     const hits = await new HybridSearch(pool, embedder).search('Rechnung ausstellen');
     expect(hits.length).toBeGreaterThan(0);
-    expect(hits.every((h) => h.ftsRank === null && h.vectorRank !== null)).toBe(true);
+    expect(hits.some((h) => h.vectorRank !== null)).toBe(true);
+    expect(hits.some((h) => h.ftsRank !== null)).toBe(true);
+    expect(hits.every((h) => h.citationRank !== undefined)).toBe(true);
   });
 
   it('BM25 ranks a rare-term match first and works in hybrid mode', async () => {
@@ -251,13 +253,19 @@ describe.skipIf(!DATABASE_URL)('index and hybrid search (Postgres)', () => {
     });
     const named = hits.find((h) => h.label === '§ 14 Abs. 1 UStG');
     expect(named?.citationRank).toBe(1);
-    const without = await search.search('Was regelt § 14 Abs. 1 UStG?', { limit: 3 });
+    const without = await search.search('Was regelt § 14 Abs. 1 UStG?', {
+      limit: 3,
+      citationMatch: false,
+    });
     expect(without[0]?.citationRank).toBeUndefined();
   });
 
   it('citation matching adds nothing when the question names no citation', async () => {
     const search = new HybridSearch(pool, embedder);
-    const a = await search.search('Wann ist eine Rechnung auszustellen?', { limit: 5 });
+    const a = await search.search('Wann ist eine Rechnung auszustellen?', {
+      limit: 5,
+      citationMatch: false,
+    });
     const b = await search.search('Wann ist eine Rechnung auszustellen?', {
       limit: 5,
       citationMatch: true,

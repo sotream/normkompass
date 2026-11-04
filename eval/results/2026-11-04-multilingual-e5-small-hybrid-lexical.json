@@ -1,6 +1,6 @@
 {
   "date": "2026-11-04",
-  "commit": "fa54502",
+  "commit": "9d9d041",
   "dirty": false,
   "embedder": "multilingual-e5-small",
   "mode": "hybrid",
@@ -10,6 +10,10 @@
   "questionSet": "lexical",
   "ftsWeight": null,
   "ftsMaxDocShare": null,
+  "lexical": "fts",
+  "ftsQuery": "or",
+  "citationMatch": false,
+  "citationWeight": null,
   "indexingSeconds": 229,
   "weightsBytes": 118308185,
   "dimension": 384,
