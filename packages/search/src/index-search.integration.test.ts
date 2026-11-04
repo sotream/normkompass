@@ -218,4 +218,50 @@ describe.skipIf(!DATABASE_URL)('index and hybrid search (Postgres)', () => {
     expect(hits.length).toBeGreaterThan(0);
     expect(hits.every((h) => h.ftsRank === null && h.vectorRank !== null)).toBe(true);
   });
+
+  it('BM25 ranks a rare-term match first and works in hybrid mode', async () => {
+    const search = new HybridSearch(pool, embedder);
+    const only = await search.search('Rechnung ausstellen', {
+      limit: 5,
+      mode: 'fts',
+      lexical: 'bm25',
+    });
+    expect(only.length).toBeGreaterThan(0);
+    expect(only.every((h) => h.vectorRank === null && h.ftsRank !== null)).toBe(true);
+    const hybrid = await search.search('Rechnung ausstellen', {
+      limit: 5,
+      mode: 'hybrid',
+      lexical: 'bm25',
+    });
+    expect(hybrid.some((h) => h.ftsRank !== null)).toBe(true);
+  });
+
+  it('"and" falls back to the OR query when the strict query finds nothing', async () => {
+    const search = new HybridSearch(pool, embedder);
+    const q = 'Rechnung Zzzxyzquark';
+    const strictOnly = await search.search(q, { limit: 5, mode: 'fts', ftsQuery: 'and' });
+    expect(strictOnly.length).toBeGreaterThan(0);
+  });
+
+  it('citation matching brings the named unit into the top results', async () => {
+    const search = new HybridSearch(pool, embedder);
+    const hits = await search.search('Was regelt § 14 Abs. 1 UStG?', {
+      limit: 3,
+      citationMatch: true,
+    });
+    const named = hits.find((h) => h.label === '§ 14 Abs. 1 UStG');
+    expect(named?.citationRank).toBe(1);
+    const without = await search.search('Was regelt § 14 Abs. 1 UStG?', { limit: 3 });
+    expect(without[0]?.citationRank).toBeUndefined();
+  });
+
+  it('citation matching adds nothing when the question names no citation', async () => {
+    const search = new HybridSearch(pool, embedder);
+    const a = await search.search('Wann ist eine Rechnung auszustellen?', { limit: 5 });
+    const b = await search.search('Wann ist eine Rechnung auszustellen?', {
+      limit: 5,
+      citationMatch: true,
+    });
+    expect(b.map((h) => h.chunkId)).toEqual(a.map((h) => h.chunkId));
+  });
 });

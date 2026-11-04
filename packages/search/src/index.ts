@@ -6,3 +6,5 @@ export * from './indexer.js';
 export * from './search.js';
 export * from './testing.js';
 export * from './reranker.js';
+export * from './bm25.js';
+export * from './citation.js';

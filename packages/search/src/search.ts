@@ -1,6 +1,8 @@
 import { Vocabulary, expandQueryTerms } from './compound.js';
 import { ensureEmbeddingTable, toVectorLiteral, type Pool } from './db.js';
 import type { Embedder } from './embedder.js';
+import { Bm25 } from './bm25.js';
+import { labelMatches, parseCitations } from './citation.js';
 import type { Reranker } from './reranker.js';
 
 export interface SearchHit {
@@ -16,7 +18,10 @@ export interface SearchHit {
   text: string;
   score: number;
   vectorRank: number | null;
+  /** Rank in the lexical list (full-text or BM25, whichever was used). */
   ftsRank: number | null;
+  /** Rank among chunks whose citation label the question names; only with `citationMatch`. */
+  citationRank?: number | null;
 }
 
 /** Which rankings are used: both merged (default), only vector similarity, or only full-text. */
@@ -42,6 +47,17 @@ export interface SearchOptions {
    * off by default. If every term would be dropped, the full query is kept.
    */
   ftsMaxDocShare?: number;
+  /** Which lexical ranking feeds the "fts" side: Postgres full-text (default) or BM25 computed in the application. */
+  lexical?: 'fts' | 'bm25';
+  /**
+   * With "and", the full-text query first requires every question word and falls back to the OR query when
+   * that finds nothing (default "or"). Only for the Postgres full-text ranking.
+   */
+  ftsQuery?: 'or' | 'and';
+  /** Adds the chunks whose citation label the question names (for example "§ 14 Abs. 1 UStG") as a third ranking. */
+  citationMatch?: boolean;
+  /** Weight of that ranking in the fusion (default 1). */
+  citationWeight?: number;
   /** Reorder the best candidates with the reranker given to the constructor; off by default. */
   rerank?: boolean;
   /** How many fused candidates the reranker sees. */
@@ -124,12 +140,10 @@ export class HybridSearch {
     const fts =
       terms.length === 0
         ? empty
-        : await this.pool.query<Row>(
-            `WITH q AS (SELECT to_tsquery('german', $1) AS query)
-             SELECT ${COLUMNS} FROM chunks c, q
-             WHERE c.fts @@ q.query ORDER BY ts_rank_cd(c.fts, q.query) DESC, c.id LIMIT $2`,
-            [terms.join(' | '), candidates],
-          );
+        : options.lexical === 'bm25'
+          ? await this.bm25Search(terms, candidates)
+          : await this.ftsSearch(terms, candidates, options.ftsQuery ?? 'or', question);
+    const citations = options.citationMatch ? await this.citationSearch(question) : empty;
 
     const rows = new Map<string, Row>();
     const vectorRank = new Map<string, number>();
@@ -142,13 +156,19 @@ export class HybridSearch {
       rows.set(r.id, r);
       ftsRank.set(r.id, i + 1);
     });
+    const citationRank = new Map<string, number>();
+    citations.rows.forEach((r, i) => {
+      rows.set(r.id, r);
+      citationRank.set(r.id, i + 1);
+    });
     const scores = rrfMerge(
       [
         [...vectorRank].map(([id, rank]) => ({ id, rank })),
         [...ftsRank].map(([id, rank]) => ({ id, rank })),
+        [...citationRank].map(([id, rank]) => ({ id, rank })),
       ],
       RRF_K,
-      [1, options.ftsWeight ?? DEFAULT_FTS_WEIGHT],
+      [1, options.ftsWeight ?? DEFAULT_FTS_WEIGHT, options.citationWeight ?? 1],
     );
 
     const fused = [...scores]
@@ -171,6 +191,7 @@ export class HybridSearch {
             score,
             vectorRank: vectorRank.get(id) ?? null,
             ftsRank: ftsRank.get(id) ?? null,
+            ...(options.citationMatch ? { citationRank: citationRank.get(id) ?? null } : {}),
           },
         ];
       });
@@ -186,6 +207,90 @@ export class HybridSearch {
       .sort((a, b) => b.score - a.score)
       .slice(0, limit)
       .map(({ hit, score }) => ({ ...hit, score }));
+  }
+
+  private async ftsSearch(
+    terms: string[],
+    candidates: number,
+    query: 'or' | 'and',
+    question: string,
+  ): Promise<{ rows: Row[] }> {
+    const sql = `SELECT ${COLUMNS} FROM chunks c, q
+             WHERE c.fts @@ q.query ORDER BY ts_rank_cd(c.fts, q.query) DESC, c.id LIMIT $2`;
+    if (query === 'and') {
+      const strict = await this.pool.query<Row>(
+        `WITH q AS (SELECT plainto_tsquery('german', $1) AS query) ${sql}`,
+        [question, candidates],
+      );
+      if (strict.rows.length > 0) return strict;
+    }
+    return this.pool.query<Row>(`WITH q AS (SELECT to_tsquery('german', $1) AS query) ${sql}`, [
+      terms.join(' | '),
+      candidates,
+    ]);
+  }
+
+  private bm25Index: Promise<Bm25> | undefined;
+
+  /** BM25 over the German-normalized terms of every chunk (title and text), built once per instance. */
+  private loadBm25(): Promise<Bm25> {
+    this.bm25Index ??= this.pool
+      .query<{ id: string; lexeme: string; tf: number }>(
+        `SELECT c.id, u.lexeme, coalesce(array_length(u.positions, 1), 1) AS tf
+         FROM chunks c,
+              LATERAL unnest(to_tsvector('german', coalesce(c.title, '') || ' ' || c.text)) AS u(lexeme, positions, weights)`,
+      )
+      .then((res) => {
+        const docs = new Map<string, Map<string, number>>();
+        for (const r of res.rows) {
+          const terms = docs.get(r.id) ?? new Map<string, number>();
+          terms.set(r.lexeme, r.tf);
+          docs.set(r.id, terms);
+        }
+        return new Bm25([...docs].map(([id, terms]) => ({ id, terms })));
+      });
+    return this.bm25Index;
+  }
+
+  private async bm25Search(terms: string[], candidates: number): Promise<{ rows: Row[] }> {
+    const lexemes = await this.pool.query<{ lexeme: string }>(
+      `SELECT lexeme FROM unnest(to_tsvector('german', $1)) AS u(lexeme, positions, weights)`,
+      [terms.join(' ')],
+    );
+    const ranked = (await this.loadBm25()).search(
+      lexemes.rows.map((r) => r.lexeme),
+      candidates,
+    );
+    if (ranked.length === 0) return { rows: [] };
+    const res = await this.pool.query<Row>(`SELECT ${COLUMNS} FROM chunks c WHERE c.id = ANY($1)`, [
+      ranked.map((r) => r.id),
+    ]);
+    const byId = new Map(res.rows.map((r) => [r.id, r]));
+    return {
+      rows: ranked.flatMap((r) => {
+        const row = byId.get(r.id);
+        return row ? [row] : [];
+      }),
+    };
+  }
+
+  /** Chunks whose label is one of the citations the question names, whole sections first limited to 10. */
+  private async citationSearch(question: string): Promise<{ rows: Row[] }> {
+    const refs = parseCitations(question);
+    if (refs.length === 0) return { rows: [] };
+    const found = new Map<string, Row>();
+    for (const ref of refs) {
+      const res = await this.pool.query<Row>(
+        `SELECT ${COLUMNS} FROM chunks c WHERE c.part = 1 AND c.label LIKE $1 ORDER BY c.id`,
+        [`§ ${ref.section} %`],
+      );
+      for (const r of res.rows) if (labelMatches(r.label, ref)) found.set(r.id, r);
+    }
+    // The Absatz itself before its Nummer sub-units, so a named Absatz is the first result.
+    const ordered = [...found.values()].sort(
+      (a, b) => Number(a.label.includes(' Nr. ')) - Number(b.label.includes(' Nr. ')),
+    );
+    return { rows: ordered.slice(0, 10) };
   }
 
   /** Removes terms found in more than `maxShare` of the chunks; keeps all terms if none would remain. */

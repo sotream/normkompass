@@ -54,6 +54,18 @@ const numberFlag = (name: string): number | undefined => {
 };
 const ftsWeight = numberFlag('--fts-weight');
 const ftsMaxDocShare = numberFlag('--fts-max-share');
+const lexicalRanking = (argValue('--lexical') ?? 'fts') as 'fts' | 'bm25';
+if (!['fts', 'bm25'].includes(lexicalRanking)) {
+  console.error('--lexical must be fts or bm25');
+  process.exit(1);
+}
+const ftsQuery = (argValue('--fts-query') ?? 'or') as 'or' | 'and';
+if (!['or', 'and'].includes(ftsQuery)) {
+  console.error('--fts-query must be or or and');
+  process.exit(1);
+}
+const citationMatch = process.argv.includes('--citation');
+const citationWeight = numberFlag('--citation-weight');
 
 const questionFile = argValue('--questions') ?? join('eval', 'questions.jsonl');
 const lexical = questionFile.includes('lexical');
@@ -93,7 +105,17 @@ try {
     new HybridSearch(pool, embedder, reranker),
     selectSplit(questions, split),
     10,
-    { mode, rerank, compoundSplitting, ftsWeight, ftsMaxDocShare },
+    {
+      mode,
+      rerank,
+      compoundSplitting,
+      ftsWeight,
+      ftsMaxDocShare,
+      lexical: lexicalRanking,
+      ftsQuery,
+      citationMatch,
+      citationWeight,
+    },
   );
   const cost = await readModelRecord(pool, embedder.model);
   const git = (...args: string[]): string =>
@@ -103,7 +125,7 @@ try {
   const date = new Date().toISOString().slice(0, 10);
 
   console.log(
-    `\nModel: ${embedder.model}   mode: ${mode}${rerank ? ' + rerank' : ''}${compoundSplitting ? '' : ' (no compound splitting)'}${ftsWeight === undefined ? '' : ` fts-weight ${ftsWeight}`}${ftsMaxDocShare === undefined ? '' : ` fts-max-share ${ftsMaxDocShare}`}   split: ${split}   commit: ${commit}${dirty ? ' (dirty)' : ''}   date: ${date}`,
+    `\nModel: ${embedder.model}   mode: ${mode}${rerank ? ' + rerank' : ''}${compoundSplitting ? '' : ' (no compound splitting)'}${ftsWeight === undefined ? '' : ` fts-weight ${ftsWeight}`}${ftsMaxDocShare === undefined ? '' : ` fts-max-share ${ftsMaxDocShare}`}${lexicalRanking === 'fts' ? '' : ` lexical ${lexicalRanking}`}${ftsQuery === 'or' ? '' : ` fts-query ${ftsQuery}`}${citationMatch ? ' citation' : ''}   split: ${split}   commit: ${commit}${dirty ? ' (dirty)' : ''}   date: ${date}`,
   );
   console.log(`Questions: ${metrics.questions}`);
   console.log(`recall@5: ${metrics.recallAt5.toFixed(3)}`);
@@ -123,6 +145,9 @@ try {
     compoundSplitting ? '' : '-nocompound',
     ftsWeight === undefined ? '' : `-w${ftsWeight}`,
     ftsMaxDocShare === undefined ? '' : `-share${ftsMaxDocShare}`,
+    lexicalRanking === 'fts' ? '' : `-${lexicalRanking}`,
+    ftsQuery === 'or' ? '' : `-q${ftsQuery}`,
+    citationMatch ? '-citation' : '',
     split === 'all' ? '' : `-${split}`,
     lexical ? '-lexical' : '',
   ].join('');
@@ -142,6 +167,10 @@ try {
         questionSet: lexical ? 'lexical' : 'paraphrase',
         ftsWeight: ftsWeight ?? null,
         ftsMaxDocShare: ftsMaxDocShare ?? null,
+        lexical: lexicalRanking,
+        ftsQuery,
+        citationMatch,
+        citationWeight: citationWeight ?? null,
         indexingSeconds: cost?.indexingSeconds ?? null,
         weightsBytes: cost?.weightsBytes ?? null,
         dimension: embedder.dimension,
