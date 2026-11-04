@@ -99,3 +99,15 @@ export function validateAgainstCorpus(
   }
   return errors;
 }
+
+export type Split = 'all' | 'dev' | 'heldout';
+
+/**
+ * Deterministic split of the questions for tuning: odd question numbers are the development part, even ones
+ * the held-out part. Parameters are chosen on the development part only.
+ */
+export function selectSplit(questions: Question[], split: Split): Question[] {
+  if (split === 'all') return questions;
+  const odd = (q: Question): boolean => Number(q.id.replace(/\D/g, '')) % 2 === 1;
+  return questions.filter((q) => (split === 'dev' ? odd(q) : !odd(q)));
+}

@@ -22,6 +22,12 @@ export interface SearchHit {
 /** Which rankings are used: both merged (default), only vector similarity, or only full-text. */
 export type SearchMode = 'hybrid' | 'vector' | 'fts';
 
+/**
+ * Vector-only is the default because on the project's eval no hybrid variant beat it (ADR 0003); "hybrid"
+ * (vector and full-text merged by weighted RRF) and "fts" remain available as explicit modes.
+ */
+export const DEFAULT_SEARCH_MODE: SearchMode = 'vector';
+
 export interface SearchOptions {
   limit?: number;
   /** Candidates taken from each of the two searches before merging. */
@@ -29,6 +35,13 @@ export interface SearchOptions {
   mode?: SearchMode;
   /** Split German compounds in the full-text query (default true); switch off to measure its effect. */
   compoundSplitting?: boolean;
+  /** Weight of the full-text ranking in the fusion relative to the vector ranking (default 1). */
+  ftsWeight?: number;
+  /**
+   * Drop query terms that occur in more than this share of all chunks (0 to 1) from the full-text query;
+   * off by default. If every term would be dropped, the full query is kept.
+   */
+  ftsMaxDocShare?: number;
   /** Reorder the best candidates with the reranker given to the constructor; off by default. */
   rerank?: boolean;
   /** How many fused candidates the reranker sees. */
@@ -40,14 +53,20 @@ export const DEFAULT_RERANK_DEPTH = 20;
 /** Reciprocal Rank Fusion constant. */
 export const RRF_K = 60;
 
+/** Weight of the full-text ranking relative to the vector ranking in the fusion. */
+export const DEFAULT_FTS_WEIGHT = 1;
+
+/** Weighted Reciprocal Rank Fusion; `weights[i]` scales list `i` (default 1 for every list). */
 export function rrfMerge(
   lists: { id: string; rank: number }[][],
   k: number = RRF_K,
+  weights: number[] = [],
 ): Map<string, number> {
   const scores = new Map<string, number>();
-  for (const list of lists) {
-    for (const { id, rank } of list) scores.set(id, (scores.get(id) ?? 0) + 1 / (k + rank));
-  }
+  lists.forEach((list, i) => {
+    const weight = weights[i] ?? 1;
+    for (const { id, rank } of list) scores.set(id, (scores.get(id) ?? 0) + weight / (k + rank));
+  });
   return scores;
 }
 
@@ -93,14 +112,15 @@ export class HybridSearch {
   async search(question: string, options: SearchOptions = {}): Promise<SearchHit[]> {
     const limit = options.limit ?? 5;
     const candidates = options.candidates ?? 50;
-    const mode = options.mode ?? 'hybrid';
+    const mode = options.mode ?? DEFAULT_SEARCH_MODE;
     if (options.rerank && !this.reranker)
       throw new Error('rerank requested but no reranker is configured');
     const empty = { rows: [] as Row[] };
 
     const vector = mode === 'fts' ? empty : await this.vectorSearch(question, candidates);
-    const terms =
+    const allTerms =
       mode === 'vector' ? [] : await this.queryTerms(question, options.compoundSplitting);
+    const terms = await this.dropCommonTerms(allTerms, options.ftsMaxDocShare);
     const fts =
       terms.length === 0
         ? empty
@@ -122,10 +142,14 @@ export class HybridSearch {
       rows.set(r.id, r);
       ftsRank.set(r.id, i + 1);
     });
-    const scores = rrfMerge([
-      [...vectorRank].map(([id, rank]) => ({ id, rank })),
-      [...ftsRank].map(([id, rank]) => ({ id, rank })),
-    ]);
+    const scores = rrfMerge(
+      [
+        [...vectorRank].map(([id, rank]) => ({ id, rank })),
+        [...ftsRank].map(([id, rank]) => ({ id, rank })),
+      ],
+      RRF_K,
+      [1, options.ftsWeight ?? DEFAULT_FTS_WEIGHT],
+    );
 
     const fused = [...scores]
       .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
@@ -162,6 +186,21 @@ export class HybridSearch {
       .sort((a, b) => b.score - a.score)
       .slice(0, limit)
       .map(({ hit, score }) => ({ ...hit, score }));
+  }
+
+  /** Removes terms found in more than `maxShare` of the chunks; keeps all terms if none would remain. */
+  private async dropCommonTerms(terms: string[], maxShare: number | undefined): Promise<string[]> {
+    if (maxShare === undefined || terms.length === 0) return terms;
+    const res = await this.pool.query<{ term: string; share: number }>(
+      `SELECT t AS term,
+              (SELECT count(*) FROM chunks c WHERE c.fts @@ plainto_tsquery('german', t))::float
+                / GREATEST((SELECT count(*) FROM chunks), 1) AS share
+       FROM unnest($1::text[]) AS t`,
+      [terms],
+    );
+    const common = new Set(res.rows.filter((r) => r.share > maxShare).map((r) => r.term));
+    const kept = terms.filter((t) => !common.has(t));
+    return kept.length > 0 ? kept : terms;
   }
 
   private async vectorSearch(question: string, candidates: number): Promise<{ rows: Row[] }> {

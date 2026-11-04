@@ -1,17 +1,20 @@
 {
   "date": "2026-11-03",
-  "commit": "90c020e",
+  "commit": "5c9212a",
   "dirty": false,
   "embedder": "multilingual-e5-small",
   "mode": "fts",
   "rerank": null,
   "compoundSplitting": true,
+  "split": "all",
+  "ftsWeight": null,
+  "ftsMaxDocShare": null,
   "indexingSeconds": 229,
   "weightsBytes": 118308185,
   "dimension": 384,
   "questions": 75,
-  "recallAt5": 0.6133333333333333,
-  "mrr": 0.3841216931216931,
+  "recallAt5": 0.6266666666666667,
+  "mrr": 0.39612169312169304,
   "perQuestion": [
     {
       "id": "q001",
@@ -40,8 +43,8 @@
     },
     {
       "id": "q006",
-      "firstHitRank": 10,
-      "recallAt5": 0
+      "firstHitRank": 1,
+      "recallAt5": 1
     },
     {
       "id": "q007",
