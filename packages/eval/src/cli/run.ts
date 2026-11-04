@@ -15,10 +15,12 @@ import {
 import { evaluateRetrieval } from '../evaluate.js';
 import {
   FULL_SET_LIMITS,
+  LEXICAL_SET_LIMITS,
   loadQuestions,
   selectSplit,
   type Split,
   validateAgainstCorpus,
+  validateLexical,
   validateStructure,
 } from '../questions.js';
 
@@ -53,7 +55,9 @@ const numberFlag = (name: string): number | undefined => {
 const ftsWeight = numberFlag('--fts-weight');
 const ftsMaxDocShare = numberFlag('--fts-max-share');
 
-const questions = await loadQuestions(join('eval', 'questions.jsonl'));
+const questionFile = argValue('--questions') ?? join('eval', 'questions.jsonl');
+const lexical = questionFile.includes('lexical');
+const questions = await loadQuestions(questionFile);
 const source = new GesetzeImInternetSource({
   cacheDir: join(process.cwd(), '.cache', 'gesetze-im-internet'),
 });
@@ -61,7 +65,8 @@ const units: CorpusUnit[] = [];
 for await (const doc of source.loadDocuments()) units.push(...source.split(doc).units);
 
 const problems = [
-  ...validateStructure(questions, FULL_SET_LIMITS),
+  ...validateStructure(questions, lexical ? LEXICAL_SET_LIMITS : FULL_SET_LIMITS),
+  ...(lexical ? validateLexical(questions, units) : []),
   ...validateAgainstCorpus(questions, units),
 ];
 if (problems.length > 0) {
@@ -119,6 +124,7 @@ try {
     ftsWeight === undefined ? '' : `-w${ftsWeight}`,
     ftsMaxDocShare === undefined ? '' : `-share${ftsMaxDocShare}`,
     split === 'all' ? '' : `-${split}`,
+    lexical ? '-lexical' : '',
   ].join('');
   const file = join('eval', 'results', `${date}-${embedder.model}${variant}.json`);
   await writeFile(
@@ -133,6 +139,7 @@ try {
         rerank: rerank ? reranker?.model : null,
         compoundSplitting,
         split,
+        questionSet: lexical ? 'lexical' : 'paraphrase',
         ftsWeight: ftsWeight ?? null,
         ftsMaxDocShare: ftsMaxDocShare ?? null,
         indexingSeconds: cost?.indexingSeconds ?? null,
