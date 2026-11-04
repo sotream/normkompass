@@ -4,3 +4,4 @@ export * from './evaluate.js';
 export * from './answer-metrics.js';
 export * from './evaluate-answers.js';
 export * from './compare.js';
+export * from './diagnose.js';
