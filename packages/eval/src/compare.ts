@@ -55,3 +55,29 @@ export function pairedBootstrap(
 /** Per-question reciprocal rank (first hit within the top 10) from a stored result file. */
 export const reciprocalRanks = (perQuestion: { firstHitRank: number | null }[]): number[] =>
   perQuestion.map((q) => (q.firstHitRank === null ? 0 : 1 / q.firstHitRank));
+
+/**
+ * 95% percentile bootstrap interval of the mean of per-question scores: how much the mean could move with a
+ * different draw of questions. Deterministic for the same input.
+ */
+export function bootstrapMeanInterval(
+  values: number[],
+  iterations = 10_000,
+  seed = 1,
+): { mean: number; lo: number; hi: number } {
+  if (values.length === 0) throw new Error('Cannot bootstrap an empty list of scores');
+  const n = values.length;
+  const rand = mulberry32(seed);
+  const means: number[] = [];
+  for (let it = 0; it < iterations; it++) {
+    let sum = 0;
+    for (let i = 0; i < n; i++) sum += values[Math.floor(rand() * n)] ?? 0;
+    means.push(sum / n);
+  }
+  means.sort((x, y) => x - y);
+  return {
+    mean: values.reduce((s, v) => s + v, 0) / n,
+    lo: means[Math.floor(0.025 * iterations)] ?? 0,
+    hi: means[Math.min(iterations - 1, Math.floor(0.975 * iterations))] ?? 0,
+  };
+}
