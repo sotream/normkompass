@@ -6,9 +6,9 @@
 
 ## 2. Related project
 
-- [ ] 2.1 After the MCP server repository exists and has merged its first implementation, add the "Related projects" section with a link and its real status
+- [x] 2.1 After the MCP server repository exists and has merged its first implementation, add the "Related projects" section with a link and its real status
 - [x] 2.2 Check every badge and link resolves
 
 ## 3. Wrap-up
 
-- [ ] 3.1 Run `openspec archive readme-navigation` and keep the Purpose sections filled
+- [x] 3.1 Run `openspec archive readme-navigation` and keep the Purpose sections filled

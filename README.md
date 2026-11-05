@@ -31,6 +31,7 @@ finished product; see "Honest limits".
 - [Quick start](#quick-start)
 - [Answer providers](#answer-providers)
 - [Bring your own corpus](#bring-your-own-corpus)
+- [Related projects](#related-projects)
 
 **How it works in detail**
 
@@ -287,6 +288,14 @@ EMBEDDER=local-e5 pnpm example "..."              # real embeddings
 
 It writes to its own Postgres schema, so it never mixes into the law index. The example documents are
 invented text, not a real policy. The Markdown source under `packages/corpus/test` stays a test fixture.
+
+## Related projects
+
+- **[normkompass-mcp](https://github.com/sotream/normkompass-mcp)**: a small MCP server in Python that offers
+  this service's search and cited answers to an AI agent as two tools, `search_law` and `ask_law`. It is a thin
+  client of the HTTP API described under "Quick start" and adds no retrieval of its own. Status: reference
+  implementation, version 0.1.0; it was run against this API with the MCP Python SDK's client on 2026-11-05, and
+  not yet in a desktop MCP client (see its README).
 
 ## Honest limits
 
