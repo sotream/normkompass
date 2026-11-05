@@ -33,6 +33,8 @@
     "eval:diagnose": "pnpm -r --filter @normkompass/corpus --filter @normkompass/search --filter @normkompass/answer --filter @normkompass/eval build && node packages/eval/dist/cli/diagnose.js",
     "eval:compare": "pnpm -r --filter @normkompass/corpus --filter @normkompass/search --filter @normkompass/answer --filter @normkompass/eval build && node packages/eval/dist/cli/compare.js",
     "eval:retrieval": "pnpm -r --filter @normkompass/corpus --filter @normkompass/search --filter @normkompass/answer --filter @normkompass/eval build && node packages/eval/dist/cli/run.js",
+    "charts": "pnpm -r --filter @normkompass/corpus --filter @normkompass/search --filter @normkompass/answer --filter @normkompass/eval build && node packages/eval/dist/cli/charts.js",
+    "charts:check": "pnpm -r --filter @normkompass/corpus --filter @normkompass/search --filter @normkompass/answer --filter @normkompass/eval build && node packages/eval/dist/cli/charts.js --check",
     "eval:validate": "pnpm -r --filter @normkompass/corpus --filter @normkompass/search --filter @normkompass/answer --filter @normkompass/eval build && node packages/eval/dist/cli/run.js --validate-only",
     "eval:answers": "pnpm -r --filter @normkompass/corpus --filter @normkompass/search --filter @normkompass/answer --filter @normkompass/eval build && node packages/eval/dist/cli/answers.js --yes"
   }

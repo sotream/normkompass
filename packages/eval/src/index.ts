@@ -5,3 +5,5 @@ export * from './answer-metrics.js';
 export * from './evaluate-answers.js';
 export * from './compare.js';
 export * from './diagnose.js';
+export * from './charts.js';
+export * from './chart-build.js';

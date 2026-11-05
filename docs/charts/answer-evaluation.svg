@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 457.0" width="640" role="img" aria-labelledby="title desc">
+  <title id="title">Answer evaluation: models other than Claude</title>
+  <desc id="desc">Citation validity, share of answerable questions answered, and refusal precision for three models on 89 questions (75 answerable, 14 not). One dot per run. Claude was not measured.</desc>
+  <style>
+  .bg{fill:#ffffff}
+  .t{fill:#1f2328;font:600 17px system-ui,sans-serif}
+  .l{fill:#1f2328;font:13px system-ui,sans-serif}
+  .lb{fill:#1f2328;font:600 13px system-ui,sans-serif}
+  .n{fill:#59636e;font:12px system-ui,sans-serif}
+  .axis{stroke:#d1d9e0;stroke-width:1}
+  .whisker{stroke:#1f2328;stroke-width:1.5}
+  .s0{fill:#2f6fb3}
+  .s1{fill:#c2691a}
+  .line{stroke:#8c959f;stroke-width:3;stroke-linecap:round}
+  @media (prefers-color-scheme: dark){
+    .bg{fill:#0d1117}
+    .t,.l,.lb{fill:#e6edf3}
+    .n{fill:#9198a1}
+    .axis{stroke:#3d444d}
+    .whisker{stroke:#e6edf3}
+    .s0{fill:#6aa8e8}
+    .s1{fill:#e7a35c}
+    .line{stroke:#6e7681}
+  }
+</style>
+  <rect class="bg" width="640" height="457.0" rx="8"/>
+  <text class="t" x="20" y="30">Answer evaluation: models other than Claude</text>
+  <text class="lb" x="20" y="70.0">gemini-3.5-flash-lite (hosted, free tier), 4 runs</text>
+  <text class="l" x="36" y="92.0">citation validity</text>
+  <line class="line" x1="485.1" y1="88.0" x2="494.0" y2="88.0"/>
+  <circle class="s0" cx="488.8" cy="88.0" r="4.5"/>
+  <circle class="s0" cx="485.1" cy="88.0" r="4.5"/>
+  <circle class="s0" cx="488.5" cy="88.0" r="4.5"/>
+  <circle class="s0" cx="494.0" cy="88.0" r="4.5"/>
+  <text class="l" x="506.0" y="92.0">0.940 to 0.976</text>
+  <text class="l" x="36" y="116.0">answerable questions answered</text>
+  <line class="line" x1="470.0" y1="112.0" x2="480.0" y2="112.0"/>
+  <circle class="s0" cx="476.7" cy="112.0" r="4.5"/>
+  <circle class="s0" cx="470.0" cy="112.0" r="4.5"/>
+  <circle class="s0" cx="476.7" cy="112.0" r="4.5"/>
+  <circle class="s0" cx="480.0" cy="112.0" r="4.5"/>
+  <text class="l" x="492.0" y="116.0">0.880 to 0.920</text>
+  <text class="l" x="36" y="140.0">refusal precision</text>
+  <line class="line" x1="402.2" y1="136.0" x2="425.0" y2="136.0"/>
+  <circle class="s0" cx="416.7" cy="136.0" r="4.5"/>
+  <circle class="s0" cx="402.2" cy="136.0" r="4.5"/>
+  <circle class="s0" cx="416.7" cy="136.0" r="4.5"/>
+  <circle class="s0" cx="425.0" cy="136.0" r="4.5"/>
+  <text class="l" x="437.0" y="140.0">0.609 to 0.700</text>
+  <text class="lb" x="20" y="172.0">gemini-3.1-flash-lite (hosted, free tier), 1 run</text>
+  <text class="l" x="36" y="194.0">citation validity</text>
+  <circle class="s0" cx="462.8" cy="190.0" r="4.5"/>
+  <text class="l" x="474.8" y="194.0">0.851</text>
+  <text class="l" x="36" y="218.0">answerable questions answered</text>
+  <circle class="s0" cx="446.7" cy="214.0" r="4.5"/>
+  <text class="l" x="458.7" y="218.0">0.787</text>
+  <text class="l" x="36" y="242.0">refusal precision</text>
+  <circle class="s0" cx="366.7" cy="238.0" r="4.5"/>
+  <text class="l" x="378.7" y="242.0">0.467</text>
+  <text class="lb" x="20" y="274.0">llama3.1:8b (local, Ollama), 1 run</text>
+  <text class="l" x="36" y="296.0">citation validity</text>
+  <circle class="s0" cx="371.5" cy="292.0" r="4.5"/>
+  <text class="l" x="383.5" y="296.0">0.486</text>
+  <text class="l" x="36" y="320.0">answerable questions answered</text>
+  <circle class="s0" cx="350.0" cy="316.0" r="4.5"/>
+  <text class="l" x="362.0" y="320.0">0.400</text>
+  <text class="l" x="36" y="344.0">refusal precision</text>
+  <circle class="s0" cx="309.3" cy="340.0" r="4.5"/>
+  <text class="l" x="321.3" y="344.0">0.237</text>
+  <line class="axis" x1="250.0" y1="52.0" x2="250.0" y2="356.0"/>
+  <text class="n" x="250.0" y="370.0" text-anchor="middle">0</text>
+  <line class="axis" x1="375.0" y1="52.0" x2="375.0" y2="356.0"/>
+  <text class="n" x="375.0" y="370.0" text-anchor="middle">0.5</text>
+  <line class="axis" x1="500.0" y1="52.0" x2="500.0" y2="356.0"/>
+  <text class="n" x="500.0" y="370.0" text-anchor="middle">1.0</text>
+  <text class="n" x="20" y="396.0">89 questions (75 answerable, 14 not) written by the project author. One dot per run.</text>
+  <text class="n" x="20" y="413.0">Not Claude: Claude has not been measured. Hosted models can change without notice,</text>
+  <text class="n" x="20" y="430.0">so these are data points for this corpus, not a ranking. Source: eval/results/answers-*.</text>
+</svg>

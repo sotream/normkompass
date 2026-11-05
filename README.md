@@ -15,6 +15,48 @@ comparison (ADR 0002), and answer generation with code-checked citations and ref
 product. See "Honest limits" for what is not known or not done, in particular that Claude itself has not
 been measured and that the default search is hybrid with BM25 and citation matching, chosen by a rule fixed before the runs (ADR 0004), after an earlier hybrid scored below vector-only (ADR 0003).
 
+## How it works
+
+```mermaid
+flowchart LR
+  subgraph offline ["Offline: ingest and index"]
+    law["gesetze-im-internet.de<br/>5 federal laws"] --> parse["Parse by structure<br/>§ → Absatz → Nummer"]
+    parse --> chunks["Chunks with citation label,<br/>title and Stand"]
+    chunks --> db[("Postgres<br/>pgvector + full text")]
+  end
+  subgraph online ["Online: POST /ask"]
+    q["Question"] --> search["Hybrid search<br/>vector + BM25 + citation matching"]
+    db -.-> search
+    search --> model["Answer model<br/>Claude, Ollama or OpenAI-compatible"]
+    model --> check{"Code check:<br/>is every quote a verbatim<br/>substring of a retrieved chunk?"}
+    check -- "all citations verify" --> ok["Answer + citations<br/>(source, path, URL, quote) + Stand"]
+    check -- "any citation fails" --> refuse["Refusal"]
+    search -- "nothing retrieved" --> refuse
+    model -- "declines, bad output or error" --> refuse
+  end
+```
+
+The model proposes an answer with quotes; the code, not the model, decides whether it is shown. One failed
+citation turns the whole answer into a refusal. A worked example with a real answer and a real refusal is in
+[docs/worked-example.md](docs/worked-example.md).
+
+## Results at a glance
+
+| What was measured                                                          | Result                                                                                 |
+| -------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| Default search on 75 paraphrase questions                                  | recall@5 0.960, MRR 0.900, not significantly different from vector-only (0.960, 0.889) |
+| Default search on 28 lexical questions (written to favor it)               | recall@5 0.857, MRR 0.720, against 0.679 and 0.536 for vector-only                     |
+| Citation validity of a free hosted model (`gemini-3.5-flash-lite`, 4 runs) | 0.940 to 0.976; **Claude has not been measured**                                       |
+
+Every figure comes from a recorded run in [`eval/results/`](eval/results); the charts below are generated from those
+files and checked in CI. The questions were written by the project author and the sets are small, so read the
+whiskers (95% bootstrap intervals), not only the bars. Full tables are in "Retrieval results" and "Answer
+evaluation".
+
+![Retrieval on paraphrase questions](docs/charts/retrieval-paraphrase.svg)
+
+![Retrieval on lexical questions](docs/charts/retrieval-lexical.svg)
+
 ## How this was built
 
 The code, specs and documents in this repository were written by Claude (Anthropic's model, used through
@@ -56,6 +98,7 @@ pnpm build && pnpm lint && pnpm typecheck && pnpm test
 pnpm ingest            # downloads the demo laws into .cache/ and prints a per-law summary
 pnpm index             # embeds all units and stores them in Postgres (first run: model download, ~8 min)
 pnpm eval              # same as pnpm eval:retrieval: recall@5 and MRR over eval/questions.jsonl; writes eval/results/
+pnpm charts            # redraws docs/charts/*.svg from eval/results/ (pnpm charts:check verifies them)
 ```
 
 The API (`apps/api`) exposes `GET /health`, `POST /search` with `{"question": "...", "limit": 5}` (ranked
@@ -114,7 +157,10 @@ A returned unit counts as a hit if it is the expected unit or its parent Absatz 
 fraction of expected units hit in the top 5, MRR uses the first hit within the top 10. The 14
 unanswerable questions are not used for these two metrics; refusal is evaluated with answer generation.
 
-Paraphrase questions (`eval/questions.jsonl`, 75 answerable):
+![Embedding models in the same search](docs/charts/embedding-models.svg)
+
+<details>
+<summary>Table: paraphrase questions (<code>eval/questions.jsonl</code>, 75 answerable)</summary>
 
 | Date       | Commit    | Embedding model       | Search                                              | recall@5 | MRR   | Index time | Weights |
 | ---------- | --------- | --------------------- | --------------------------------------------------- | -------- | ----- | ---------- | ------- |
@@ -128,8 +174,12 @@ Paraphrase questions (`eval/questions.jsonl`, 75 answerable):
 | 2026-11-03 | `5c9212a` | bge-m3                | hybrid with Postgres full-text                      | 0.893    | 0.746 | 16719 s    | 570 MB  |
 | 2026-11-03 | `4a0f7f6` | multilingual-e5-small | vector + reranker (bge-reranker-v2-m3, top 20)      | 0.987    | 0.958 | 229 s      | 118 MB  |
 
-Lexical questions (`eval/lexical-questions.jsonl`, 28 answerable: 10 exact terms, 9 numbers, 9 citation lookups),
-written to favor lexical matching and reported separately; they are not averaged with the table above:
+</details>
+
+<details>
+<summary>Table: lexical questions (<code>eval/lexical-questions.jsonl</code>, 28 answerable: 10 exact terms, 9 numbers, 9 citation lookups)</summary>
+
+Written to favor lexical matching and reported separately; they are not averaged with the table above.
 
 | Date       | Commit    | Search                                              | recall@5 | MRR   |
 | ---------- | --------- | --------------------------------------------------- | -------- | ----- |
@@ -138,6 +188,8 @@ written to favor lexical matching and reported separately; they are not averaged
 | 2026-11-04 | `9d9d041` | hybrid: vector + BM25, no citation matching         | 0.607    | 0.538 |
 | 2026-11-04 | `9d9d041` | hybrid: vector + Postgres full-text (older default) | 0.714    | 0.647 |
 | 2026-11-04 | `fa54502` | Postgres full-text only                             | 0.536    | 0.428 |
+
+</details>
 
 How to read these (details and paired bootstrap intervals in [ADR 0002](docs/adr/0002-embeddings-and-reranker.md),
 [ADR 0003](docs/adr/0003-hybrid-tuning-and-default-mode.md) and [ADR 0004](docs/adr/0004-lexical-retrieval.md)):
@@ -281,11 +333,18 @@ it is free but takes a while.
 
 ### Results: other models (not Claude)
 
+![Answer evaluation for models other than Claude](docs/charts/answer-evaluation.svg)
+
+<details>
+<summary>Table: answer evaluation runs</summary>
+
 | Date       | Commit               | Answer model                                                                          | Embedder              | Citation validity | Cites expected norm             | Refusal precision | Refusal recall |
 | ---------- | -------------------- | ------------------------------------------------------------------------------------- | --------------------- | ----------------- | ------------------------------- | ----------------- | -------------- |
 | 2026-11-02 | `abef35d` (see note) | ollama `llama3.1:8b`                                                                  | multilingual-e5-small | 0.486 (69/142)    | 0.867 (of 30 answered)          | 0.237             | 1.000          |
 | 2026-11-02 | `7971384`            | openai-compatible `gemini-3.5-flash-lite` @ generativelanguage.googleapis.com, 4 runs | multilingual-e5-small | 0.940–0.976       | 0.956–0.971 (of 66–69 answered) | 0.609–0.700       | 1.000          |
 | 2026-11-02 | `7971384`            | openai-compatible `gemini-3.1-flash-lite` @ generativelanguage.googleapis.com, 1 run  | multilingual-e5-small | 0.851 (80/94)     | 0.966 (of 59 answered)          | 0.467             | 1.000          |
+
+</details>
 
 None of these rows is Claude. The first is a small local model run on a laptop. Reading its numbers plainly: the
 pipeline never accepted a bad citation, but the model is a poor fit for the task. Of the 75 answerable questions

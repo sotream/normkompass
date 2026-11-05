@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 407.0" width="640" role="img" aria-labelledby="title desc">
+  <title id="title">Retrieval on lexical questions</title>
+  <desc id="desc">Recall@5 and MRR of five search variants on 28 questions about exact terms, numbers and citation labels. The set favors lexical matching by construction and is not averaged with the paraphrase set.</desc>
+  <style>
+  .bg{fill:#ffffff}
+  .t{fill:#1f2328;font:600 17px system-ui,sans-serif}
+  .l{fill:#1f2328;font:13px system-ui,sans-serif}
+  .lb{fill:#1f2328;font:600 13px system-ui,sans-serif}
+  .n{fill:#59636e;font:12px system-ui,sans-serif}
+  .axis{stroke:#d1d9e0;stroke-width:1}
+  .whisker{stroke:#1f2328;stroke-width:1.5}
+  .s0{fill:#2f6fb3}
+  .s1{fill:#c2691a}
+  .line{stroke:#8c959f;stroke-width:3;stroke-linecap:round}
+  @media (prefers-color-scheme: dark){
+    .bg{fill:#0d1117}
+    .t,.l,.lb{fill:#e6edf3}
+    .n{fill:#9198a1}
+    .axis{stroke:#3d444d}
+    .whisker{stroke:#e6edf3}
+    .s0{fill:#6aa8e8}
+    .s1{fill:#e7a35c}
+    .line{stroke:#6e7681}
+  }
+</style>
+  <rect class="bg" width="640" height="407.0" rx="8"/>
+  <text class="t" x="20" y="30">Retrieval on lexical questions</text>
+  <rect class="s0" x="20.0" y="46" width="12" height="12" rx="2"/>
+  <text class="l" x="38.0" y="57">recall@5</text>
+  <rect class="s1" x="170.0" y="46" width="12" height="12" rx="2"/>
+  <text class="l" x="188.0" y="57">MRR</text>
+  <text class="lb" x="20" y="90.0">hybrid: vector + BM25</text>
+  <text class="lb" x="20" y="106.0">+ citations (default)</text>
+  <rect class="s0" x="250.0" y="78.0" width="257.1" height="13" rx="2"/>
+  <line class="whisker" x1="464.3" y1="84.5" x2="539.3" y2="84.5"/>
+  <line class="whisker" x1="464.3" y1="80.5" x2="464.3" y2="88.5"/>
+  <line class="whisker" x1="539.3" y1="80.5" x2="539.3" y2="88.5"/>
+  <text class="l" x="551.3" y="89.0">0.857</text>
+  <rect class="s1" x="250.0" y="94.0" width="216.1" height="13" rx="2"/>
+  <line class="whisker" x1="428.0" y1="100.5" x2="503.6" y2="100.5"/>
+  <line class="whisker" x1="428.0" y1="96.5" x2="428.0" y2="104.5"/>
+  <line class="whisker" x1="503.6" y1="96.5" x2="503.6" y2="104.5"/>
+  <text class="l" x="515.6" y="105.0">0.720</text>
+  <text class="l" x="20" y="136.0">vector only</text>
+  <rect class="s0" x="250.0" y="124.0" width="203.6" height="13" rx="2"/>
+  <line class="whisker" x1="400.0" y1="130.5" x2="507.1" y2="130.5"/>
+  <line class="whisker" x1="400.0" y1="126.5" x2="400.0" y2="134.5"/>
+  <line class="whisker" x1="507.1" y1="126.5" x2="507.1" y2="134.5"/>
+  <text class="l" x="519.1" y="135.0">0.679</text>
+  <rect class="s1" x="250.0" y="140.0" width="160.7" height="13" rx="2"/>
+  <line class="whisker" x1="364.0" y1="146.5" x2="458.0" y2="146.5"/>
+  <line class="whisker" x1="364.0" y1="142.5" x2="364.0" y2="150.5"/>
+  <line class="whisker" x1="458.0" y1="142.5" x2="458.0" y2="150.5"/>
+  <text class="l" x="470.0" y="151.0">0.536</text>
+  <text class="l" x="20" y="182.0">hybrid: vector + BM25,</text>
+  <text class="l" x="20" y="198.0">no citation matching</text>
+  <rect class="s0" x="250.0" y="170.0" width="182.1" height="13" rx="2"/>
+  <line class="whisker" x1="378.6" y1="176.5" x2="485.7" y2="176.5"/>
+  <line class="whisker" x1="378.6" y1="172.5" x2="378.6" y2="180.5"/>
+  <line class="whisker" x1="485.7" y1="172.5" x2="485.7" y2="180.5"/>
+  <text class="l" x="497.7" y="181.0">0.607</text>
+  <rect class="s1" x="250.0" y="186.0" width="161.4" height="13" rx="2"/>
+  <line class="whisker" x1="364.5" y1="192.5" x2="460.1" y2="192.5"/>
+  <line class="whisker" x1="364.5" y1="188.5" x2="364.5" y2="196.5"/>
+  <line class="whisker" x1="460.1" y1="188.5" x2="460.1" y2="196.5"/>
+  <text class="l" x="472.1" y="197.0">0.538</text>
+  <text class="l" x="20" y="228.0">hybrid: vector + Postgres</text>
+  <text class="l" x="20" y="244.0">full-text (older default)</text>
+  <rect class="s0" x="250.0" y="216.0" width="214.3" height="13" rx="2"/>
+  <line class="whisker" x1="410.7" y1="222.5" x2="507.1" y2="222.5"/>
+  <line class="whisker" x1="410.7" y1="218.5" x2="410.7" y2="226.5"/>
+  <line class="whisker" x1="507.1" y1="218.5" x2="507.1" y2="226.5"/>
+  <text class="l" x="519.1" y="227.0">0.714</text>
+  <rect class="s1" x="250.0" y="232.0" width="194.1" height="13" rx="2"/>
+  <line class="whisker" x1="395.4" y1="238.5" x2="490.8" y2="238.5"/>
+  <line class="whisker" x1="395.4" y1="234.5" x2="395.4" y2="242.5"/>
+  <line class="whisker" x1="490.8" y1="234.5" x2="490.8" y2="242.5"/>
+  <text class="l" x="502.8" y="243.0">0.647</text>
+  <text class="l" x="20" y="274.0">Postgres full-text only</text>
+  <rect class="s0" x="250.0" y="262.0" width="160.7" height="13" rx="2"/>
+  <line class="whisker" x1="357.1" y1="268.5" x2="464.3" y2="268.5"/>
+  <line class="whisker" x1="357.1" y1="264.5" x2="357.1" y2="272.5"/>
+  <line class="whisker" x1="464.3" y1="264.5" x2="464.3" y2="272.5"/>
+  <text class="l" x="476.3" y="273.0">0.536</text>
+  <rect class="s1" x="250.0" y="278.0" width="128.5" height="13" rx="2"/>
+  <line class="whisker" x1="331.7" y1="284.5" x2="426.8" y2="284.5"/>
+  <line class="whisker" x1="331.7" y1="280.5" x2="331.7" y2="288.5"/>
+  <line class="whisker" x1="426.8" y1="280.5" x2="426.8" y2="288.5"/>
+  <text class="l" x="438.8" y="289.0">0.428</text>
+  <line class="axis" x1="250.0" y1="72.0" x2="250.0" y2="308.0"/>
+  <line class="axis" x1="400.0" y1="72.0" x2="400.0" y2="308.0"/>
+  <line class="axis" x1="550.0" y1="72.0" x2="550.0" y2="308.0"/>
+  <text class="n" x="250.0" y="322.0" text-anchor="middle">0</text>
+  <text class="n" x="400.0" y="322.0" text-anchor="middle">0.5</text>
+  <text class="n" x="550.0" y="322.0" text-anchor="middle">1.0</text>
+  <text class="n" x="20" y="346.0">28 questions written to favor lexical matching, by the project author.</text>
+  <text class="n" x="20" y="363.0">Shown separately from the paraphrase set; it says the machinery works for quoted</text>
+  <text class="n" x="20" y="380.0">references, not how real users ask. Whiskers: 95% bootstrap interval. Source: eval/results/.</text>
+</svg>
