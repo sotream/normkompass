@@ -1,11 +1,53 @@
-# normkompass
+<h1 align="center">Normkompass</h1>
 
-RAG with verifiable citations for regulated documents (TypeScript).
-Demo corpus: German federal law (gesetze-im-internet.de).
+<p align="center"><b>RAG with verifiable citations for German federal law.</b><br>
+Every answer points to the exact passage, for example "§ 14 Abs. 1 UStG". If the corpus does not support an
+answer, the service refuses instead of guessing.</p>
 
-The goal: answer questions over a document set and always point to the exact
-passage (for example "§ 14 Abs. 1 UStG"). If the corpus does not support an
-answer, the service refuses instead of guessing.
+<p align="center">
+  <a href="https://github.com/sotream/normkompass/actions/workflows/ci.yml"><img alt="CI status of the main branch" src="https://github.com/sotream/normkompass/actions/workflows/ci.yml/badge.svg?branch=main"></a>
+  <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-blue"></a>
+  <img alt="Language: TypeScript, strict mode" src="https://img.shields.io/badge/TypeScript-strict-3178c6">
+  <img alt="Requires Node 24 or newer" src="https://img.shields.io/badge/node-%3E%3D24-339933">
+  <img alt="Database: Postgres with pgvector" src="https://img.shields.io/badge/Postgres-pgvector-336791">
+  <img alt="Specifications written with OpenSpec" src="https://img.shields.io/badge/specs-OpenSpec-6e40c9">
+</p>
+
+The demo corpus is German federal law from gesetze-im-internet.de. This is a reference implementation, not a
+finished product; see "Honest limits".
+
+## Contents
+
+**Overview**
+
+- [Status](#status)
+- [How it works](#how-it-works)
+- [Results at a glance](#results-at-a-glance)
+- [How this was built](#how-this-was-built)
+- [Not legal advice](#not-legal-advice)
+
+**Use it**
+
+- [Quick start](#quick-start)
+- [Answer providers](#answer-providers)
+- [Bring your own corpus](#bring-your-own-corpus)
+
+**How it works in detail**
+
+- [Corpus model](#corpus-model)
+- [Search](#search)
+- [Answers and citations](#answers-and-citations)
+- [Process](#process)
+
+**Results and limits**
+
+- [Retrieval results](#retrieval-results)
+- [Answer evaluation](#answer-evaluation)
+- [Honest limits](#honest-limits)
+
+**Project**
+
+- [License](#license)
 
 ## Status
 
