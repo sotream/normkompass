@@ -3,7 +3,7 @@ import { defineConfig, globalIgnores } from 'eslint/config';
 import tseslint from 'typescript-eslint';
 
 export default defineConfig(
-  globalIgnores(['**/dist/**', '**/node_modules/**', '.cache/**', 'openspec/**']),
+  globalIgnores(['site/**', '**/dist/**', '**/node_modules/**', '.cache/**', 'openspec/**']),
 
   js.configs.recommended,
 
@@ -33,7 +33,12 @@ export default defineConfig(
 
   // Command-line entry points print to the console by design.
   {
-    files: ['**/src/cli/**/*.ts', 'packages/eval/src/**/run*.ts', 'examples/**/src/run.ts'],
+    files: [
+      '**/src/cli/**/*.ts',
+      'packages/site/src/cli.ts',
+      'packages/eval/src/**/run*.ts',
+      'examples/**/src/run.ts',
+    ],
     rules: { 'no-console': 'off' },
   },
 
