@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 457.0" width="640" role="img" aria-labelledby="title desc">
-  <title id="title">Answer evaluation: models other than Claude</title>
-  <desc id="desc">Citation validity, share of answerable questions answered, and refusal precision for three models on 89 questions (75 answerable, 14 not). One dot per run. Claude was not measured.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 661.0" width="640" role="img" aria-labelledby="title desc">
+  <title id="title">Answer evaluation: five models</title>
+  <desc id="desc">Citation validity, share of answerable questions answered, and refusal precision for five models on 89 questions (75 answerable, 14 not). One dot per run; Claude Opus 5.5 and Sonnet 5.5 have one run each. Not a ranking.</desc>
   <style>
   .bg{fill:#ffffff}
   .t{fill:#1f2328;font:600 17px system-ui,sans-serif}
@@ -23,8 +23,8 @@
     .line{stroke:#6e7681}
   }
 </style>
-  <rect class="bg" width="640" height="457.0" rx="8"/>
-  <text class="t" x="20" y="30">Answer evaluation: models other than Claude</text>
+  <rect class="bg" width="640" height="661.0" rx="8"/>
+  <text class="t" x="20" y="30">Answer evaluation: five models</text>
   <text class="lb" x="20" y="70.0">gemini-3.5-flash-lite (hosted, free tier), 4 runs</text>
   <text class="l" x="36" y="92.0">citation validity</text>
   <line class="line" x1="485.1" y1="88.0" x2="494.0" y2="88.0"/>
@@ -67,13 +67,33 @@
   <text class="l" x="36" y="344.0">refusal precision</text>
   <circle class="s0" cx="309.3" cy="340.0" r="4.5"/>
   <text class="l" x="321.3" y="344.0">0.237</text>
-  <line class="axis" x1="250.0" y1="52.0" x2="250.0" y2="356.0"/>
-  <text class="n" x="250.0" y="370.0" text-anchor="middle">0</text>
-  <line class="axis" x1="375.0" y1="52.0" x2="375.0" y2="356.0"/>
-  <text class="n" x="375.0" y="370.0" text-anchor="middle">0.5</text>
-  <line class="axis" x1="500.0" y1="52.0" x2="500.0" y2="356.0"/>
-  <text class="n" x="500.0" y="370.0" text-anchor="middle">1.0</text>
-  <text class="n" x="20" y="396.0">89 questions (75 answerable, 14 not) written by the project author. One dot per run.</text>
-  <text class="n" x="20" y="413.0">Not Claude: Claude has not been measured. Hosted models can change without notice,</text>
-  <text class="n" x="20" y="430.0">so these are data points for this corpus, not a ranking. Source: eval/results/answers-*.</text>
+  <text class="lb" x="20" y="376.0">claude-opus-5-5 (Anthropic API), 1 run</text>
+  <text class="l" x="36" y="398.0">citation validity</text>
+  <circle class="s0" cx="500.0" cy="394.0" r="4.5"/>
+  <text class="l" x="512.0" y="398.0">1.000</text>
+  <text class="l" x="36" y="422.0">answerable questions answered</text>
+  <circle class="s0" cx="490.0" cy="418.0" r="4.5"/>
+  <text class="l" x="502.0" y="422.0">0.960</text>
+  <text class="l" x="36" y="446.0">refusal precision</text>
+  <circle class="s0" cx="455.9" cy="442.0" r="4.5"/>
+  <text class="l" x="467.9" y="446.0">0.824</text>
+  <text class="lb" x="20" y="478.0">claude-sonnet-5-5 (Anthropic API), 1 run</text>
+  <text class="l" x="36" y="500.0">citation validity</text>
+  <circle class="s0" cx="500.0" cy="496.0" r="4.5"/>
+  <text class="l" x="512.0" y="500.0">1.000</text>
+  <text class="l" x="36" y="524.0">answerable questions answered</text>
+  <circle class="s0" cx="490.0" cy="520.0" r="4.5"/>
+  <text class="l" x="502.0" y="524.0">0.960</text>
+  <text class="l" x="36" y="548.0">refusal precision</text>
+  <circle class="s0" cx="455.9" cy="544.0" r="4.5"/>
+  <text class="l" x="467.9" y="548.0">0.824</text>
+  <line class="axis" x1="250.0" y1="52.0" x2="250.0" y2="560.0"/>
+  <text class="n" x="250.0" y="574.0" text-anchor="middle">0</text>
+  <line class="axis" x1="375.0" y1="52.0" x2="375.0" y2="560.0"/>
+  <text class="n" x="375.0" y="574.0" text-anchor="middle">0.5</text>
+  <line class="axis" x1="500.0" y1="52.0" x2="500.0" y2="560.0"/>
+  <text class="n" x="500.0" y="574.0" text-anchor="middle">1.0</text>
+  <text class="n" x="20" y="600.0">89 questions (75 answerable, 14 not) written by the project author. One dot per run.</text>
+  <text class="n" x="20" y="617.0">One run per Claude model shows no spread; hosted models can change without notice,</text>
+  <text class="n" x="20" y="634.0">so these are data points for this corpus, not a ranking. Source: eval/results/answers-*.</text>
 </svg>

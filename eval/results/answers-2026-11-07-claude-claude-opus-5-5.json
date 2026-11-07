@@ -1,0 +1,738 @@
+{
+  "date": "2026-11-07",
+  "commit": "327de90",
+  "dirty": false,
+  "answerProvider": "claude",
+  "answerModel": "claude-opus-5-5",
+  "answerHost": null,
+  "embedder": "multilingual-e5-small",
+  "metrics": {
+    "questions": 89,
+    "answerable": 75,
+    "unanswerable": 14,
+    "proposedCitations": 241,
+    "validCitations": 241,
+    "citationValidity": 1,
+    "answeredAnswerable": 72,
+    "citesExpected": 0.9861111111111112,
+    "truePositives": 14,
+    "falsePositives": 3,
+    "falseNegatives": 0,
+    "refusalPrecision": 0.8235294117647058,
+    "refusalRecall": 1
+  },
+  "perQuestion": [
+    {
+      "id": "q001",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 4,
+      "validCitations": 4
+    },
+    {
+      "id": "q002",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 2,
+      "validCitations": 2
+    },
+    {
+      "id": "q003",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 4,
+      "validCitations": 4
+    },
+    {
+      "id": "q004",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 1,
+      "validCitations": 1
+    },
+    {
+      "id": "q005",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 7,
+      "validCitations": 7
+    },
+    {
+      "id": "q006",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 1,
+      "validCitations": 1
+    },
+    {
+      "id": "q007",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 1,
+      "validCitations": 1
+    },
+    {
+      "id": "q008",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 3,
+      "validCitations": 3
+    },
+    {
+      "id": "q009",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 2,
+      "validCitations": 2
+    },
+    {
+      "id": "q010",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 3,
+      "validCitations": 3
+    },
+    {
+      "id": "q011",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 2,
+      "validCitations": 2
+    },
+    {
+      "id": "q012",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 1,
+      "validCitations": 1
+    },
+    {
+      "id": "q013",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 4,
+      "validCitations": 4
+    },
+    {
+      "id": "q014",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 2,
+      "validCitations": 2
+    },
+    {
+      "id": "q015",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 1,
+      "validCitations": 1
+    },
+    {
+      "id": "q016",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 3,
+      "validCitations": 3
+    },
+    {
+      "id": "q017",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 7,
+      "validCitations": 7
+    },
+    {
+      "id": "q018",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 2,
+      "validCitations": 2
+    },
+    {
+      "id": "q019",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 7,
+      "validCitations": 7
+    },
+    {
+      "id": "q020",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 6,
+      "validCitations": 6
+    },
+    {
+      "id": "q021",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 4,
+      "validCitations": 4
+    },
+    {
+      "id": "q022",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 3,
+      "validCitations": 3
+    },
+    {
+      "id": "q023",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 7,
+      "validCitations": 7
+    },
+    {
+      "id": "q024",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 7,
+      "validCitations": 7
+    },
+    {
+      "id": "q025",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 6,
+      "validCitations": 6
+    },
+    {
+      "id": "q026",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 4,
+      "validCitations": 4
+    },
+    {
+      "id": "q027",
+      "answerable": true,
+      "refused": true,
+      "reason": "model-refused",
+      "proposedCitations": 0,
+      "validCitations": 0
+    },
+    {
+      "id": "q028",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 2,
+      "validCitations": 2
+    },
+    {
+      "id": "q029",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 7,
+      "validCitations": 7
+    },
+    {
+      "id": "q030",
+      "answerable": true,
+      "refused": true,
+      "reason": "model-refused",
+      "proposedCitations": 0,
+      "validCitations": 0
+    },
+    {
+      "id": "q031",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 1,
+      "validCitations": 1
+    },
+    {
+      "id": "q032",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 2,
+      "validCitations": 2
+    },
+    {
+      "id": "q033",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 1,
+      "validCitations": 1
+    },
+    {
+      "id": "q034",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 3,
+      "validCitations": 3
+    },
+    {
+      "id": "q035",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 5,
+      "validCitations": 5
+    },
+    {
+      "id": "q036",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 2,
+      "validCitations": 2
+    },
+    {
+      "id": "q037",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 4,
+      "validCitations": 4
+    },
+    {
+      "id": "q038",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 3,
+      "validCitations": 3
+    },
+    {
+      "id": "q039",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 2,
+      "validCitations": 2
+    },
+    {
+      "id": "q040",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 4,
+      "validCitations": 4
+    },
+    {
+      "id": "q041",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 4,
+      "validCitations": 4
+    },
+    {
+      "id": "q042",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 6,
+      "validCitations": 6
+    },
+    {
+      "id": "q043",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 2,
+      "validCitations": 2
+    },
+    {
+      "id": "q044",
+      "answerable": true,
+      "refused": true,
+      "reason": "model-refused",
+      "proposedCitations": 0,
+      "validCitations": 0
+    },
+    {
+      "id": "q045",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 5,
+      "validCitations": 5
+    },
+    {
+      "id": "q046",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 3,
+      "validCitations": 3
+    },
+    {
+      "id": "q047",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 3,
+      "validCitations": 3
+    },
+    {
+      "id": "q048",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 2,
+      "validCitations": 2
+    },
+    {
+      "id": "q049",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 3,
+      "validCitations": 3
+    },
+    {
+      "id": "q050",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 2,
+      "validCitations": 2
+    },
+    {
+      "id": "q051",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 3,
+      "validCitations": 3
+    },
+    {
+      "id": "q052",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 8,
+      "validCitations": 8
+    },
+    {
+      "id": "q053",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 3,
+      "validCitations": 3
+    },
+    {
+      "id": "q054",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 2,
+      "validCitations": 2
+    },
+    {
+      "id": "q055",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 2,
+      "validCitations": 2
+    },
+    {
+      "id": "q056",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 3,
+      "validCitations": 3
+    },
+    {
+      "id": "q057",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 4,
+      "validCitations": 4
+    },
+    {
+      "id": "q058",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 1,
+      "validCitations": 1
+    },
+    {
+      "id": "q059",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 5,
+      "validCitations": 5
+    },
+    {
+      "id": "q060",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 3,
+      "validCitations": 3
+    },
+    {
+      "id": "q061",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 3,
+      "validCitations": 3
+    },
+    {
+      "id": "q062",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 2,
+      "validCitations": 2
+    },
+    {
+      "id": "q063",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 3,
+      "validCitations": 3
+    },
+    {
+      "id": "q064",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 3,
+      "validCitations": 3
+    },
+    {
+      "id": "q065",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 1,
+      "validCitations": 1
+    },
+    {
+      "id": "q066",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 7,
+      "validCitations": 7
+    },
+    {
+      "id": "q067",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 3,
+      "validCitations": 3
+    },
+    {
+      "id": "q068",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 4,
+      "validCitations": 4
+    },
+    {
+      "id": "q069",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 2,
+      "validCitations": 2
+    },
+    {
+      "id": "q070",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 4,
+      "validCitations": 4
+    },
+    {
+      "id": "q071",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 2,
+      "validCitations": 2
+    },
+    {
+      "id": "q072",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 5,
+      "validCitations": 5
+    },
+    {
+      "id": "q073",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 4,
+      "validCitations": 4
+    },
+    {
+      "id": "q074",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 2,
+      "validCitations": 2
+    },
+    {
+      "id": "q075",
+      "answerable": true,
+      "refused": false,
+      "reason": null,
+      "proposedCitations": 2,
+      "validCitations": 2
+    },
+    {
+      "id": "q076",
+      "answerable": false,
+      "refused": true,
+      "reason": "model-refused",
+      "proposedCitations": 0,
+      "validCitations": 0
+    },
+    {
+      "id": "q077",
+      "answerable": false,
+      "refused": true,
+      "reason": "model-refused",
+      "proposedCitations": 0,
+      "validCitations": 0
+    },
+    {
+      "id": "q078",
+      "answerable": false,
+      "refused": true,
+      "reason": "model-refused",
+      "proposedCitations": 0,
+      "validCitations": 0
+    },
+    {
+      "id": "q079",
+      "answerable": false,
+      "refused": true,
+      "reason": "model-refused",
+      "proposedCitations": 0,
+      "validCitations": 0
+    },
+    {
+      "id": "q080",
+      "answerable": false,
+      "refused": true,
+      "reason": "model-refused",
+      "proposedCitations": 0,
+      "validCitations": 0
+    },
+    {
+      "id": "q081",
+      "answerable": false,
+      "refused": true,
+      "reason": "model-refused",
+      "proposedCitations": 0,
+      "validCitations": 0
+    },
+    {
+      "id": "q082",
+      "answerable": false,
+      "refused": true,
+      "reason": "model-refused",
+      "proposedCitations": 0,
+      "validCitations": 0
+    },
+    {
+      "id": "q083",
+      "answerable": false,
+      "refused": true,
+      "reason": "model-refused",
+      "proposedCitations": 0,
+      "validCitations": 0
+    },
+    {
+      "id": "q084",
+      "answerable": false,
+      "refused": true,
+      "reason": "model-refused",
+      "proposedCitations": 0,
+      "validCitations": 0
+    },
+    {
+      "id": "q085",
+      "answerable": false,
+      "refused": true,
+      "reason": "model-refused",
+      "proposedCitations": 0,
+      "validCitations": 0
+    },
+    {
+      "id": "q086",
+      "answerable": false,
+      "refused": true,
+      "reason": "model-refused",
+      "proposedCitations": 0,
+      "validCitations": 0
+    },
+    {
+      "id": "q087",
+      "answerable": false,
+      "refused": true,
+      "reason": "model-refused",
+      "proposedCitations": 0,
+      "validCitations": 0
+    },
+    {
+      "id": "q088",
+      "answerable": false,
+      "refused": true,
+      "reason": "model-refused",
+      "proposedCitations": 0,
+      "validCitations": 0
+    },
+    {
+      "id": "q089",
+      "answerable": false,
+      "refused": true,
+      "reason": "model-refused",
+      "proposedCitations": 0,
+      "validCitations": 0
+    }
+  ]
+}
