@@ -16,6 +16,7 @@ import {
 } from '@normkompass/search';
 import { evaluateRetrieval } from '../evaluate.js';
 import {
+  EXTERNAL_SET_LIMITS,
   FULL_SET_LIMITS,
   LEXICAL_SET_LIMITS,
   loadQuestions,
@@ -70,7 +71,9 @@ const citationMatch = process.argv.includes('--no-citation') ? false : DEFAULT_C
 const citationWeight = numberFlag('--citation-weight');
 
 const questionFile = argValue('--questions') ?? join('eval', 'questions.jsonl');
-const lexical = questionFile.includes('lexical');
+const external = questionFile.includes('external');
+const lexical = !external && questionFile.includes('lexical');
+const setKind = external ? 'external' : lexical ? 'lexical' : 'paraphrase';
 const questions = await loadQuestions(questionFile);
 const source = new GesetzeImInternetSource({
   cacheDir: join(process.cwd(), '.cache', 'gesetze-im-internet'),
@@ -79,8 +82,13 @@ const units: CorpusUnit[] = [];
 for await (const doc of source.loadDocuments()) units.push(...source.split(doc).units);
 
 const problems = [
-  ...validateStructure(questions, lexical ? LEXICAL_SET_LIMITS : FULL_SET_LIMITS),
+  ...validateStructure(
+    questions,
+    external ? EXTERNAL_SET_LIMITS : lexical ? LEXICAL_SET_LIMITS : FULL_SET_LIMITS,
+  ),
   ...(lexical ? validateLexical(questions, units) : []),
+  // External questions that are ambiguous are kept and flagged by the conversion, so only quoting is checked.
+  ...(external ? validateLexical(questions, units, { ambiguity: false }) : []),
   ...validateAgainstCorpus(questions, units),
 ];
 if (problems.length > 0) {
@@ -151,7 +159,7 @@ try {
     ftsQuery === 'or' ? '' : `-q${ftsQuery}`,
     citationMatch === DEFAULT_CITATION_MATCH ? '' : '-nocitation',
     split === 'all' ? '' : `-${split}`,
-    lexical ? '-lexical' : '',
+    setKind === 'paraphrase' ? '' : `-${setKind}`,
   ].join('');
   const file = join('eval', 'results', `${date}-${embedder.model}${variant}.json`);
   await writeFile(
@@ -166,7 +174,7 @@ try {
         rerank: rerank ? reranker?.model : null,
         compoundSplitting,
         split,
-        questionSet: lexical ? 'lexical' : 'paraphrase',
+        questionSet: setKind,
         ftsWeight: ftsWeight ?? null,
         ftsMaxDocShare: ftsMaxDocShare ?? null,
         lexical: lexicalRanking,
