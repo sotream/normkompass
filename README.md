@@ -234,37 +234,47 @@ Written to favor lexical matching and reported separately; they are not averaged
 
 </details>
 
-### External question set (written by another AI)
+### External question set (written by other AI assistants)
 
 To test the lexical results against questions this repository's author did not choose, four batches of 16 to 24
 corpus passages (seed 20261107, every law in every batch) were given, with the instruction in
-[`eval/external/INSTRUCTIONS.md`](eval/external/INSTRUCTIONS.md), to **one** AI assistant, Perplexity, as reported
-by the repository owner (model version not recorded; each output ended with a "Sources" line, which suggests an
-interface with web search, but the repository cannot verify how the questions were produced). Its raw output is
-stored unchanged in `eval/external/raw/`. Of 80 question lines, 64 became questions; 24 of these are flagged
-`needs_review` because the quoted term also occurs in other passages, so the single expected passage is not the only
-defensible answer. 16 lines were rejected with a reason in `eval/external/rejected.json` (15 whose quoted term is not
-in the question verbatim, 1 copy of an existing question), and the four "Sources" lines are not JSON. These are
-**model-written questions, not users' questions**, from a single writer, so there is no comparison between writers,
-and 27 of the 64 are citation lookups ("Was regelt § 22 Abs. 2 DDG?").
+[`eval/external/INSTRUCTIONS.md`](eval/external/INSTRUCTIONS.md), to two assistants, each of which got all four batches
+and wrote its own questions on the same passages: **Perplexity** and **Gemini 3.6 thinking**, as reported by the
+repository owner (versions are not recorded and the repository cannot verify what produced a file). Perplexity's
+outputs ended with a "Sources" line, which suggests an interface with web search; for batch `d` Gemini's paste also
+contained its own code and a first draft, and only its final 16 lines are stored (see `eval/external/raw/`; everything
+else is stored as received). Of 164 lines, 144 became questions and 20, all Perplexity's, were rejected with a
+reason in `eval/external/rejected.json` (15 whose quoted term is not in the question verbatim, 1 copy of an existing
+question, and 4 "Sources" lines that are not JSON). 62 of the 144 are flagged `needs_review` because the quoted term also
+occurs in other passages, so the single expected passage is not the only defensible answer; 20 of Gemini's 38 flags
+are "number" questions whose "number" is a reference such as "Nummer 1" or "Absatz 2". These are **model-written
+questions, not users' questions**, each written while looking at the passage, so they quote its words and favor lexical
+matching. Two writers are not a sample of writers.
 
-| Search (multilingual-e5-small)                      | all 64 (recall@5 / MRR) | not flagged, 40 | terms 29      | numbers 8     | citations 27  |
-| --------------------------------------------------- | ----------------------- | --------------- | ------------- | ------------- | ------------- |
-| hybrid: vector + BM25 + citation matching (default) | 0.984 / 0.830           | 0.975 / 0.814   | 1.000 / 0.922 | 1.000 / 0.792 | 0.963 / 0.743 |
-| vector only                                         | 0.953 / 0.753           | 0.975 / 0.796   | 0.966 / 0.754 | 0.750 / 0.542 | 1.000 / 0.815 |
-| hybrid: vector + BM25, no citation matching         | 0.719 / 0.601           | 0.550 / 0.422   | 1.000 / 0.940 | 1.000 / 0.854 | 0.333 / 0.162 |
-| hybrid: vector + Postgres full-text (older default) | 0.656 / 0.534           | 0.500 / 0.405   | 0.897 / 0.748 | 0.750 / 0.674 | 0.370 / 0.262 |
+Cells show recall@5 / MRR; "unflagged" leaves out the `needs_review` questions.
 
-Result files are `eval/results/2026-11-07-multilingual-e5-small{,-vector,-nocitation,-fts-nocitation}-external.json`,
-measured at commit `b5d26fe`. Paired 95% bootstrap intervals of the MRR difference, default minus the other: against
-vector-only +0.077 [+0.012, +0.144] on all 64 but +0.018 [-0.063, +0.104] on the 40 questions not flagged (not
-significant); against the older hybrid +0.296 [+0.194, +0.399], and +0.162 [+0.044, +0.287] on the 37 term and
-number questions. Reading it: the older Postgres hybrid is not better than the default on exact terms and numbers
-here, which agrees with ADR 0005 that the earlier gap was noise; the default is clearly ahead of the older hybrid
-and not distinguishable from vector-only on the unflagged questions. On citation lookups vector-only is
-slightly higher (MRR 0.815 against 0.743, not tested), the opposite of the hand-written lexical set; with 27
-questions and one writer this is a difference to look at, not a conclusion. The set is also not independent of
-lexical matching: each question was written while looking at the passage and quotes its words.
+| Search (multilingual-e5-small)             | all 144       | Perplexity 64 | Gemini 80     | Perplexity unflagged 40 | Gemini unflagged 42 |
+| ------------------------------------------ | ------------- | ------------- | ------------- | ----------------------- | ------------------- |
+| default: vector + BM25 + citation matching | 0.979 / 0.837 | 0.984 / 0.830 | 0.975 / 0.843 | 0.975 / 0.814           | 1.000 / 0.952       |
+| vector only                                | 0.903 / 0.727 | 0.953 / 0.753 | 0.863 / 0.705 | 0.975 / 0.796           | 0.976 / 0.858       |
+| vector + BM25, no citation matching        | 0.840 / 0.698 | 0.719 / 0.601 | 0.938 / 0.776 | 0.550 / 0.422           | 0.929 / 0.821       |
+| vector + Postgres full-text (older)        | 0.750 / 0.584 | 0.656 / 0.534 | 0.825 / 0.625 | 0.500 / 0.405           | 0.810 / 0.621       |
+
+Result files are `eval/results/2026-11-07-multilingual-e5-small{,-vector,-nocitation,-fts-nocitation}-external.json`
+(commit `b5d26fe`; the first version of these files covered Perplexity's 64 questions only, and its per-question
+ranks are unchanged in the files above). Paired 95% bootstrap intervals of the MRR difference, default minus
+vector-only: +0.110 [+0.066, +0.157] on all 144 and +0.057 [+0.003, +0.116] on the 82 unflagged ones; by writer on the
+unflagged questions, Perplexity +0.018 [-0.063, +0.104] (not significant) and Gemini +0.094 [+0.028, +0.174]. Default
+minus the older hybrid: +0.253 [+0.184, +0.321] on all 144 and +0.127 [+0.049, +0.206] on the 91 term and number
+questions.
+
+Reading it: on questions written by two other assistants the default is ahead of vector-only (on the unflagged
+questions for one writer significantly and for the other not) and clearly ahead of the older Postgres hybrid, including
+on exact terms and numbers, which agrees with ADR 0005 that the earlier gap in favor of the older hybrid was noise.
+The earlier observation that vector-only is slightly better on citation lookups did **not** replicate: it held for
+Perplexity's short "Was regelt § ...?" questions (MRR 0.743 against 0.815, 27 questions, not tested) and was reversed
+for Gemini's (0.962 against 0.912, 26 questions), whose citation questions also name content, so it depends on how the
+question is phrased. This set was not used to choose the default.
 
 How to read these (details and paired bootstrap intervals in [ADR 0002](docs/adr/0002-embeddings-and-reranker.md),
 [ADR 0003](docs/adr/0003-hybrid-tuning-and-default-mode.md) and [ADR 0004](docs/adr/0004-lexical-retrieval.md)):
@@ -341,8 +351,8 @@ invented text, not a real policy. The Markdown source under `packages/corpus/tes
 - **The lexical gain is shown on questions written to favor it.** The default search (hybrid with BM25 and citation
   matching) beat vector-only on a 28-question lexical set that favors lexical matching by construction and was written
   by the author; on the paraphrase questions it only matched vector-only. How it behaves on real users' questions or
-  other corpora is not known; the one external check is 64 questions from a single AI writer, which quote the passages'
-  words and are not users' questions (see "External question set"). On exact terms and numbers the default is not shown to be better or worse than the
+  other corpora is not known; the external check is 144 questions from two AI writers, which quote the passages' words
+  and are not users' questions (see "External question set"). On exact terms and numbers the default is not shown to be better or worse than the
   older Postgres hybrid (19 questions, differences within noise, ADR 0005).
 - **The reranker is not part of the service.** It improves MRR significantly (recall@5 not significantly), but
   took about 53 seconds per question on the development laptop, so it is off by default and not wired into
