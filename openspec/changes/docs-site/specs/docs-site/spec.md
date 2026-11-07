@@ -29,11 +29,11 @@ Every page SHALL be readable without JavaScript, and a diagram that needs a scri
 - **THEN** all text, tables and charts are visible and the diagram source is shown as text
 
 ### Requirement: No tracking
-The site SHALL NOT use analytics, cookies or third-party fonts, and its only external request SHALL be a version-pinned diagram library.
+The site SHALL NOT use analytics, cookies or third-party fonts, and its only external requests SHALL be a version-pinned diagram library and the badge images that the README itself contains, each of which the documentation SHALL name as an external request.
 
 #### Scenario: Network inspection
 - **WHEN** a page is loaded
-- **THEN** no request goes to an analytics or font service
+- **THEN** no request goes to an analytics or font service, and the external requests are the pinned diagram library and the README's badge images
 
 ### Requirement: Deployment from main only
 Pull requests SHALL build the site as a check without deploying it, and only a push to the default branch SHALL deploy it, with the minimal workflow permissions deployment needs.

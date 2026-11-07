@@ -12,6 +12,7 @@ export default defineConfig({
       '@normkompass/search': src('./packages/search/src/index.ts'),
       '@normkompass/answer': src('./packages/answer/src/index.ts'),
       '@normkompass/eval': src('./packages/eval/src/index.ts'),
+      '@normkompass/site': src('./packages/site/src/index.ts'),
     },
   },
   test: {

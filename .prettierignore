@@ -7,3 +7,4 @@ dist/
 eval/external/batches/
 eval/external/raw/
 eval/external-questions.jsonl
+/site/
