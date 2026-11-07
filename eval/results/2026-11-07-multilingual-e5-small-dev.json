@@ -1,0 +1,217 @@
+{
+  "date": "2026-11-07",
+  "commit": "01640f3",
+  "dirty": false,
+  "embedder": "multilingual-e5-small",
+  "mode": "hybrid",
+  "rerank": null,
+  "compoundSplitting": true,
+  "split": "dev",
+  "questionSet": "paraphrase",
+  "ftsWeight": null,
+  "ftsMaxDocShare": null,
+  "lexical": "bm25",
+  "ftsQuery": "or",
+  "citationMatch": true,
+  "citationWeight": null,
+  "bm25B": null,
+  "keepSeparatedNumbers": false,
+  "indexingSeconds": 229,
+  "weightsBytes": 118308185,
+  "dimension": 384,
+  "questions": 38,
+  "recallAt5": 0.9736842105263158,
+  "mrr": 0.9,
+  "perQuestion": [
+    {
+      "id": "q001",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q003",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q005",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q007",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q009",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q011",
+      "firstHitRank": 2,
+      "recallAt5": 1
+    },
+    {
+      "id": "q013",
+      "firstHitRank": 2,
+      "recallAt5": 1
+    },
+    {
+      "id": "q015",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q017",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q019",
+      "firstHitRank": 2,
+      "recallAt5": 1
+    },
+    {
+      "id": "q021",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q023",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q025",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q027",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q029",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q031",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q033",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q035",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q037",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q039",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q041",
+      "firstHitRank": 2,
+      "recallAt5": 1
+    },
+    {
+      "id": "q043",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q045",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q047",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q049",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q051",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q053",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q055",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q057",
+      "firstHitRank": null,
+      "recallAt5": 0
+    },
+    {
+      "id": "q059",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q061",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q063",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q065",
+      "firstHitRank": 5,
+      "recallAt5": 1
+    },
+    {
+      "id": "q067",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q069",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q071",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q073",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "q075",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    }
+  ]
+}

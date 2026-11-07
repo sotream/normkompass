@@ -54,8 +54,21 @@ interface Row {
   bm25Outranking: { id: string; length: number }[];
 }
 
-const DEFAULT: SearchOptions = { mode: 'hybrid', lexical: 'bm25', citationMatch: true, limit: 50 };
-const OLDER: SearchOptions = { mode: 'hybrid', lexical: 'fts', citationMatch: false, limit: 50 };
+// The analysis describes the search before ADR 0005 changed separated numbers, so that option is pinned off.
+const DEFAULT: SearchOptions = {
+  mode: 'hybrid',
+  lexical: 'bm25',
+  citationMatch: true,
+  keepSeparatedNumbers: false,
+  limit: 50,
+};
+const OLDER: SearchOptions = {
+  mode: 'hybrid',
+  lexical: 'fts',
+  citationMatch: false,
+  keepSeparatedNumbers: false,
+  limit: 50,
+};
 
 const pool = createPool({ connectionString });
 try {
@@ -93,7 +106,9 @@ try {
     const oQuoted = ranked(await search.search(quoted, OLDER));
 
     const termLexemes = await lexemes(quoted);
-    const queryLexemes = new Set(await lexemes((await search.queryTerms(quoted)).join(' ')));
+    const queryLexemes = new Set(
+      await lexemes((await search.queryTerms(quoted, true, false)).join(' ')),
+    );
     const inUnit = await unitLexemes(q.expected);
     const topLexical = outranking(d, q.expected, 'ftsRank');
     rows.push({
@@ -173,7 +188,7 @@ try {
   const lost: string[] = [];
   for (const t of tokens) {
     const doc = await lexemes(t);
-    const query = new Set(await lexemes((await search.queryTerms(t)).join(' ')));
+    const query = new Set(await lexemes((await search.queryTerms(t, true, false)).join(' ')));
     if (doc.some((l) => !query.has(l))) lost.push(t);
   }
   const separatorProbe = {

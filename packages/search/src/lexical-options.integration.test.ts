@@ -49,16 +49,24 @@ describe.skipIf(!DATABASE_URL)('lexical options (Postgres)', () => {
       ...extra,
     });
 
-  it('a number with a separator finds nothing by default and its unit when kept whole', async () => {
-    expect(await bm25('6.000')).toEqual([]);
-    const kept = await bm25('6.000', { keepSeparatedNumbers: true });
-    expect(kept.map((h) => h.unitId)).toEqual(['x/§ 3']);
+  it('a number with a separator finds its unit by default and nothing when split into digit groups', async () => {
+    expect((await bm25('6.000')).map((h) => h.unitId)).toEqual(['x/§ 3']);
+    expect(await bm25('6.000', { keepSeparatedNumbers: false })).toEqual([]);
   });
 
   it('keeping separated numbers does not change a question without one', async () => {
-    const a = await bm25('Seltenwort');
-    const b = await bm25('Seltenwort', { keepSeparatedNumbers: true });
+    const a = await bm25('Seltenwort', { keepSeparatedNumbers: false });
+    const b = await bm25('Seltenwort');
     expect(b.map((h) => h.unitId)).toEqual(a.map((h) => h.unitId));
+  });
+
+  it('the older full-text query also accepts numbers with a separator without failing', async () => {
+    const hits = await new HybridSearch(pool, embedder).search('Kilometer 6.000 und 30,5', {
+      mode: 'fts',
+      lexical: 'fts',
+      citationMatch: false,
+    });
+    expect(hits.length).toBeGreaterThan(0);
   });
 
   it('a lower length normalization discounts the long unit less', async () => {

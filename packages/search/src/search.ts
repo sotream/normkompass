@@ -35,6 +35,8 @@ export type SearchMode = 'hybrid' | 'vector' | 'fts';
 export const DEFAULT_SEARCH_MODE: SearchMode = 'hybrid';
 export const DEFAULT_LEXICAL = 'bm25';
 export const DEFAULT_CITATION_MATCH = true;
+/** Keep numbers such as "6.000" whole in the query; adopted by the rule of ADR 0005 (neutral on every measured half). */
+export const DEFAULT_KEEP_SEPARATED_NUMBERS = true;
 
 export interface SearchOptions {
   limit?: number;
@@ -57,7 +59,7 @@ export interface SearchOptions {
   bm25B?: number;
   /**
    * Keep numbers written with a separator ("6.000", "30,5") as one query term, as they are one word in the
-   * index; by default they are split into digit groups that cannot match (ADR 0005). Off by default.
+   * index (default true); switched off they are split into digit groups that cannot match (ADR 0005).
    */
   keepSeparatedNumbers?: boolean;
   /** Which lexical ranking feeds the "fts" side: BM25 computed in the application (default) or Postgres full-text. */
@@ -136,7 +138,7 @@ export class HybridSearch {
   async queryTerms(
     question: string,
     compoundSplitting = true,
-    keepSeparatedNumbers = false,
+    keepSeparatedNumbers = DEFAULT_KEEP_SEPARATED_NUMBERS,
   ): Promise<string[]> {
     const options = { keepSeparatedNumbers };
     if (!compoundSplitting) return expandQueryTerms(question, Vocabulary.fromTexts([]), options);
