@@ -1,4 +1,4 @@
-import { readFile } from 'node:fs/promises';
+import { readFile, readdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { bootstrapMeanInterval, pairedBootstrap, reciprocalRanks } from './compare.js';
 import {
@@ -191,8 +191,19 @@ export async function buildCharts(resultsDir: string): Promise<Record<string, st
     ],
   };
 
+  // Runs with the Anthropic API are found by file name and labeled with the model id each file records,
+  // so no model id is written in this source.
+  const claudeFiles = (await readdir(resultsDir))
+    .filter((f) => /^answers-.*-claude-.*\.json$/.test(f))
+    .sort();
+  const claudeGroups = await Promise.all(
+    claudeFiles.map(async (file) => {
+      const run = await load<AnswerResult>(resultsDir, file);
+      return { title: `${run.answerModel} (Anthropic API), 1 run`, files: [file] };
+    }),
+  );
   const groups = await Promise.all(
-    ANSWER_RUNS.map(async (g) => {
+    [...ANSWER_RUNS, ...claudeGroups].map(async (g) => {
       const runs = await Promise.all(g.files.map((file) => load<AnswerResult>(resultsDir, file)));
       const m = runs.map((r) => r.metrics);
       return {
@@ -209,13 +220,13 @@ export async function buildCharts(resultsDir: string): Promise<Record<string, st
     }),
   );
   const answers: DotChart = {
-    title: 'Answer evaluation: models other than Claude',
+    title: 'Answer evaluation: five models',
     description:
-      'Citation validity, share of answerable questions answered, and refusal precision for three models on 89 questions (75 answerable, 14 not). One dot per run. Claude was not measured.',
+      'Citation validity, share of answerable questions answered, and refusal precision for five models on 89 questions (75 answerable, 14 not). One dot per run; Claude Opus 5.5 and Sonnet 5.5 have one run each. Not a ranking.',
     groups,
     notes: [
       '89 questions (75 answerable, 14 not) written by the project author. One dot per run.',
-      'Not Claude: Claude has not been measured. Hosted models can change without notice,',
+      'One run per Claude model shows no spread; hosted models can change without notice,',
       'so these are data points for this corpus, not a ranking. Source: eval/results/answers-*.',
     ],
   };

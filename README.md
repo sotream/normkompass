@@ -57,8 +57,8 @@ This README is also published as a website: <https://sotream.github.io/normkompa
 Reference implementation, all planned v1 phases implemented: project scaffold, corpus ingest with a
 structure-aware parser for the demo laws, hybrid search with a retrieval evaluation and an embedding
 comparison (ADR 0002), and answer generation with code-checked citations and refusal. It is not a finished
-product. See "Honest limits" for what is not known or not done, in particular that Claude itself has not
-been measured and that the default search is hybrid with BM25 and citation matching, chosen by a rule fixed before the runs (ADR 0004), after an earlier hybrid scored below vector-only (ADR 0003).
+product. See "Honest limits" for what is not known or not done, in particular that the Claude runs are one run per
+model on questions written by the author and that the default search is hybrid with BM25 and citation matching, chosen by a rule fixed before the runs (ADR 0004), after an earlier hybrid scored below vector-only (ADR 0003).
 
 ## How it works
 
@@ -91,7 +91,8 @@ citation turns the whole answer into a refusal. A worked example with a real ans
 | -------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
 | Default search on 75 paraphrase questions                                  | recall@5 0.960, MRR 0.900, not significantly different from vector-only (0.960, 0.889) |
 | Default search on 28 lexical questions (written to favor it)               | recall@5 0.857, MRR 0.720, against 0.679 and 0.536 for vector-only                     |
-| Citation validity of a free hosted model (`gemini-3.5-flash-lite`, 4 runs) | 0.940 to 0.976; **Claude has not been measured**                                       |
+| Citation validity of a free hosted model (`gemini-3.5-flash-lite`, 4 runs) | 0.940 to 0.976                                                                         |
+| Citation validity of Claude Opus 5.5 and Sonnet 5.5 (1 run each)           | 1.000 for both (241/241 and 168/168); one run each, not a ranking                      |
 
 Every figure comes from a recorded run in [`eval/results/`](eval/results); the charts below are generated from those
 files and checked in CI. The questions were written by the project author and the sets are small, so read the
@@ -348,8 +349,10 @@ invented text, not a real policy. The Markdown source under `packages/corpus/tes
 
 ## Honest limits
 
-- **Claude has not been measured.** No real Claude run exists, so there is no number for answer quality with
-  Claude. Results for other models are in "Answer evaluation" and say nothing about Claude.
+- **The Claude runs are one run per model.** Claude Opus 5.5 and Sonnet 5.5 were each run once on the 89
+  author-written questions, so there is no spread, and a difference of one question out of 72 is noise. They are
+  not a ranking of the two models, and they say nothing about other question sets or real users (see "Answer
+  evaluation").
 - **The lexical gain is shown on questions written to favor it.** The default search (hybrid with BM25 and citation
   matching) beat vector-only on a 28-question lexical set that favors lexical matching by construction and was written
   by the author; on the paraphrase questions it only matched vector-only. How it behaves on real users' questions or
@@ -433,9 +436,9 @@ expected norm, and refusal precision and recall (with "refused" as the positive 
 requests to the configured model. With `claude` that costs money, so it is a manual command; with `ollama`
 it is free but takes a while.
 
-### Results: other models (not Claude)
+### Results
 
-![Answer evaluation for models other than Claude](docs/charts/answer-evaluation.svg)
+![Answer evaluation for five models](docs/charts/answer-evaluation.svg)
 
 <details>
 <summary>Table: answer evaluation runs</summary>
@@ -445,10 +448,12 @@ it is free but takes a while.
 | 2026-11-02 | `abef35d` (see note) | ollama `llama3.1:8b`                                                                  | multilingual-e5-small | 0.486 (69/142)    | 0.867 (of 30 answered)          | 0.237             | 1.000          |
 | 2026-11-02 | `7971384`            | openai-compatible `gemini-3.5-flash-lite` @ generativelanguage.googleapis.com, 4 runs | multilingual-e5-small | 0.940–0.976       | 0.956–0.971 (of 66–69 answered) | 0.609–0.700       | 1.000          |
 | 2026-11-02 | `7971384`            | openai-compatible `gemini-3.1-flash-lite` @ generativelanguage.googleapis.com, 1 run  | multilingual-e5-small | 0.851 (80/94)     | 0.966 (of 59 answered)          | 0.467             | 1.000          |
+| 2026-11-07 | `327de90`            | claude `claude-opus-5-5`, 1 run                                                       | multilingual-e5-small | 1.000 (241/241)   | 0.986 (of 72 answered)          | 0.824             | 1.000          |
+| 2026-11-07 | `327de90`            | claude `claude-sonnet-5-5`, 1 run                                                     | multilingual-e5-small | 1.000 (168/168)   | 0.972 (of 72 answered)          | 0.824             | 1.000          |
 
 </details>
 
-None of these rows is Claude. The first is a small local model run on a laptop. Reading its numbers plainly: the
+The first row is a small local model run on a laptop. Reading its numbers plainly: the
 pipeline never accepted a bad citation, but the model is a poor fit for the task. Of the 75 answerable questions
 only 30 were answered; 45 were refused, and all 14 unanswerable questions were refused (hence recall 1.0 and a low
 precision of 0.237). Refusal reasons across all 89 questions: `citation-rejected` 44, `model-refused` 7,
@@ -469,18 +474,39 @@ on `main` under that hash.
 Not measured, on purpose or for lack of access: `gemini-3.8-flash` and `gemini-3-flash-preview` (so overloaded or
 slow on the free tier that no run finished in a reasonable time), `gemma-4-26b-a4b-it` (stopped, too slow on the
 free tier), `gemma-4-31b-it` (the endpoint returned an internal error), and every model of Mistral and Groq (no
-key; Groq's free tier also appears too small for a full run in a day). **Claude has not been measured** (see below).
+key; Groq's free tier also appears too small for a full run in a day).
 
 Note on the commit: the recorded `abef35d` is a docs-only commit made before the provider code was merged
 to `main` (as `595c501`). The run was made from a local build of that provider code, but the recorded
 revision does not identify it exactly, so treat the row as indicative and not exactly reproducible until
 the run is repeated on `main`.
 
-**Claude has not been measured:** no real Claude run has been executed, so there are no numbers for it here
-and none are claimed. CI runs the same pipeline on fixtures with a scripted stand-in model that never
-touches the network. It checks that the code and the metrics behave correctly (a faithful model scores
-1.0, a model that misquotes or answers unanswerable questions is detected). It says nothing about how
-Claude performs.
+### Claude runs
+
+Both Claude runs used the defaults (hybrid search, 8 retrieved passages, the shipped prompt) through the
+Anthropic API on 2026-11-07, one run per model, on commit `327de90`. Cost, read from the organization's usage
+page before and after each run: Opus 5.5 $2.23 (about $0.025 per question), Sonnet 5.5 $0.88 (about $0.010);
+prices change, so this is the cost on that day. Of the 75 answerable questions,
+72 were answered by each model; all 14 unanswerable questions were refused, so refusal recall is 1.0. Every
+proposed citation passed verification (Opus 241, Sonnet 168; Sonnet proposed fewer citations per answer). Both runs have 17
+refusals, all with the reason `model-refused`: none was rejected by citation verification and no model call
+failed.
+
+The two models refused the same three answerable questions, which is why refusal precision is 0.824 (14 of 17)
+for both. Re-running the search for them shows what is known: for q030 (which taxes the Abgabenordnung applies
+to) and q044 (who can be called in during an objection procedure) the expected unit was not among the 8
+retrieved passages, so there the miss is in search and the refusal is consistent with what the model was
+given. For q027 (the deadline for a refund application) the expected unit was the top hit, and both models
+still refused; why is not established here.
+
+What this shows: with these questions, Claude's citations were all verifiable and it refused every question the
+corpus cannot answer. What it does not show: which of the two models is better (one run each, a difference of
+one question out of 72), how stable the numbers are across repeated runs, or how Claude behaves on questions
+written by other people or on other laws. The raw files are in `eval/results/answers-2026-11-07-claude-*.json`.
+
+CI runs the same pipeline on fixtures with a scripted stand-in model that never touches the network. It
+checks that the code and the metrics behave correctly (a faithful model scores 1.0, a model that misquotes or
+answers unanswerable questions is detected); it does not measure any model.
 
 ## License
 
