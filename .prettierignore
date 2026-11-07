@@ -2,3 +2,8 @@ pnpm-lock.yaml
 openspec/
 .cache/
 dist/
+
+# Verbatim corpus text and raw writer output must not be reformatted
+eval/external/batches/
+eval/external/raw/
+eval/external-questions.jsonl

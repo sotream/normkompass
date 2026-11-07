@@ -20,6 +20,12 @@ export interface Question {
    * reason, so that an apparent ambiguity has been looked at and decided.
    */
   not_expected?: { id: string; reason: string }[];
+  /** External questions only: written by another model from text it was given, not by this repository's author. */
+  origin?: 'external';
+  /** External questions only: the label of the writer, as reported by the repository owner. */
+  writer?: string;
+  /** Why a question was flagged `needs_review` by the conversion. */
+  review_note?: string;
 }
 
 export interface SetLimits {
@@ -40,6 +46,14 @@ export const FULL_SET_LIMITS: SetLimits = {
 export const LEXICAL_SET_LIMITS: SetLimits = {
   minAnswerable: 20,
   maxAnswerable: 40,
+  minUnanswerable: 0,
+  maxUnanswerable: 0,
+};
+
+/** The external set has answerable questions only and is larger than the hand-written lexical set. */
+export const EXTERNAL_SET_LIMITS: SetLimits = {
+  minAnswerable: 20,
+  maxAnswerable: 200,
   minUnanswerable: 0,
   maxUnanswerable: 0,
 };
@@ -140,6 +154,7 @@ const related = (a: string, b: string): boolean =>
 export function validateLexical(
   questions: Question[],
   units: { id: string; label: string; text: string; title: string }[],
+  options: { ambiguity?: boolean } = {},
 ): string[] {
   const errors: string[] = [];
   const byId = new Map(units.map((u) => [u.id, u]));
@@ -174,6 +189,7 @@ export function validateLexical(
         errors.push(`${q.id}: not_expected "${n.id}" must exist and give a reason`);
       }
     }
+    if (options.ambiguity === false) continue;
     const others = units
       .filter(
         (u) =>

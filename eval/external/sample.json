@@ -1,0 +1,333 @@
+{
+  "seed": 20261107,
+  "slots": {
+    "a": [
+      {
+        "ref": "u01",
+        "unit": "ao_1977/§ 30/Abs. 9"
+      },
+      {
+        "ref": "u02",
+        "unit": "ustg_1980/§ 25b/Abs. 1/Nr. 3"
+      },
+      {
+        "ref": "u03",
+        "unit": "ddg/§ 17/Abs. 2/Nr. 3"
+      },
+      {
+        "ref": "u04",
+        "unit": "ao_1977/§ 87c/Abs. 3"
+      },
+      {
+        "ref": "u05",
+        "unit": "ustg_1980/§ 18/Abs. 10/Nr. 1"
+      },
+      {
+        "ref": "u06",
+        "unit": "ddg/§ 20/Abs. 1/Nr. 4"
+      },
+      {
+        "ref": "u07",
+        "unit": "ao_1977/§ 93/Abs. 9/Nr. 3"
+      },
+      {
+        "ref": "u08",
+        "unit": "ustg_1980/§ 4c/Abs. 1/Nr. 2"
+      },
+      {
+        "ref": "u09",
+        "unit": "ddg/§ 3/Abs. 4/Nr. 1"
+      },
+      {
+        "ref": "u10",
+        "unit": "ao_1977/§ 112/Abs. 1/Nr. 2"
+      },
+      {
+        "ref": "u11",
+        "unit": "ustg_1980/§ 26/Abs. 5/Nr. 3"
+      },
+      {
+        "ref": "u12",
+        "unit": "ddg/§ 33/Abs. 5/Nr. 24"
+      },
+      {
+        "ref": "u13",
+        "unit": "ao_1977/§ 272/Abs. 2"
+      },
+      {
+        "ref": "u14",
+        "unit": "ustg_1980/§ 15a/Abs. 10"
+      },
+      {
+        "ref": "u15",
+        "unit": "ddg/§ 22/Abs. 2"
+      },
+      {
+        "ref": "u16",
+        "unit": "ao_1977/§ 138d/Abs. 5/Nr. 3"
+      },
+      {
+        "ref": "u17",
+        "unit": "ustg_1980/§ 27/Abs. 38/Nr. 3"
+      },
+      {
+        "ref": "u18",
+        "unit": "ddg/§ 3/Abs. 4/Nr. 6"
+      },
+      {
+        "ref": "u19",
+        "unit": "ao_1977/§ 81/Abs. 1/Nr. 5"
+      },
+      {
+        "ref": "u20",
+        "unit": "ustg_1980/§ 1b/Abs. 3"
+      },
+      {
+        "ref": "u21",
+        "unit": "ddg/§ 2/Abs. 5"
+      },
+      {
+        "ref": "u22",
+        "unit": "ao_1977/§ 170/Abs. 2/Nr. 2"
+      },
+      {
+        "ref": "u23",
+        "unit": "ustg_1980/§ 22a/Abs. 2/Nr. 1"
+      },
+      {
+        "ref": "u24",
+        "unit": "ddg/§ 21/Abs. 2/Nr. 2"
+      }
+    ],
+    "b": [
+      {
+        "ref": "u01",
+        "unit": "bdsg_2018/§ 82/Abs. 1"
+      },
+      {
+        "ref": "u02",
+        "unit": "ustdv_1980/§ 30a/Nr. 3"
+      },
+      {
+        "ref": "u03",
+        "unit": "bdsg_2018/§ 32/Abs. 1/Nr. 5"
+      },
+      {
+        "ref": "u04",
+        "unit": "ustdv_1980/§ 20/Abs. 2"
+      },
+      {
+        "ref": "u05",
+        "unit": "bdsg_2018/§ 73"
+      },
+      {
+        "ref": "u06",
+        "unit": "ustdv_1980/§ 17"
+      },
+      {
+        "ref": "u07",
+        "unit": "bdsg_2018/§ 8/Abs. 2"
+      },
+      {
+        "ref": "u08",
+        "unit": "ustdv_1980/§ 49"
+      },
+      {
+        "ref": "u09",
+        "unit": "bdsg_2018/§ 56/Abs. 4"
+      },
+      {
+        "ref": "u10",
+        "unit": "ustdv_1980/§ 13/Abs. 2"
+      },
+      {
+        "ref": "u11",
+        "unit": "bdsg_2018/§ 70/Abs. 1/Nr. 6"
+      },
+      {
+        "ref": "u12",
+        "unit": "ustdv_1980/§ 59/Nr. 6"
+      },
+      {
+        "ref": "u13",
+        "unit": "bdsg_2018/§ 72"
+      },
+      {
+        "ref": "u14",
+        "unit": "ustdv_1980/§ 13/Abs. 4"
+      },
+      {
+        "ref": "u15",
+        "unit": "bdsg_2018/§ 59/Abs. 2"
+      },
+      {
+        "ref": "u16",
+        "unit": "ustdv_1980/§ 33/Nr. 3"
+      }
+    ],
+    "c": [
+      {
+        "ref": "u01",
+        "unit": "ddg/§ 33/Abs. 3/Nr. 13"
+      },
+      {
+        "ref": "u02",
+        "unit": "ao_1977/§ 376/Abs. 1"
+      },
+      {
+        "ref": "u03",
+        "unit": "ustg_1980/§ 27/Abs. 5"
+      },
+      {
+        "ref": "u04",
+        "unit": "ddg/§ 33/Abs. 1"
+      },
+      {
+        "ref": "u05",
+        "unit": "ao_1977/§ 226/Abs. 4"
+      },
+      {
+        "ref": "u06",
+        "unit": "ustg_1980/§ 25b/Abs. 3"
+      },
+      {
+        "ref": "u07",
+        "unit": "ddg/§ 19/Abs. 2"
+      },
+      {
+        "ref": "u08",
+        "unit": "ao_1977/§ 298/Abs. 2"
+      },
+      {
+        "ref": "u09",
+        "unit": "ustg_1980/§ 15a/Abs. 8"
+      },
+      {
+        "ref": "u10",
+        "unit": "ddg/§ 33/Abs. 3/Nr. 14"
+      },
+      {
+        "ref": "u11",
+        "unit": "ao_1977/§ 21/Abs. 2"
+      },
+      {
+        "ref": "u12",
+        "unit": "ustg_1980/§ 1a/Abs. 3/Nr. 1"
+      },
+      {
+        "ref": "u13",
+        "unit": "ddg/§ 26/Abs. 1"
+      },
+      {
+        "ref": "u14",
+        "unit": "ao_1977/§ 203a/Abs. 1/Nr. 1"
+      },
+      {
+        "ref": "u15",
+        "unit": "ustg_1980/§ 19/Abs. 2"
+      },
+      {
+        "ref": "u16",
+        "unit": "ddg/§ 13"
+      },
+      {
+        "ref": "u17",
+        "unit": "ao_1977/§ 58a/Abs. 3"
+      },
+      {
+        "ref": "u18",
+        "unit": "ustg_1980/§ 13/Abs. 1/Nr. 3"
+      },
+      {
+        "ref": "u19",
+        "unit": "ddg/§ 33/Abs. 2"
+      },
+      {
+        "ref": "u20",
+        "unit": "ao_1977/§ 385/Abs. 1"
+      },
+      {
+        "ref": "u21",
+        "unit": "ustg_1980/§ 26/Abs. 2"
+      },
+      {
+        "ref": "u22",
+        "unit": "ddg/§ 17/Abs. 2/Nr. 5"
+      },
+      {
+        "ref": "u23",
+        "unit": "ao_1977/§ 89b/Abs. 3/Nr. 2"
+      },
+      {
+        "ref": "u24",
+        "unit": "ustg_1980/§ 16/Abs. 1"
+      }
+    ],
+    "d": [
+      {
+        "ref": "u01",
+        "unit": "ustdv_1980/§ 61a/Abs. 2/Nr. 2"
+      },
+      {
+        "ref": "u02",
+        "unit": "bdsg_2018/§ 62/Abs. 5/Nr. 7"
+      },
+      {
+        "ref": "u03",
+        "unit": "ustdv_1980/§ 72/Abs. 2/Nr. 4"
+      },
+      {
+        "ref": "u04",
+        "unit": "bdsg_2018/§ 64/Abs. 3/Nr. 3"
+      },
+      {
+        "ref": "u05",
+        "unit": "ustdv_1980/§ 30a/Nr. 2"
+      },
+      {
+        "ref": "u06",
+        "unit": "bdsg_2018/§ 56/Abs. 1/Nr. 5"
+      },
+      {
+        "ref": "u07",
+        "unit": "ustdv_1980/§ 8/Abs. 2"
+      },
+      {
+        "ref": "u08",
+        "unit": "bdsg_2018/§ 1/Abs. 7"
+      },
+      {
+        "ref": "u09",
+        "unit": "ustdv_1980/§ 24/Abs. 3"
+      },
+      {
+        "ref": "u10",
+        "unit": "bdsg_2018/§ 37/Abs. 1"
+      },
+      {
+        "ref": "u11",
+        "unit": "ustdv_1980/§ 72/Abs. 1"
+      },
+      {
+        "ref": "u12",
+        "unit": "bdsg_2018/§ 71/Abs. 2"
+      },
+      {
+        "ref": "u13",
+        "unit": "ustdv_1980/§ 13/Abs. 2/Nr. 2"
+      },
+      {
+        "ref": "u14",
+        "unit": "bdsg_2018/§ 37/Abs. 1/Nr. 2"
+      },
+      {
+        "ref": "u15",
+        "unit": "ustdv_1980/§ 44/Abs. 1"
+      },
+      {
+        "ref": "u16",
+        "unit": "bdsg_2018/§ 26/Abs. 8/Nr. 3"
+      }
+    ]
+  }
+}
