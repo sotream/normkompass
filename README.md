@@ -16,6 +16,8 @@ answer, the service refuses instead of guessing.</p>
 The demo corpus is German federal law from gesetze-im-internet.de. This is a reference implementation, not a
 finished product; see "Honest limits".
 
+This README is also published as a website: <https://sotream.github.io/normkompass/>.
+
 ## Contents
 
 **Overview**
