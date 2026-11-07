@@ -1,0 +1,531 @@
+{
+  "date": "2026-11-07",
+  "commit": "faa10ed",
+  "embedder": null,
+  "summary": {
+    "all": {
+      "questions": 19,
+      "olderBetter": 3,
+      "defaultBetter": 1,
+      "equal": 15,
+      "mrrOlderMinusDefault": {
+        "meanDiff": 0.10651629072681706,
+        "lo": -0.008771929824561405,
+        "hi": 0.2468671679197995,
+        "significant": false
+      },
+      "recallOlderMinusDefault": {
+        "meanDiff": 0.10526315789473684,
+        "lo": 0,
+        "hi": 0.2631578947368421,
+        "significant": false
+      },
+      "withLexemesLostInQuery": 0,
+      "withLexemesMissingInExpected": 0
+    },
+    "term": {
+      "questions": 10,
+      "olderBetter": 1,
+      "defaultBetter": 1,
+      "equal": 8,
+      "mrrOlderMinusDefault": {
+        "meanDiff": 0.03333333333333333,
+        "lo": -0.05,
+        "hi": 0.15,
+        "significant": false
+      },
+      "recallOlderMinusDefault": {
+        "meanDiff": 0,
+        "lo": 0,
+        "hi": 0,
+        "significant": false
+      },
+      "withLexemesLostInQuery": 0,
+      "withLexemesMissingInExpected": 0
+    },
+    "number": {
+      "questions": 9,
+      "olderBetter": 2,
+      "defaultBetter": 0,
+      "equal": 7,
+      "mrrOlderMinusDefault": {
+        "meanDiff": 0.18783068783068785,
+        "lo": 0,
+        "hi": 0.46560846560846564,
+        "significant": false
+      },
+      "recallOlderMinusDefault": {
+        "meanDiff": 0.2222222222222222,
+        "lo": 0,
+        "hi": 0.5555555555555556,
+        "significant": false
+      },
+      "withLexemesLostInQuery": 0,
+      "withLexemesMissingInExpected": 0
+    }
+  },
+  "lengthEffect": {
+    "questions": 19,
+    "spearmanLengthVsBm25MinusFullText": 0.435899984358992,
+    "longestFive": [
+      {
+        "id": "l008",
+        "length": 1385,
+        "bm25Rank": 20,
+        "fullTextRank": 17
+      },
+      {
+        "id": "l026",
+        "length": 1355,
+        "bm25Rank": 4,
+        "fullTextRank": 1
+      },
+      {
+        "id": "l001",
+        "length": 1176,
+        "bm25Rank": 2,
+        "fullTextRank": 2
+      },
+      {
+        "id": "l013",
+        "length": 953,
+        "bm25Rank": 1,
+        "fullTextRank": 1
+      },
+      {
+        "id": "l010",
+        "length": 930,
+        "bm25Rank": 2,
+        "fullTextRank": 1
+      }
+    ]
+  },
+  "separatorProbe": {
+    "distinctTokens": 64,
+    "unitsWithAToken": 85,
+    "totalUnits": 4425,
+    "tokensLostInTheQuery": 47,
+    "examples": [
+      "10.10",
+      "20.10",
+      "1.550",
+      "6.000",
+      "11.12",
+      "21.1",
+      "30.1",
+      "27.2",
+      "7.6",
+      "20.12"
+    ],
+    "inTheExactTermQuestions": 0
+  },
+  "rows": [
+    {
+      "id": "l001",
+      "style": "term",
+      "question": "Welche Bruttoleistung der Photovoltaikanlage ist nach dem Marktstammdatenregister maßgeblich?",
+      "terms": ["Bruttoleistung"],
+      "expected": ["ustg_1980/§ 12/Abs. 3"],
+      "defaultRank": 2,
+      "olderRank": 2,
+      "vectorRank": 2,
+      "bm25Rank": 2,
+      "fullTextRank": 2,
+      "bm25RankQuotedOnly": 2,
+      "fullTextRankQuotedOnly": 1,
+      "termLexemes": ["bruttoleist"],
+      "lexemesLostInQuery": [],
+      "lexemesMissingInExpected": [],
+      "expectedLength": 1176,
+      "bm25Outranking": [
+        {
+          "id": "ustg_1980/§ 12/Abs. 3/Nr. 1",
+          "length": 652
+        }
+      ]
+    },
+    {
+      "id": "l002",
+      "style": "number",
+      "question": "Wann wird der Umsatz mit 30 Prozent des Verkaufspreises angesetzt?",
+      "terms": ["30 Prozent des Verkaufspreises"],
+      "expected": ["ustg_1980/§ 25a/Abs. 3"],
+      "defaultRank": 1,
+      "olderRank": 1,
+      "vectorRank": 1,
+      "bm25Rank": 1,
+      "fullTextRank": 5,
+      "bm25RankQuotedOnly": 1,
+      "fullTextRankQuotedOnly": 2,
+      "termLexemes": ["30", "prozent", "verkaufspreis"],
+      "lexemesLostInQuery": [],
+      "lexemesMissingInExpected": [],
+      "expectedLength": 780,
+      "bm25Outranking": []
+    },
+    {
+      "id": "l004",
+      "style": "term",
+      "question": "Was gilt für Positionspapiere des Beirats?",
+      "terms": ["Positionspapiere"],
+      "expected": ["ddg/§ 21/Abs. 11"],
+      "defaultRank": 1,
+      "olderRank": 1,
+      "vectorRank": 1,
+      "bm25Rank": 1,
+      "fullTextRank": 2,
+      "bm25RankQuotedOnly": 1,
+      "fullTextRankQuotedOnly": 1,
+      "termLexemes": ["positionspapi"],
+      "lexemesLostInQuery": [],
+      "lexemesMissingInExpected": [],
+      "expectedLength": 611,
+      "bm25Outranking": []
+    },
+    {
+      "id": "l005",
+      "style": "number",
+      "question": "Bei welchen Verstößen droht eine Geldbuße bis zu 6 Prozent des Gesamtumsatzes?",
+      "terms": ["6 Prozent des Gesamtumsatzes"],
+      "expected": ["ddg/§ 33/Abs. 7"],
+      "defaultRank": 1,
+      "olderRank": 1,
+      "vectorRank": 1,
+      "bm25Rank": 1,
+      "fullTextRank": 1,
+      "bm25RankQuotedOnly": 1,
+      "fullTextRankQuotedOnly": 1,
+      "termLexemes": ["6", "gesamtumsatz", "prozent"],
+      "lexemesLostInQuery": [],
+      "lexemesMissingInExpected": [],
+      "expectedLength": 425,
+      "bm25Outranking": []
+    },
+    {
+      "id": "l007",
+      "style": "term",
+      "question": "Wie hoch muss das Mindestgebot im Verhältnis zum gewöhnlichen Verkaufswert der Sache sein?",
+      "terms": ["Verkaufswert", "Mindestgebot"],
+      "expected": ["ao_1977/§ 300/Abs. 1"],
+      "defaultRank": 1,
+      "olderRank": 1,
+      "vectorRank": 1,
+      "bm25Rank": 1,
+      "fullTextRank": 1,
+      "bm25RankQuotedOnly": 1,
+      "fullTextRankQuotedOnly": 1,
+      "termLexemes": ["mindestgebot", "verkaufswert"],
+      "lexemesLostInQuery": [],
+      "lexemesMissingInExpected": [],
+      "expectedLength": 246,
+      "bm25Outranking": []
+    },
+    {
+      "id": "l008",
+      "style": "number",
+      "question": "Welche Regelung gilt, wenn der Gesamtumsatz im vorangegangenen Kalenderjahr nicht mehr als 600 000 Euro betragen hat?",
+      "terms": ["600 000 Euro"],
+      "expected": ["ustg_1980/§ 24/Abs. 1"],
+      "defaultRank": 7,
+      "olderRank": 1,
+      "vectorRank": 3,
+      "bm25Rank": 20,
+      "fullTextRank": 17,
+      "bm25RankQuotedOnly": null,
+      "fullTextRankQuotedOnly": 24,
+      "termLexemes": ["000", "600", "euro"],
+      "lexemesLostInQuery": [],
+      "lexemesMissingInExpected": [],
+      "expectedLength": 1385,
+      "bm25Outranking": [
+        {
+          "id": "ustg_1980/§ 20/Nr. 1",
+          "length": 117
+        },
+        {
+          "id": "ustg_1980/§ 27/Abs. 38/Nr. 2",
+          "length": 423
+        },
+        {
+          "id": "ao_1977/§ 141/Abs. 1/Nr. 1",
+          "length": 127
+        }
+      ]
+    },
+    {
+      "id": "l010",
+      "style": "term",
+      "question": "Wann beginnt die Festsetzungsfrist, wenn eine Steuer durch Verwendung von Steuerzeichen oder Steuerstemplern zu zahlen ist?",
+      "terms": ["Steuerstemplern"],
+      "expected": ["ao_1977/§ 170/Abs. 2"],
+      "defaultRank": 2,
+      "olderRank": 1,
+      "vectorRank": 2,
+      "bm25Rank": 2,
+      "fullTextRank": 1,
+      "bm25RankQuotedOnly": 4,
+      "fullTextRankQuotedOnly": 1,
+      "termLexemes": ["steuerstempl"],
+      "lexemesLostInQuery": [],
+      "lexemesMissingInExpected": [],
+      "expectedLength": 930,
+      "bm25Outranking": [
+        {
+          "id": "ao_1977/§ 170/Abs. 2/Nr. 2",
+          "length": 363
+        }
+      ]
+    },
+    {
+      "id": "l011",
+      "style": "number",
+      "question": "Wann beträgt die Verjährungsfrist 15 Jahre?",
+      "terms": ["15 Jahre"],
+      "expected": ["ao_1977/§ 376/Abs. 1"],
+      "defaultRank": 2,
+      "olderRank": 2,
+      "vectorRank": 3,
+      "bm25Rank": 2,
+      "fullTextRank": 6,
+      "bm25RankQuotedOnly": 1,
+      "fullTextRankQuotedOnly": 25,
+      "termLexemes": ["15", "jahr"],
+      "lexemesLostInQuery": [],
+      "lexemesMissingInExpected": [],
+      "expectedLength": 201,
+      "bm25Outranking": [
+        {
+          "id": "ao_1977/§ 228",
+          "length": 177
+        }
+      ]
+    },
+    {
+      "id": "l013",
+      "style": "term",
+      "question": "Woraus besteht die Ziffernfolge des Identifikationsmerkmals?",
+      "terms": ["Ziffernfolge"],
+      "expected": ["ao_1977/§ 139a/Abs. 1"],
+      "defaultRank": 1,
+      "olderRank": 1,
+      "vectorRank": 1,
+      "bm25Rank": 1,
+      "fullTextRank": 1,
+      "bm25RankQuotedOnly": 1,
+      "fullTextRankQuotedOnly": 1,
+      "termLexemes": ["ziffernfolg"],
+      "lexemesLostInQuery": [],
+      "lexemesMissingInExpected": [],
+      "expectedLength": 953,
+      "bm25Outranking": []
+    },
+    {
+      "id": "l014",
+      "style": "number",
+      "question": "Was gilt bei einem Überschuss zu Gunsten des Unternehmers von mehr als 9 000 Euro?",
+      "terms": ["9 000 Euro"],
+      "expected": ["ustg_1980/§ 18/Abs. 2a"],
+      "defaultRank": 1,
+      "olderRank": 1,
+      "vectorRank": 1,
+      "bm25Rank": 1,
+      "fullTextRank": 6,
+      "bm25RankQuotedOnly": 8,
+      "fullTextRankQuotedOnly": null,
+      "termLexemes": ["000", "9", "euro"],
+      "lexemesLostInQuery": [],
+      "lexemesMissingInExpected": [],
+      "expectedLength": 477,
+      "bm25Outranking": []
+    },
+    {
+      "id": "l016",
+      "style": "term",
+      "question": "Was zählt zu den kirchlichen Zwecken, etwa die Abhaltung von Gottesdiensten?",
+      "terms": ["Gottesdiensten"],
+      "expected": ["ao_1977/§ 54/Abs. 2"],
+      "defaultRank": 1,
+      "olderRank": 1,
+      "vectorRank": 1,
+      "bm25Rank": 1,
+      "fullTextRank": 4,
+      "bm25RankQuotedOnly": 1,
+      "fullTextRankQuotedOnly": 1,
+      "termLexemes": ["gottesdien"],
+      "lexemesLostInQuery": [],
+      "lexemesMissingInExpected": [],
+      "expectedLength": 510,
+      "bm25Outranking": []
+    },
+    {
+      "id": "l017",
+      "style": "number",
+      "question": "Wann ist ein Verspätungszuschlag festzusetzen, wenn die Steuererklärung nicht binnen 19 Monaten abgegeben wird?",
+      "terms": ["19 Monaten"],
+      "expected": ["ao_1977/§ 152/Abs. 2"],
+      "defaultRank": 1,
+      "olderRank": 1,
+      "vectorRank": 1,
+      "bm25Rank": 1,
+      "fullTextRank": 1,
+      "bm25RankQuotedOnly": 2,
+      "fullTextRankQuotedOnly": 1,
+      "termLexemes": ["19", "monat"],
+      "lexemesLostInQuery": [],
+      "lexemesMissingInExpected": [],
+      "expectedLength": 569,
+      "bm25Outranking": []
+    },
+    {
+      "id": "l019",
+      "style": "term",
+      "question": "Welche Zwangsmittel gibt es: Zwangsgeld, Ersatzvornahme, unmittelbarer Zwang?",
+      "terms": ["Ersatzvornahme", "unmittelbarer Zwang"],
+      "expected": ["ao_1977/§ 328/Abs. 1"],
+      "defaultRank": 1,
+      "olderRank": 1,
+      "vectorRank": 1,
+      "bm25Rank": 1,
+      "fullTextRank": 1,
+      "bm25RankQuotedOnly": 3,
+      "fullTextRankQuotedOnly": 3,
+      "termLexemes": ["ersatzvornahm", "unmittelbar", "zwang"],
+      "lexemesLostInQuery": [],
+      "lexemesMissingInExpected": [],
+      "expectedLength": 323,
+      "bm25Outranking": []
+    },
+    {
+      "id": "l020",
+      "style": "number",
+      "question": "Wann beginnt der Zinslauf bei der Einkommen- und Körperschaftsteuer 23 Monate nach dem Zeitpunkt der Entstehung?",
+      "terms": ["23 Monate"],
+      "expected": ["ao_1977/§ 233a/Abs. 2"],
+      "defaultRank": 1,
+      "olderRank": 1,
+      "vectorRank": 1,
+      "bm25Rank": 1,
+      "fullTextRank": 2,
+      "bm25RankQuotedOnly": 1,
+      "fullTextRankQuotedOnly": 6,
+      "termLexemes": ["23", "monat"],
+      "lexemesLostInQuery": [],
+      "lexemesMissingInExpected": [],
+      "expectedLength": 500,
+      "bm25Outranking": []
+    },
+    {
+      "id": "l022",
+      "style": "term",
+      "question": "Wann kann die Frist verlängert werden, wenn ein automationsgestütztes Risikomanagementsystem eingesetzt wird?",
+      "terms": ["automationsgestütztes Risikomanagementsystem"],
+      "expected": ["ao_1977/§ 109/Abs. 4"],
+      "defaultRank": 1,
+      "olderRank": 1,
+      "vectorRank": 1,
+      "bm25Rank": 1,
+      "fullTextRank": 1,
+      "bm25RankQuotedOnly": 2,
+      "fullTextRankQuotedOnly": 2,
+      "termLexemes": ["automationsgestutzt", "risikomanagementsystem"],
+      "lexemesLostInQuery": [],
+      "lexemesMissingInExpected": [],
+      "expectedLength": 367,
+      "bm25Outranking": []
+    },
+    {
+      "id": "l023",
+      "style": "number",
+      "question": "Welcher Betrag gilt, wenn der Hinterziehungsbetrag 1 000 000 Euro nicht übersteigt?",
+      "terms": ["1 000 000 Euro"],
+      "expected": ["ao_1977/§ 398a/Abs. 1"],
+      "defaultRank": 2,
+      "olderRank": 2,
+      "vectorRank": 2,
+      "bm25Rank": 2,
+      "fullTextRank": 1,
+      "bm25RankQuotedOnly": 3,
+      "fullTextRankQuotedOnly": 5,
+      "termLexemes": ["000", "1", "euro"],
+      "lexemesLostInQuery": [],
+      "lexemesMissingInExpected": [],
+      "expectedLength": 922,
+      "bm25Outranking": [
+        {
+          "id": "ao_1977/§ 398a/Abs. 1/Nr. 2",
+          "length": 399
+        }
+      ]
+    },
+    {
+      "id": "l025",
+      "style": "term",
+      "question": "Was gilt für Steuerhinterziehung bei harmonisierten Verbrauchsteuern, die von einem anderen Mitgliedstaat verwaltet werden?",
+      "terms": ["harmonisierten Verbrauchsteuern"],
+      "expected": ["ao_1977/§ 370/Abs. 6"],
+      "defaultRank": 1,
+      "olderRank": 1,
+      "vectorRank": 1,
+      "bm25Rank": 1,
+      "fullTextRank": 2,
+      "bm25RankQuotedOnly": 1,
+      "fullTextRankQuotedOnly": 7,
+      "termLexemes": ["harmonisiert", "verbrauchsteu"],
+      "lexemesLostInQuery": [],
+      "lexemesMissingInExpected": [],
+      "expectedLength": 690,
+      "bm25Outranking": []
+    },
+    {
+      "id": "l026",
+      "style": "number",
+      "question": "Was gilt, wenn die Umsätze im vorangegangenen Kalenderjahr 15 000 Euro nicht überstiegen haben?",
+      "terms": ["15 000 Euro"],
+      "expected": ["ustg_1980/§ 18a/Abs. 9"],
+      "defaultRank": 6,
+      "olderRank": 1,
+      "vectorRank": 17,
+      "bm25Rank": 4,
+      "fullTextRank": 1,
+      "bm25RankQuotedOnly": 26,
+      "fullTextRankQuotedOnly": 10,
+      "termLexemes": ["000", "15", "euro"],
+      "lexemesLostInQuery": [],
+      "lexemesMissingInExpected": [],
+      "expectedLength": 1355,
+      "bm25Outranking": [
+        {
+          "id": "ustg_1980/§ 18a/Abs. 9/Nr. 1",
+          "length": 193
+        },
+        {
+          "id": "ustg_1980/§ 18a/Abs. 9/Nr. 2",
+          "length": 403
+        },
+        {
+          "id": "ustg_1980/§ 23a/Abs. 2",
+          "length": 232
+        }
+      ]
+    },
+    {
+      "id": "l028",
+      "style": "term",
+      "question": "Wann ist der Steuerpflichtige nach seinen individuellen Kenntnissen und Fähigkeiten von der elektronischen Übermittlung befreit?",
+      "terms": ["Kenntnissen und Fähigkeiten"],
+      "expected": ["ao_1977/§ 150/Abs. 8"],
+      "defaultRank": 2,
+      "olderRank": 3,
+      "vectorRank": 9,
+      "bm25Rank": 1,
+      "fullTextRank": 8,
+      "bm25RankQuotedOnly": 2,
+      "fullTextRankQuotedOnly": 1,
+      "termLexemes": ["fahig", "kenntnis"],
+      "lexemesLostInQuery": [],
+      "lexemesMissingInExpected": [],
+      "expectedLength": 838,
+      "bm25Outranking": []
+    }
+  ]
+}
