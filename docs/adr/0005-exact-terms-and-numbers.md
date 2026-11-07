@@ -1,6 +1,6 @@
 # 0005. Exact terms and numbers: why the older hybrid scored higher, and a decision rule
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-07
 
 ## Context
@@ -79,8 +79,45 @@ includes zero is not described as an improvement.
 
 ## Results and decision
 
-To be added after the candidate runs.
+MRR per half; "default" is the search before this ADR changed anything. Result files are in `eval/results/`
+(`2026-11-07-multilingual-e5-small-{b0.5,b0.25,keepnum}-{dev,heldout}[-lexical].json` and the default
+`...-{dev,heldout}[-lexical].json`), all measured at commit `01640f3`.
+
+| Variant                   | paraphrase dev (38) | lexical dev (14) | paraphrase held-out (37) | lexical held-out (14) |
+| ------------------------- | ------------------- | ---------------- | ------------------------ | --------------------- |
+| default                   | 0.900               | 0.728            | 0.901                    | 0.713                 |
+| C1 `b` = 0.5              | 0.908               | 0.728            | 0.928                    | 0.756                 |
+| C1 `b` = 0.25             | 0.904               | 0.730            | 0.906                    | 0.764                 |
+| C2 separated numbers kept | 0.900               | 0.728            | 0.901                    | 0.713                 |
+
+**C1 is not adopted.**
+
+- `b` = 0.5 fails condition 1: its MRR on the lexical development half equals the default's (0.728), it is not
+  above it. Condition 3 fails too (see below).
+- `b` = 0.25 meets conditions 1, 2 and 4. On the paraphrase set it is not below the default on either half; on the
+  lexical set it is above on both halves; by style (all 28 lexical questions) terms change by -0.017, numbers by
+  +0.043 and citations by +0.059. It fails condition 3: on the 19 exact-term and number questions the paired
+  bootstrap difference in MRR is +0.012 with an interval of [-0.025, +0.058], and in recall@5 +0.105 with an
+  interval of [0.000, +0.263]. Neither excludes zero, so the difference cannot be told from noise.
+- For `b` = 0.5 the interval of the MRR difference on those 19 questions is [0.000, +0.017] (+0.006).
+
+C1 stays available as the option `bm25B` (`pnpm eval:retrieval --bm25-b 0.25`). The lexical set as a whole scores
+a little higher with it (0.720 to 0.747 MRR at `b` = 0.25), but that rise comes mostly from the citation
+questions, which this rule did not target, and no interval was computed for it, so it is not claimed as an
+improvement.
+
+**C2 is adopted as the default.** It changed no question on any of the four halves (identical MRR and recall to
+the default), and the fixture test and the Postgres integration test show that a number with a separator now
+finds its unit and that the older full-text query accepts such numbers without failing (checked on the 64
+separated numbers of the corpus plus five extra forms). No eval question contains such a number, so its effect on
+real questions is **not measured**; the justification is the demonstrated mismatch, as the rule stated.
 
 ## Consequences
 
-To be added.
+- The earlier statement that the older hybrid is better on exact terms and numbers is revised: it rests on three
+  questions of 19, with paired intervals that include zero, and is not evidence that BM25 is worse. The cause that
+  best fits is length normalization (hypothesis 2), which is suggestive only.
+- The default search is unchanged except that numbers with a separator are kept whole in the query.
+- Open: how often separated numbers occur in real questions and how much C2 helps; whether the external question
+  set (a separate change) contains any; and a larger set of exact-term questions, since 19 cannot settle the
+  length-normalization question.

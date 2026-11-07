@@ -123,8 +123,8 @@ What the numbers say, and what they do not:
 - The CI fixture eval, with a deterministic fake embedder, scores recall@5 0.786 and MRR 0.652 in the default mode;
   its thresholds (0.7 and 0.5) still hold. It says nothing about real models.
 - The reranker was measured on vector-only candidates (ADR 0003) and was not re-measured on the new default.
-- Open: why the Postgres hybrid beats BM25 on exact terms and numbers; a lexical set not written by the same author;
-  questions from real use.
+- Open: why the Postgres hybrid beats BM25 on exact terms and numbers (analyzed in [ADR 0005](0005-exact-terms-and-numbers.md):
+  within noise on 19 questions); a lexical set not written by the same author; questions from real use.
 
 ## Limits of the evidence
 
