@@ -241,7 +241,11 @@ How to read these (details and paired bootstrap intervals in [ADR 0002](docs/adr
   (MRR +0.011, interval [-0.034, +0.056], not significant); on the lexical questions it is clearly better (MRR
   +0.185, [+0.081, +0.304]). The gain on the lexical questions comes almost entirely from citation matching
   ("Was regelt § 172 Abs. 1 AO?"): by style, citation lookups score 0.596 against 0.080 for vector-only. On exact
-  terms and numbers the older Postgres hybrid was better than the default (0.883 and 0.889 against 0.850 and 0.701).
+  terms and numbers the older Postgres hybrid scored higher (0.883 and 0.889 against 0.850 and 0.701), but that
+  rests on three of 19 questions and the paired intervals include zero, so it cannot be told from noise
+  ([ADR 0005](docs/adr/0005-exact-terms-and-numbers.md)). That analysis also found that numbers written with a
+  separator ("6.000") were split in the query and could not match; they are now kept whole, which changed no
+  measured result because no eval question contains one.
 - The choice was made on a development half of both sets and confirmed on a held-out half by a rule fixed before the
   runs. The lexical set is small and favors lexical matching by construction, so it shows that the machinery
   works for quoted references, not how real users ask.
@@ -255,10 +259,11 @@ How to read these (details and paired bootstrap intervals in [ADR 0002](docs/adr
   another): read them as orders of magnitude. Cloud embedding models were not evaluated (no key).
 
 Run a comparison with `pnpm index --embedder <name>` and
-`pnpm eval:retrieval --embedder <name> [--questions eval/lexical-questions.jsonl] [--mode vector|hybrid|fts] [--lexical fts|bm25] [--no-citation] [--fts-query or|and] [--rerank] [--no-compound] [--fts-weight w] [--fts-max-share s] [--split dev|heldout]`,
+`pnpm eval:retrieval --embedder <name> [--questions eval/lexical-questions.jsonl] [--mode vector|hybrid|fts] [--lexical fts|bm25] [--no-citation] [--fts-query or|and] [--rerank] [--no-compound] [--fts-weight w] [--fts-max-share s] [--bm25-b b] [--no-keep-numbers] [--split dev|heldout]`,
 where the names are `local-e5`, `local-e5-base`, `local-e5-large`, `local-bge-m3` and `fake`. Raw results are in
 `eval/results/` and `pnpm eval:compare a.json b.json` gives the paired bootstrap. `pnpm eval:diagnose` shows, per
-question, where vector and full-text ranking place the expected unit. The commit shown is the head of the pull
+question, where vector and full-text ranking place the expected unit, and `pnpm eval:exact-terms` compares the default with
+the older hybrid on the exact-term and number questions. The commit shown is the head of the pull
 request branch the numbers were measured on (a squash merge gives it a new hash). The runs are manual.
 
 Weak spots, as measured with the default: 3 of 75 paraphrase questions have no expected unit in the top 10 (q030,
@@ -304,7 +309,8 @@ invented text, not a real policy. The Markdown source under `packages/corpus/tes
 - **The lexical gain is shown on questions written to favor it.** The default search (hybrid with BM25 and citation
   matching) beat vector-only on a 28-question lexical set that favors lexical matching by construction and was written
   by the author; on the paraphrase questions it only matched vector-only. How it behaves on real users' questions or
-  other corpora is not known, and the gain on exact terms and numbers is not better than the older Postgres hybrid.
+  other corpora is not known. On exact terms and numbers the default is not shown to be better or worse than the
+  older Postgres hybrid (19 questions, differences within noise, ADR 0005).
 - **The reranker is not part of the service.** It improves MRR significantly (recall@5 not significantly), but
   took about 53 seconds per question on the development laptop, so it is off by default and not wired into
   `/ask`.

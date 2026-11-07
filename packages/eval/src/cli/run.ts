@@ -5,6 +5,7 @@ import { join } from 'node:path';
 import { GesetzeImInternetSource, type CorpusUnit } from '@normkompass/corpus';
 import {
   DEFAULT_CITATION_MATCH,
+  DEFAULT_KEEP_SEPARATED_NUMBERS,
   DEFAULT_LEXICAL,
   DEFAULT_SEARCH_MODE,
   HybridSearch,
@@ -69,6 +70,8 @@ if (!['or', 'and'].includes(ftsQuery)) {
 }
 const citationMatch = process.argv.includes('--no-citation') ? false : DEFAULT_CITATION_MATCH;
 const citationWeight = numberFlag('--citation-weight');
+const bm25B = numberFlag('--bm25-b');
+const keepSeparatedNumbers = !process.argv.includes('--no-keep-numbers');
 
 const questionFile = argValue('--questions') ?? join('eval', 'questions.jsonl');
 const external = questionFile.includes('external');
@@ -125,6 +128,8 @@ try {
       ftsQuery,
       citationMatch,
       citationWeight,
+      bm25B,
+      keepSeparatedNumbers,
     },
   );
   const cost = await readModelRecord(pool, embedder.model);
@@ -158,6 +163,8 @@ try {
     lexicalRanking === DEFAULT_LEXICAL ? '' : `-${lexicalRanking}`,
     ftsQuery === 'or' ? '' : `-q${ftsQuery}`,
     citationMatch === DEFAULT_CITATION_MATCH ? '' : '-nocitation',
+    bm25B === undefined ? '' : `-b${bm25B}`,
+    keepSeparatedNumbers === DEFAULT_KEEP_SEPARATED_NUMBERS ? '' : '-nokeepnum',
     split === 'all' ? '' : `-${split}`,
     setKind === 'paraphrase' ? '' : `-${setKind}`,
   ].join('');
@@ -181,6 +188,8 @@ try {
         ftsQuery,
         citationMatch,
         citationWeight: citationWeight ?? null,
+        bm25B: bm25B ?? null,
+        keepSeparatedNumbers,
         indexingSeconds: cost?.indexingSeconds ?? null,
         weightsBytes: cost?.weightsBytes ?? null,
         dimension: embedder.dimension,

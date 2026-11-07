@@ -1,7 +1,7 @@
 import { Vocabulary, expandQueryTerms } from './compound.js';
 import { ensureEmbeddingTable, toVectorLiteral, type Pool } from './db.js';
 import type { Embedder } from './embedder.js';
-import { Bm25 } from './bm25.js';
+import { Bm25, type Bm25Doc } from './bm25.js';
 import { labelMatches, parseCitations } from './citation.js';
 import type { Reranker } from './reranker.js';
 
@@ -35,6 +35,8 @@ export type SearchMode = 'hybrid' | 'vector' | 'fts';
 export const DEFAULT_SEARCH_MODE: SearchMode = 'hybrid';
 export const DEFAULT_LEXICAL = 'bm25';
 export const DEFAULT_CITATION_MATCH = true;
+/** Keep numbers such as "6.000" whole in the query; adopted by the rule of ADR 0005 (neutral on every measured half). */
+export const DEFAULT_KEEP_SEPARATED_NUMBERS = true;
 
 export interface SearchOptions {
   limit?: number;
@@ -50,6 +52,16 @@ export interface SearchOptions {
    * off by default. If every term would be dropped, the full query is kept.
    */
   ftsMaxDocShare?: number;
+  /**
+   * BM25 length normalization (0 to 1, default 0.75); lower values discount long units less. Only for BM25.
+   * An option for the analysis of ADR 0005.
+   */
+  bm25B?: number;
+  /**
+   * Keep numbers written with a separator ("6.000", "30,5") as one query term, as they are one word in the
+   * index (default true); switched off they are split into digit groups that cannot match (ADR 0005).
+   */
+  keepSeparatedNumbers?: boolean;
   /** Which lexical ranking feeds the "fts" side: BM25 computed in the application (default) or Postgres full-text. */
   lexical?: 'fts' | 'bm25';
   /**
@@ -123,9 +135,14 @@ export class HybridSearch {
   }
 
   /** Terms used for full-text search: question words plus parts of known compounds. */
-  async queryTerms(question: string, compoundSplitting = true): Promise<string[]> {
-    if (!compoundSplitting) return expandQueryTerms(question, Vocabulary.fromTexts([]));
-    return expandQueryTerms(question, await this.loadVocabulary());
+  async queryTerms(
+    question: string,
+    compoundSplitting = true,
+    keepSeparatedNumbers = DEFAULT_KEEP_SEPARATED_NUMBERS,
+  ): Promise<string[]> {
+    const options = { keepSeparatedNumbers };
+    if (!compoundSplitting) return expandQueryTerms(question, Vocabulary.fromTexts([]), options);
+    return expandQueryTerms(question, await this.loadVocabulary(), options);
   }
 
   async search(question: string, options: SearchOptions = {}): Promise<SearchHit[]> {
@@ -138,13 +155,15 @@ export class HybridSearch {
 
     const vector = mode === 'fts' ? empty : await this.vectorSearch(question, candidates);
     const allTerms =
-      mode === 'vector' ? [] : await this.queryTerms(question, options.compoundSplitting);
+      mode === 'vector'
+        ? []
+        : await this.queryTerms(question, options.compoundSplitting, options.keepSeparatedNumbers);
     const terms = await this.dropCommonTerms(allTerms, options.ftsMaxDocShare);
     const fts =
       terms.length === 0
         ? empty
         : (options.lexical ?? DEFAULT_LEXICAL) === 'bm25'
-          ? await this.bm25Search(terms, candidates)
+          ? await this.bm25Search(terms, candidates, options.bm25B)
           : await this.ftsSearch(terms, candidates, options.ftsQuery ?? 'or', question);
     const citationMatch = options.citationMatch ?? DEFAULT_CITATION_MATCH;
     const citations = citationMatch ? await this.citationSearch(question) : empty;
@@ -234,11 +253,12 @@ export class HybridSearch {
     ]);
   }
 
-  private bm25Index: Promise<Bm25> | undefined;
+  private bm25Docs: Promise<Bm25Doc[]> | undefined;
+  private readonly bm25Indexes = new Map<number | undefined, Bm25>();
 
-  /** BM25 over the German-normalized terms of every chunk (title and text), built once per instance. */
-  private loadBm25(): Promise<Bm25> {
-    this.bm25Index ??= this.pool
+  /** The German-normalized terms of every chunk (title and text), read once per instance. */
+  private loadBm25Docs(): Promise<Bm25Doc[]> {
+    this.bm25Docs ??= this.pool
       .query<{ id: string; lexeme: string; tf: number }>(
         `SELECT c.id, u.lexeme, coalesce(array_length(u.positions, 1), 1) AS tf
          FROM chunks c,
@@ -251,17 +271,30 @@ export class HybridSearch {
           terms.set(r.lexeme, r.tf);
           docs.set(r.id, terms);
         }
-        return new Bm25([...docs].map(([id, terms]) => ({ id, terms })));
+        return [...docs].map(([id, terms]) => ({ id, terms }));
       });
-    return this.bm25Index;
+    return this.bm25Docs;
   }
 
-  private async bm25Search(terms: string[], candidates: number): Promise<{ rows: Row[] }> {
+  /** The BM25 index for one length normalization, built from the shared documents on first use. */
+  private async loadBm25(b: number | undefined): Promise<Bm25> {
+    const known = this.bm25Indexes.get(b);
+    if (known) return known;
+    const index = new Bm25(await this.loadBm25Docs(), b === undefined ? {} : { b });
+    this.bm25Indexes.set(b, index);
+    return index;
+  }
+
+  private async bm25Search(
+    terms: string[],
+    candidates: number,
+    b: number | undefined,
+  ): Promise<{ rows: Row[] }> {
     const lexemes = await this.pool.query<{ lexeme: string }>(
       `SELECT lexeme FROM unnest(to_tsvector('german', $1)) AS u(lexeme, positions, weights)`,
       [terms.join(' ')],
     );
-    const ranked = (await this.loadBm25()).search(
+    const ranked = (await this.loadBm25(b)).search(
       lexemes.rows.map((r) => r.lexeme),
       candidates,
     );

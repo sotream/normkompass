@@ -1,0 +1,97 @@
+{
+  "date": "2026-11-07",
+  "commit": "01640f3",
+  "dirty": false,
+  "embedder": "multilingual-e5-small",
+  "mode": "hybrid",
+  "rerank": null,
+  "compoundSplitting": true,
+  "split": "heldout",
+  "questionSet": "lexical",
+  "ftsWeight": null,
+  "ftsMaxDocShare": null,
+  "lexical": "bm25",
+  "ftsQuery": "or",
+  "citationMatch": true,
+  "citationWeight": null,
+  "bm25B": 0.25,
+  "keepSeparatedNumbers": false,
+  "indexingSeconds": 229,
+  "weightsBytes": 118308185,
+  "dimension": 384,
+  "questions": 14,
+  "recallAt5": 0.9285714285714286,
+  "mrr": 0.7642857142857143,
+  "perQuestion": [
+    {
+      "id": "l002",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "l004",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "l006",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "l008",
+      "firstHitRank": 2,
+      "recallAt5": 1
+    },
+    {
+      "id": "l010",
+      "firstHitRank": 2,
+      "recallAt5": 1
+    },
+    {
+      "id": "l012",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "l014",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "l016",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "l018",
+      "firstHitRank": 6,
+      "recallAt5": 0
+    },
+    {
+      "id": "l020",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "l022",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "l024",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "l026",
+      "firstHitRank": 5,
+      "recallAt5": 1
+    },
+    {
+      "id": "l028",
+      "firstHitRank": 3,
+      "recallAt5": 1
+    }
+  ]
+}
