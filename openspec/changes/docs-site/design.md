@@ -9,7 +9,7 @@ GitHub Pages can serve a folder built by a workflow. The README is written for G
 - **Deploy by workflow.** The site is built in CI on every pull request (checks only) and deployed only from `main`, with the minimal permissions Pages deployment needs. Nothing is committed to a `gh-pages` branch.
 - **Link and image check.** The build fails on a broken internal link or image so the site cannot silently lose the charts or ADRs.
 - **Footer.** Each page states the commit it was built from, the Stand caveat and that it is not legal advice.
-- **No tracking.** No analytics, no cookies, no third-party fonts; the only external request is the pinned diagram library.
+- **No tracking.** No analytics, no cookies, no third-party fonts. The external requests are the pinned diagram library and the badge images that the README itself contains (from a badge service and from GitHub); the site does not add any other.
 - **Website field.** Set to the site address after the first deployment succeeds and the address answers with the site, not before.
 
 ## Risks
