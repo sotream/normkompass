@@ -1,0 +1,347 @@
+{
+  "date": "2026-11-07",
+  "commit": "b5d26fe",
+  "dirty": true,
+  "embedder": "multilingual-e5-small",
+  "mode": "hybrid",
+  "rerank": null,
+  "compoundSplitting": true,
+  "split": "all",
+  "questionSet": "external",
+  "ftsWeight": null,
+  "ftsMaxDocShare": null,
+  "lexical": "bm25",
+  "ftsQuery": "or",
+  "citationMatch": true,
+  "citationWeight": null,
+  "bm25B": null,
+  "keepSeparatedNumbers": true,
+  "indexingSeconds": 229,
+  "weightsBytes": 118308185,
+  "dimension": 384,
+  "questions": 64,
+  "recallAt5": 0.984375,
+  "mrr": 0.8302083333333334,
+  "perQuestion": [
+    {
+      "id": "e001",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "e002",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "e003",
+      "firstHitRank": 4,
+      "recallAt5": 1
+    },
+    {
+      "id": "e004",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "e005",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "e006",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "e007",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "e008",
+      "firstHitRank": 3,
+      "recallAt5": 1
+    },
+    {
+      "id": "e009",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "e010",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "e011",
+      "firstHitRank": 2,
+      "recallAt5": 1
+    },
+    {
+      "id": "e012",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "e013",
+      "firstHitRank": 2,
+      "recallAt5": 1
+    },
+    {
+      "id": "e014",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "e015",
+      "firstHitRank": 4,
+      "recallAt5": 1
+    },
+    {
+      "id": "e016",
+      "firstHitRank": 2,
+      "recallAt5": 1
+    },
+    {
+      "id": "e017",
+      "firstHitRank": 2,
+      "recallAt5": 1
+    },
+    {
+      "id": "e018",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "e019",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "e020",
+      "firstHitRank": 2,
+      "recallAt5": 1
+    },
+    {
+      "id": "e021",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "e022",
+      "firstHitRank": 3,
+      "recallAt5": 1
+    },
+    {
+      "id": "e023",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "e024",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "e025",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "e026",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "e027",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "e028",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "e029",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "e030",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "e031",
+      "firstHitRank": 3,
+      "recallAt5": 1
+    },
+    {
+      "id": "e032",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "e033",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "e034",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "e035",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "e036",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "e037",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "e038",
+      "firstHitRank": 2,
+      "recallAt5": 1
+    },
+    {
+      "id": "e039",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "e040",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "e041",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "e042",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "e043",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "e044",
+      "firstHitRank": 10,
+      "recallAt5": 0
+    },
+    {
+      "id": "e045",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "e046",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "e047",
+      "firstHitRank": 3,
+      "recallAt5": 1
+    },
+    {
+      "id": "e048",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "e049",
+      "firstHitRank": 5,
+      "recallAt5": 1
+    },
+    {
+      "id": "e050",
+      "firstHitRank": 2,
+      "recallAt5": 1
+    },
+    {
+      "id": "e051",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "e052",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "e053",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "e054",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "e055",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "e056",
+      "firstHitRank": 2,
+      "recallAt5": 1
+    },
+    {
+      "id": "e057",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "e058",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "e059",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "e060",
+      "firstHitRank": 2,
+      "recallAt5": 1
+    },
+    {
+      "id": "e061",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "e062",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    },
+    {
+      "id": "e063",
+      "firstHitRank": 2,
+      "recallAt5": 1
+    },
+    {
+      "id": "e064",
+      "firstHitRank": 1,
+      "recallAt5": 1
+    }
+  ]
+}

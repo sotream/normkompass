@@ -1,0 +1,122 @@
+[
+  {
+    "writer": "perplexity",
+    "line": 24,
+    "reason": "the question does not quote \"acht Vertreterinnen und Vertreter\" verbatim",
+    "raw": "{\"unit\": \"u24\", \"question\": \"Wie viele Vertreterinnen und Vertreter der Zivilgesellschaft gehören zum Beirat?\", \"style\": \"number\", \"terms\": [\"acht Vertreterinnen und Vertreter\"]}"
+  },
+  {
+    "writer": "perplexity",
+    "line": 26,
+    "reason": "invalid JSON",
+    "raw": "Sources"
+  },
+  {
+    "writer": "perplexity",
+    "line": 1,
+    "reason": "the question does not quote \"Richtlinie (EU) 2016/680\" verbatim",
+    "raw": "{\"unit\": \"u01\", \"question\": \"Für welche Richtlinie muss die oder der Bundesbeauftragte den Datenschutzaufsichtsbehörden in anderen Mitgliedstaaten der Europäischen Union Amtshilfe leisten?\", \"style\": \"number\", \"terms\": [\"Richtlinie (EU) 2016/680\"]}"
+  },
+  {
+    "writer": "perplexity",
+    "line": 4,
+    "reason": "the question does not quote \"§ 4 Nr. 3 Satz 1 Buchstabe a Doppelbuchstabe bb\" verbatim",
+    "raw": "{\"unit\": \"u04\", \"question\": \"Welche Vorschrift betrifft eine Leistung, die sich auf einen Gegenstand der Einfuhr in das Gebiet eines Mitgliedstaates der Europäischen Union bezieht?\", \"style\": \"number\", \"terms\": [\"§ 4 Nr. 3 Satz 1 Buchstabe a Doppelbuchstabe bb\"]}"
+  },
+  {
+    "writer": "perplexity",
+    "line": 5,
+    "reason": "the question does not quote \"persönlichen Einschätzungen\" verbatim",
+    "raw": "{\"unit\": \"u05\", \"question\": \"Woran soll der Verantwortliche bei der Verarbeitung personenbezogener Daten so weit wie möglich unterscheiden?\", \"style\": \"term\", \"terms\": [\"persönlichen Einschätzungen\"]}"
+  },
+  {
+    "writer": "perplexity",
+    "line": 10,
+    "reason": "the question does not quote \"Master Reference Number – MRN\" verbatim",
+    "raw": "{\"unit\": \"u10\", \"question\": \"Welche Nummer muss der Unternehmer in den Fällen des § 9 Absatz 1 Satz 1 Nummer 1, des § 10 Absatz 1 Satz 1 Nummer 1 und des § 10 Absatz 3 zusätzlich aufzeichnen?\", \"style\": \"number\", \"terms\": [\"Master Reference Number – MRN\"]}"
+  },
+  {
+    "writer": "perplexity",
+    "line": 11,
+    "reason": "the question does not quote \"Drittstaat\" verbatim",
+    "raw": "{\"unit\": \"u11\", \"question\": \"Welche Kategorien von Übermittlungen personenbezogener Daten sind gegebenenfalls im Verzeichnis von Verarbeitungstätigkeiten anzugeben?\", \"style\": \"term\", \"terms\": [\"Drittstaat\"]}"
+  },
+  {
+    "writer": "perplexity",
+    "line": 18,
+    "reason": "invalid JSON",
+    "raw": "Sources"
+  },
+  {
+    "writer": "perplexity",
+    "line": 2,
+    "reason": "the question does not quote \"15 Jahre\" verbatim",
+    "raw": "{\"unit\": \"u02\", \"question\": \"Wie lange beträgt die Verjährungsfrist bei besonders schwerer Steuerhinterziehung?\", \"style\": \"number\", \"terms\": [\"15 Jahre\"]}"
+  },
+  {
+    "writer": "perplexity",
+    "line": 11,
+    "reason": "copy of an existing question",
+    "raw": "{\"unit\": \"u11\", \"question\": \"Welches Finanzamt ist für die Umsatzsteuer von Personen zuständig, die keine Unternehmer sind?\", \"style\": \"term\", \"terms\": [\"Finanzamt\"]}"
+  },
+  {
+    "writer": "perplexity",
+    "line": 13,
+    "reason": "the question does not quote \"drei Tagen\" verbatim",
+    "raw": "{\"unit\": \"u13\", \"question\": \"Innerhalb welcher Frist muss die gerichtliche Bestätigung einer Beschlagnahme beantragt werden?\", \"style\": \"number\", \"terms\": [\"drei Tagen\"]}"
+  },
+  {
+    "writer": "perplexity",
+    "line": 16,
+    "reason": "the question does not quote \"30. Juni 2025\" verbatim",
+    "raw": "{\"unit\": \"u16\", \"question\": \"Wann legt die Bundesregierung erstmals den Bericht über die dem Bundeskriminalamt gemeldeten Straftaten vor?\", \"style\": \"number\", \"terms\": [\"30. Juni 2025\"]}"
+  },
+  {
+    "writer": "perplexity",
+    "line": 24,
+    "reason": "the question does not quote \"Kalenderjahr\" verbatim",
+    "raw": "{\"unit\": \"u24\", \"question\": \"Was ist der Besteuerungszeitraum nach § 16 Abs. 1 UStG?\", \"style\": \"number\", \"terms\": [\"Kalenderjahr\"]}"
+  },
+  {
+    "writer": "perplexity",
+    "line": 26,
+    "reason": "invalid JSON",
+    "raw": "Sources"
+  },
+  {
+    "writer": "perplexity",
+    "line": 6,
+    "reason": "the question does not quote \"weitere Informationen\" verbatim",
+    "raw": "{\"unit\": \"u06\", \"question\": \"Welche weiteren Informationen können bei der Benachrichtigung betroffener Personen erforderlich sein?\", \"style\": \"term\", \"terms\": [\"weitere Informationen\"]}"
+  },
+  {
+    "writer": "perplexity",
+    "line": 12,
+    "reason": "the question does not quote \"datenschutzfreundliche Voreinstellungen\" verbatim",
+    "raw": "{\"unit\": \"u12\", \"question\": \"Welche Maßnahmen muss der Verantwortliche bei datenschutzfreundlichen Voreinstellungen treffen?\", \"style\": \"term\", \"terms\": [\"datenschutzfreundliche Voreinstellungen\"]}"
+  },
+  {
+    "writer": "perplexity",
+    "line": 13,
+    "reason": "the question does not quote \"Abnehmers oder Auftraggebers\" verbatim",
+    "raw": "{\"unit\": \"u13\", \"question\": \"Was muss beim buchmäßigen Nachweis bei Ausfuhrlieferungen über den Abnehmer oder Auftraggeber angegeben werden?\", \"style\": \"term\", \"terms\": [\"Abnehmers oder Auftraggebers\"]}"
+  },
+  {
+    "writer": "perplexity",
+    "line": 14,
+    "reason": "the question does not quote \"verbindlicher Entgeltregelungen für Heilbehandlungen\" verbatim",
+    "raw": "{\"unit\": \"u14\", \"question\": \"Worauf muss die Entscheidung bei verbindlichen Entgeltregelungen für Heilbehandlungen beruhen?\", \"style\": \"term\", \"terms\": [\"verbindlicher Entgeltregelungen für Heilbehandlungen\"]}"
+  },
+  {
+    "writer": "perplexity",
+    "line": 15,
+    "reason": "the question does not quote \"1 000 Euro\" verbatim",
+    "raw": "{\"unit\": \"u15\", \"question\": \"Bis zu welchem Betrag entfällt die Berichtigung des Vorsteuerabzugs bei Anschaffungs- oder Herstellungskosten eines Wirtschaftsguts?\", \"style\": \"number\", \"terms\": [\"1 000 Euro\"]}"
+  },
+  {
+    "writer": "perplexity",
+    "line": 18,
+    "reason": "invalid JSON",
+    "raw": "Sources"
+  }
+]

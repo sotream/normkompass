@@ -234,6 +234,38 @@ Written to favor lexical matching and reported separately; they are not averaged
 
 </details>
 
+### External question set (written by another AI)
+
+To test the lexical results against questions this repository's author did not choose, four batches of 16 to 24
+corpus passages (seed 20261107, every law in every batch) were given, with the instruction in
+[`eval/external/INSTRUCTIONS.md`](eval/external/INSTRUCTIONS.md), to **one** AI assistant, Perplexity, as reported
+by the repository owner (model version not recorded; each output ended with a "Sources" line, which suggests an
+interface with web search, but the repository cannot verify how the questions were produced). Its raw output is
+stored unchanged in `eval/external/raw/`. Of 80 question lines, 64 became questions; 24 of these are flagged
+`needs_review` because the quoted term also occurs in other passages, so the single expected passage is not the only
+defensible answer. 16 lines were rejected with a reason in `eval/external/rejected.json` (15 whose quoted term is not
+in the question verbatim, 1 copy of an existing question), and the four "Sources" lines are not JSON. These are
+**model-written questions, not users' questions**, from a single writer, so there is no comparison between writers,
+and 27 of the 64 are citation lookups ("Was regelt § 22 Abs. 2 DDG?").
+
+| Search (multilingual-e5-small)                      | all 64 (recall@5 / MRR) | not flagged, 40 | terms 29      | numbers 8     | citations 27  |
+| --------------------------------------------------- | ----------------------- | --------------- | ------------- | ------------- | ------------- |
+| hybrid: vector + BM25 + citation matching (default) | 0.984 / 0.830           | 0.975 / 0.814   | 1.000 / 0.922 | 1.000 / 0.792 | 0.963 / 0.743 |
+| vector only                                         | 0.953 / 0.753           | 0.975 / 0.796   | 0.966 / 0.754 | 0.750 / 0.542 | 1.000 / 0.815 |
+| hybrid: vector + BM25, no citation matching         | 0.719 / 0.601           | 0.550 / 0.422   | 1.000 / 0.940 | 1.000 / 0.854 | 0.333 / 0.162 |
+| hybrid: vector + Postgres full-text (older default) | 0.656 / 0.534           | 0.500 / 0.405   | 0.897 / 0.748 | 0.750 / 0.674 | 0.370 / 0.262 |
+
+Result files are `eval/results/2026-11-07-multilingual-e5-small{,-vector,-nocitation,-fts-nocitation}-external.json`,
+measured at commit `b5d26fe`. Paired 95% bootstrap intervals of the MRR difference, default minus the other: against
+vector-only +0.077 [+0.012, +0.144] on all 64 but +0.018 [-0.063, +0.104] on the 40 questions not flagged (not
+significant); against the older hybrid +0.296 [+0.194, +0.399], and +0.162 [+0.044, +0.287] on the 37 term and
+number questions. Reading it: the older Postgres hybrid is not better than the default on exact terms and numbers
+here, which agrees with ADR 0005 that the earlier gap was noise; the default is clearly ahead of the older hybrid
+and not distinguishable from vector-only on the unflagged questions. On citation lookups vector-only is
+slightly higher (MRR 0.815 against 0.743, not tested), the opposite of the hand-written lexical set; with 27
+questions and one writer this is a difference to look at, not a conclusion. The set is also not independent of
+lexical matching: each question was written while looking at the passage and quotes its words.
+
 How to read these (details and paired bootstrap intervals in [ADR 0002](docs/adr/0002-embeddings-and-reranker.md),
 [ADR 0003](docs/adr/0003-hybrid-tuning-and-default-mode.md) and [ADR 0004](docs/adr/0004-lexical-retrieval.md)):
 
@@ -309,7 +341,8 @@ invented text, not a real policy. The Markdown source under `packages/corpus/tes
 - **The lexical gain is shown on questions written to favor it.** The default search (hybrid with BM25 and citation
   matching) beat vector-only on a 28-question lexical set that favors lexical matching by construction and was written
   by the author; on the paraphrase questions it only matched vector-only. How it behaves on real users' questions or
-  other corpora is not known. On exact terms and numbers the default is not shown to be better or worse than the
+  other corpora is not known; the one external check is 64 questions from a single AI writer, which quote the passages'
+  words and are not users' questions (see "External question set"). On exact terms and numbers the default is not shown to be better or worse than the
   older Postgres hybrid (19 questions, differences within noise, ADR 0005).
 - **The reranker is not part of the service.** It improves MRR significantly (recall@5 not significantly), but
   took about 53 seconds per question on the development laptop, so it is off by default and not wired into
