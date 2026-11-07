@@ -57,8 +57,15 @@ export function splitCompound(word: string, vocab: Vocabulary): string[] {
   return result.length >= 2 ? result : [];
 }
 
+const WORD = /[\p{L}\p{N}]+/gu;
+const SEPARATED_OR_WORD = /\d{1,3}(?:[.,]\d{1,3})+(?![\p{L}\p{N}])|[\p{L}\p{N}]+/gu;
+
 /** Words of a question, plus the parts of any compound that splits into known words. */
-export function expandQueryTerms(question: string, vocab: Vocabulary): string[] {
+export function expandQueryTerms(
+  question: string,
+  vocab: Vocabulary,
+  options: { keepSeparatedNumbers?: boolean } = {},
+): string[] {
   const terms: string[] = [];
   const seen = new Set<string>();
   const add = (t: string): void => {
@@ -67,7 +74,9 @@ export function expandQueryTerms(question: string, vocab: Vocabulary): string[] 
       terms.push(t);
     }
   };
-  for (const raw of question.match(/[\p{L}\p{N}]+/gu) ?? []) {
+  // With keepSeparatedNumbers a number such as "6.000" or "30,5" stays one term, as it is one word in the index.
+  const tokens = options.keepSeparatedNumbers ? SEPARATED_OR_WORD : WORD;
+  for (const raw of question.match(tokens) ?? []) {
     const word = raw.toLowerCase();
     add(word);
     if (word.length >= 2 * MIN_PART) {
