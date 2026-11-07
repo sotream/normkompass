@@ -10,6 +10,6 @@
 
 ## 3. Results
 
-- [ ] 3.1 Run the retrieval eval on the external set and record the results
-- [ ] 3.2 Report them per writer and overall in a separate table, with what the set shows and does not show
-- [ ] 3.3 Run `openspec archive external-lexical-set` and keep the Purpose sections filled
+- [x] 3.1 Run the retrieval eval on the external set and record the results
+- [x] 3.2 Report them per writer and overall in a separate table, with what the set shows and does not show
+- [x] 3.3 Run `openspec archive external-lexical-set` and keep the Purpose sections filled
