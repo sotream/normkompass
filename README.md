@@ -14,7 +14,7 @@ answer, the service refuses instead of guessing.</p>
 </p>
 
 The demo corpus is German federal law from gesetze-im-internet.de. This is a reference implementation, not a
-finished product; see "Honest limits".
+finished product; see "Limitations".
 
 This README is also published as a website: <https://sotream.github.io/normkompass/>.
 
@@ -46,7 +46,7 @@ This README is also published as a website: <https://sotream.github.io/normkompa
 
 - [Retrieval results](#retrieval-results)
 - [Answer evaluation](#answer-evaluation)
-- [Honest limits](#honest-limits)
+- [Limitations](#limitations)
 
 **Project**
 
@@ -57,7 +57,7 @@ This README is also published as a website: <https://sotream.github.io/normkompa
 Reference implementation, all planned v1 phases implemented: project scaffold, corpus ingest with a
 structure-aware parser for the demo laws, hybrid search with a retrieval evaluation and an embedding
 comparison (ADR 0002), and answer generation with code-checked citations and refusal. It is not a finished
-product. See "Honest limits" for what is not known or not done, in particular that the Claude runs are one run per
+product. See "Limitations" for what is not known or not done, in particular that the Claude runs are one run per
 model on questions that Claude wrote and the owner reviewed, and that the default search is hybrid with BM25 and citation matching, chosen by a rule fixed before the runs (ADR 0004), after an earlier hybrid scored below vector-only (ADR 0003).
 
 ## How it works
@@ -87,12 +87,12 @@ citation turns the whole answer into a refusal. A worked example with a real ans
 
 ## Results at a glance
 
-| What was measured                                                          | Result                                                                                                                                                                   |
-| -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Default search on 75 paraphrase questions                                  | recall@5 0.960, MRR 0.900 on all 75; 0.946 and 0.901 on the held-out half (37) not used to choose it; all 75 not significantly different from vector-only (0.960, 0.889) |
-| Default search on 28 lexical questions (written to favor it)               | recall@5 0.857, MRR 0.720, against 0.679 and 0.536 for vector-only                                                                                                       |
-| Citation validity of a free hosted model (`gemini-3.5-flash-lite`, 4 runs) | 0.940 to 0.976                                                                                                                                                           |
-| Citation validity of Claude Opus 5.5 and Sonnet 5.5 (1 run each)           | 1.000 for both (241/241 and 168/168); a single run per model on 89 questions, 2026-11-07, not a ranking                                                                  |
+| What was measured                                                          | Result                                                                                                                                                                                                   |
+| -------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Default search on 75 paraphrase questions                                  | recall@5 0.960, MRR 0.900 on all 75; 0.946 and 0.901 on the held-out half (37), which was used to check the tuning (see Limitations); all 75 not significantly different from vector-only (0.960, 0.889) |
+| Default search on 28 lexical questions (written to favor it)               | recall@5 0.857, MRR 0.720, against 0.679 and 0.536 for vector-only                                                                                                                                       |
+| Citation validity of a free hosted model (`gemini-3.5-flash-lite`, 4 runs) | 0.940 to 0.976                                                                                                                                                                                           |
+| Citation validity of Claude Opus 5.5 and Sonnet 5.5 (1 run each)           | 1.000 for both (241/241 and 168/168); a single run per model on 89 questions, 2026-11-07, not a ranking                                                                                                  |
 
 Every figure comes from a recorded run in [`eval/results/`](eval/results); the charts below are generated from those
 files and checked in CI. The paraphrase and lexical questions were written by Claude, the same model that wrote the
@@ -111,7 +111,8 @@ Claude Code), directed by the repository owner with a human in the loop. Work fo
 [OpenSpec](https://github.com/Fission-AI/OpenSpec): every change started as a spec pull request that the
 owner read and merged before any implementation existed, and the implementation arrived as a separate pull
 request that the owner merged after review. The owner set the goals, the constraints and the acceptance
-criteria and decided at each gate. Commits are made under the owner's account.
+criteria and decided at each gate. Commits are made under the owner's account. Who wrote the evaluation questions
+and corpus units is stated under "Limitations".
 
 If you want to judge the engineering and the product thinking rather than take this page's word for it, these
 are the places where it is visible and checkable:
@@ -122,7 +123,7 @@ are the places where it is visible and checkable:
   processed, with cited sources) and [ADR 0002](docs/adr/0002-embeddings-and-reranker.md) (the decision rule
   and where it was and was not fixed before the numbers were seen).
 - **Results that are not flattering are kept.** The tables show a weak local model, hybrid search scoring
-  below vector-only search, and a reranker that is too slow to use; "Honest limits" lists what is unknown.
+  below vector-only search, and a reranker that is too slow to use; "Limitations" lists what is unknown.
 - **A strict product rule enforced in code.** An answer needs a citation whose quote is a verbatim substring of
   the retrieved text; any failed citation turns the whole answer into a refusal.
 - **Scope.** What was deliberately left out (no UI, no auth, no promise of current law) is stated, not
@@ -348,7 +349,7 @@ invented text, not a real policy. The Markdown source under `packages/corpus/tes
   implementation, version 0.1.0; it was run against this API with the MCP Python SDK's client on 2026-11-05, and
   not yet in a desktop MCP client (see its README).
 
-## Honest limits
+## Limitations
 
 - **The Claude runs are one run per model.** Claude Opus 5.5 and Sonnet 5.5 were each run once on the 89
   questions that Claude wrote and the owner reviewed, so there is no spread, and a difference of one question out of 72 is noise. They are
@@ -363,11 +364,30 @@ invented text, not a real policy. The Markdown source under `packages/corpus/tes
 - **The reranker is not part of the service.** It improves MRR significantly (recall@5 not significantly), but
   took about 53 seconds per question on the development laptop, so it is off by default and not wired into
   `/ask`.
-- **The question set is small and written by the model that wrote the system.** 75 answerable and 14 unanswerable
-  questions, written by Claude from the corpus text and reviewed by the owner, so the system and its test share one
-  author (self-bias); the external set below is the independent check. Seven are flagged `needs_review`, three of
-  them reworded after one review in the same process, and none reviewed independently. Differences of a few points between
-  configurations are not meaningful, and four embedding models could not be told apart.
+- **Who wrote the corpus and the questions.** The corpus is the official text of five laws from gesetze-im-internet.de
+  (snapshot 2026-11-02); this project's parser cut it into units and made the citation labels, and no lawyer checked
+  those units or labels. The 75 paraphrase questions, the 14 unanswerable questions and the 28 lexical questions were
+  written by Claude, the model that also wrote the code, and none of them by a lawyer or any independent person. The
+  owner reviewed the 89 paraphrase questions once, in the same process that wrote them; the lexical questions were not
+  reviewed by anyone else. The system and its test share one author (self-bias). The 144 external questions were
+  written by Perplexity and Gemini, as reported by the owner, from corpus passages, so they quote those passages.
+- **What is held out and what is not.** The 75 paraphrase questions are split by number: odd numbers are the
+  development half (38), even numbers the held-out half (37); the 28 lexical questions are split the same way (14 and
+  14). The embedding model (multilingual-e5-small) was chosen on all 75 questions (ADR 0002), before the split
+  existed. The search default was chosen on the development halves, but the held-out halves were used as the gate of
+  the decision rules in ADRs 0003, 0004 and 0005 and are in 18 result files (`eval/results/*heldout*`), so the
+  held-out figures (0.946 recall@5, 0.901 MRR for the default) confirm a choice; they are not an untouched test. The
+  diagnosis that led to BM25 and citation matching, and the lexical set itself, were made after looking at results on
+  all 75 questions. The frozen protocol for a new, untouched set is in [eval/PROTOCOL.md](eval/PROTOCOL.md); that set
+  has not been written yet and no result exists for it.
+- **The sets are small and every number is one run.** 75 and 28 answerable questions (38 and 37, or 14 and 14, per
+  half); seven paraphrase and six lexical questions are flagged `needs_review`, three of the paraphrase ones were
+  reworded after one review by their own author, and none was reviewed by anyone else. Differences of a few points
+  between configurations are not meaningful, and four embedding models could not be told apart. Each model and each
+  search configuration was measured once per question set, so there is no spread over repeated runs.
+- **No human legal review.** Nobody with legal training checked the expected units, the answers or the refusals.
+  "Citation validity" means the quoted text is a verbatim substring of a retrieved unit (code check); it does not
+  mean the unit supports the answer or that the answer is legally right.
 - **Compound-word handling is untested by the eval.** Only one of 75 paraphrase questions contains a compound that
   the splitting touches.
 - **One corpus, one language, one snapshot.** Five German federal laws, taken on 2026-11-02 with the "Stand"

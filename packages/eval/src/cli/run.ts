@@ -1,5 +1,6 @@
 import { execFileSync } from 'node:child_process';
-import { existsSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { GesetzeImInternetSource, type CorpusUnit } from '@normkompass/corpus';
@@ -15,16 +16,19 @@ import {
   readModelRecord,
   type SearchMode,
 } from '@normkompass/search';
+import { bootstrapMeanInterval, reciprocalRanks } from '../compare.js';
 import { evaluateRetrieval } from '../evaluate.js';
 import {
   EXTERNAL_SET_LIMITS,
   FULL_SET_LIMITS,
+  HELDOUT_V2_LIMITS,
   LEXICAL_SET_LIMITS,
   loadQuestions,
   selectSplit,
   type Split,
   validateAgainstCorpus,
   validateLexical,
+  validateProvenance,
   validateStructure,
 } from '../questions.js';
 
@@ -74,9 +78,16 @@ const bm25B = numberFlag('--bm25-b');
 const keepSeparatedNumbers = !process.argv.includes('--no-keep-numbers');
 
 const questionFile = argValue('--questions') ?? join('eval', 'questions.jsonl');
-const external = questionFile.includes('external');
-const lexical = !external && questionFile.includes('lexical');
-const setKind = external ? 'external' : lexical ? 'lexical' : 'paraphrase';
+const heldoutV2 = questionFile.includes('heldout-v2');
+const external = !heldoutV2 && questionFile.includes('external');
+const lexical = !heldoutV2 && !external && questionFile.includes('lexical');
+const setKind = heldoutV2
+  ? 'heldout-v2'
+  : external
+    ? 'external'
+    : lexical
+      ? 'lexical'
+      : 'paraphrase';
 const questions = await loadQuestions(questionFile);
 const source = new GesetzeImInternetSource({
   cacheDir: join(process.cwd(), '.cache', 'gesetze-im-internet'),
@@ -87,8 +98,26 @@ for await (const doc of source.loadDocuments()) units.push(...source.split(doc).
 const problems = [
   ...validateStructure(
     questions,
-    external ? EXTERNAL_SET_LIMITS : lexical ? LEXICAL_SET_LIMITS : FULL_SET_LIMITS,
+    heldoutV2
+      ? HELDOUT_V2_LIMITS
+      : external
+        ? EXTERNAL_SET_LIMITS
+        : lexical
+          ? LEXICAL_SET_LIMITS
+          : FULL_SET_LIMITS,
   ),
+  ...(heldoutV2
+    ? validateProvenance(
+        questions,
+        (
+          await Promise.all(
+            ['questions', 'lexical-questions', 'external-questions'].map((f) =>
+              loadQuestions(join('eval', `${f}.jsonl`)),
+            ),
+          )
+        ).flat(),
+      )
+    : []),
   ...(lexical ? validateLexical(questions, units) : []),
   // External questions that are ambiguous are kept and flagged by the conversion, so only quoting is checked.
   ...(external ? validateLexical(questions, units, { ambiguity: false }) : []),
@@ -109,6 +138,25 @@ const connectionString = process.env.DATABASE_URL;
 if (!connectionString) {
   console.error('DATABASE_URL is not set (see .env.example).');
   process.exit(1);
+}
+// Frozen protocol (eval/PROTOCOL.md): the v2 set is run once, from a committed tree.
+if (heldoutV2) {
+  const status = execFileSync('git', ['status', '--porcelain', '--', ':!eval/results'], {
+    encoding: 'utf-8',
+  }).trim();
+  if (status.length > 0) {
+    console.error('Held-out v2 must be run from a clean, committed tree (see eval/PROTOCOL.md).');
+    process.exit(1);
+  }
+  const earlier = existsSync(join('eval', 'results'))
+    ? readdirSync(join('eval', 'results')).filter((f) => f.includes('heldout-v2'))
+    : [];
+  if (earlier.length > 0) {
+    console.error(
+      `Held-out v2 was already run (${earlier.join(', ')}); the protocol allows one run.`,
+    );
+    process.exit(1);
+  }
 }
 const embedder = createEmbedder(argValue('--embedder') ?? process.env.EMBEDDER);
 const pool = createPool({ connectionString });
@@ -145,6 +193,13 @@ try {
   console.log(`Questions: ${metrics.questions}`);
   console.log(`recall@5: ${metrics.recallAt5.toFixed(3)}`);
   console.log(`MRR:      ${metrics.mrr.toFixed(3)}`);
+  if (heldoutV2) {
+    const recall = bootstrapMeanInterval(results.map((r) => r.recallAt5));
+    const mrr = bootstrapMeanInterval(reciprocalRanks(results));
+    console.log(
+      `recall@5 95% bootstrap interval: [${recall.lo.toFixed(3)}, ${recall.hi.toFixed(3)}]   MRR: [${mrr.lo.toFixed(3)}, ${mrr.hi.toFixed(3)}]   (10000 resamples, seed 1)`,
+    );
+  }
   const misses = results.filter((r) => r.firstHitRank === null || r.firstHitRank > 5);
   console.log(`\nNot in top 5 (${misses.length}):`);
   for (const r of misses) {
@@ -193,6 +248,7 @@ try {
         indexingSeconds: cost?.indexingSeconds ?? null,
         weightsBytes: cost?.weightsBytes ?? null,
         dimension: embedder.dimension,
+        questionsSha256: createHash('sha256').update(readFileSync(questionFile)).digest('hex'),
         questions: metrics.questions,
         recallAt5: metrics.recallAt5,
         mrr: metrics.mrr,
