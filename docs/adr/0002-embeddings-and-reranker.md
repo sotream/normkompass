@@ -95,7 +95,7 @@ which would retrieve better.
 
 ## Limits of the evidence
 
-- 75 questions, written by the author from the corpus text; the wording is often close to the law, which
+- 75 questions, written by Claude from the corpus text and reviewed by the owner; the wording is often close to the law, which
   can favor any method that matches on similar words. Seven questions are flagged `needs_review` and have
   not been reviewed by a second person.
 - One corpus (five German federal laws) and one language; nothing here transfers to other documents

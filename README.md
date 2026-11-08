@@ -58,7 +58,7 @@ Reference implementation, all planned v1 phases implemented: project scaffold, c
 structure-aware parser for the demo laws, hybrid search with a retrieval evaluation and an embedding
 comparison (ADR 0002), and answer generation with code-checked citations and refusal. It is not a finished
 product. See "Honest limits" for what is not known or not done, in particular that the Claude runs are one run per
-model on questions written by the author and that the default search is hybrid with BM25 and citation matching, chosen by a rule fixed before the runs (ADR 0004), after an earlier hybrid scored below vector-only (ADR 0003).
+model on questions that Claude wrote and the owner reviewed, and that the default search is hybrid with BM25 and citation matching, chosen by a rule fixed before the runs (ADR 0004), after an earlier hybrid scored below vector-only (ADR 0003).
 
 ## How it works
 
@@ -87,15 +87,16 @@ citation turns the whole answer into a refusal. A worked example with a real ans
 
 ## Results at a glance
 
-| What was measured                                                          | Result                                                                                 |
-| -------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| Default search on 75 paraphrase questions                                  | recall@5 0.960, MRR 0.900, not significantly different from vector-only (0.960, 0.889) |
-| Default search on 28 lexical questions (written to favor it)               | recall@5 0.857, MRR 0.720, against 0.679 and 0.536 for vector-only                     |
-| Citation validity of a free hosted model (`gemini-3.5-flash-lite`, 4 runs) | 0.940 to 0.976                                                                         |
-| Citation validity of Claude Opus 5.5 and Sonnet 5.5 (1 run each)           | 1.000 for both (241/241 and 168/168); one run each, not a ranking                      |
+| What was measured                                                          | Result                                                                                                                                                                   |
+| -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Default search on 75 paraphrase questions                                  | recall@5 0.960, MRR 0.900 on all 75; 0.946 and 0.901 on the held-out half (37) not used to choose it; all 75 not significantly different from vector-only (0.960, 0.889) |
+| Default search on 28 lexical questions (written to favor it)               | recall@5 0.857, MRR 0.720, against 0.679 and 0.536 for vector-only                                                                                                       |
+| Citation validity of a free hosted model (`gemini-3.5-flash-lite`, 4 runs) | 0.940 to 0.976                                                                                                                                                           |
+| Citation validity of Claude Opus 5.5 and Sonnet 5.5 (1 run each)           | 1.000 for both (241/241 and 168/168); a single run per model on 89 questions, 2026-11-07, not a ranking                                                                  |
 
 Every figure comes from a recorded run in [`eval/results/`](eval/results); the charts below are generated from those
-files and checked in CI. The questions were written by the project author and the sets are small, so read the
+files and checked in CI. The paraphrase and lexical questions were written by Claude, the same model that wrote the
+code, and the owner reviewed the 89 paraphrase questions; the sets are small, so read the
 whiskers (95% bootstrap intervals), not only the bars. Full tables are in "Retrieval results" and "Answer
 evaluation".
 
@@ -195,8 +196,8 @@ machine after the one-time model download. It was kept after comparing four loca
 answerable question lists the expected units and the place in the corpus it was derived from. A script
 checks that every expected unit exists and that the words of each unanswerable question's topic
 (`absent_terms`) occur nowhere in the corpus; it flagged seven wrong guesses while the set was written.
-Seven questions are flagged `needs_review`; they were checked once by the author of the questions, who
-reworded three of them (see [ADR 0003](docs/adr/0003-hybrid-tuning-and-default-mode.md)), and have not been
+Seven questions are flagged `needs_review`; they were checked once in the same process that wrote the questions,
+which reworded three of them (see [ADR 0003](docs/adr/0003-hybrid-tuning-and-default-mode.md)), and have not been
 reviewed by anyone else.
 
 A returned unit counts as a hit if it is the expected unit or its parent Absatz or §. Recall@5 is the
@@ -350,20 +351,22 @@ invented text, not a real policy. The Markdown source under `packages/corpus/tes
 ## Honest limits
 
 - **The Claude runs are one run per model.** Claude Opus 5.5 and Sonnet 5.5 were each run once on the 89
-  author-written questions, so there is no spread, and a difference of one question out of 72 is noise. They are
+  questions that Claude wrote and the owner reviewed, so there is no spread, and a difference of one question out of 72 is noise. They are
   not a ranking of the two models, and they say nothing about other question sets or real users (see "Answer
   evaluation").
 - **The lexical gain is shown on questions written to favor it.** The default search (hybrid with BM25 and citation
   matching) beat vector-only on a 28-question lexical set that favors lexical matching by construction and was written
-  by the author; on the paraphrase questions it only matched vector-only. How it behaves on real users' questions or
+  by Claude; on the paraphrase questions it only matched vector-only. How it behaves on real users' questions or
   other corpora is not known; the external check is 144 questions from two AI writers, which quote the passages' words
   and are not users' questions (see "External question set"). On exact terms and numbers the default is not shown to be better or worse than the
   older Postgres hybrid (19 questions, differences within noise, ADR 0005).
 - **The reranker is not part of the service.** It improves MRR significantly (recall@5 not significantly), but
   took about 53 seconds per question on the development laptop, so it is off by default and not wired into
   `/ask`.
-- **The question set is small and written by the author.** 75 answerable and 14 unanswerable questions;
-  seven are flagged `needs_review`, three of them reworded after one review by their own author, and none reviewed by anyone else. Differences of a few points between
+- **The question set is small and written by the model that wrote the system.** 75 answerable and 14 unanswerable
+  questions, written by Claude from the corpus text and reviewed by the owner, so the system and its test share one
+  author (self-bias); the external set below is the independent check. Seven are flagged `needs_review`, three of
+  them reworded after one review in the same process, and none reviewed independently. Differences of a few points between
   configurations are not meaningful, and four embedding models could not be told apart.
 - **Compound-word handling is untested by the eval.** Only one of 75 paraphrase questions contains a compound that
   the splitting touches.

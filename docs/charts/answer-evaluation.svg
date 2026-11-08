@@ -93,7 +93,7 @@
   <text class="n" x="375.0" y="574.0" text-anchor="middle">0.5</text>
   <line class="axis" x1="500.0" y1="52.0" x2="500.0" y2="560.0"/>
   <text class="n" x="500.0" y="574.0" text-anchor="middle">1.0</text>
-  <text class="n" x="20" y="600.0">89 questions (75 answerable, 14 not) written by the project author. One dot per run.</text>
+  <text class="n" x="20" y="600.0">89 questions (75 answerable, 14 not) written by Claude, reviewed by the owner. One dot per run.</text>
   <text class="n" x="20" y="617.0">One run per Claude model shows no spread; hosted models can change without notice,</text>
   <text class="n" x="20" y="634.0">so these are data points for this corpus, not a ranking. Source: eval/results/answers-*.</text>
 </svg>
