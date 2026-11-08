@@ -93,7 +93,7 @@
   <text class="n" x="250.0" y="322.0" text-anchor="middle">0</text>
   <text class="n" x="400.0" y="322.0" text-anchor="middle">0.5</text>
   <text class="n" x="550.0" y="322.0" text-anchor="middle">1.0</text>
-  <text class="n" x="20" y="346.0">28 questions written to favor lexical matching, by the project author.</text>
+  <text class="n" x="20" y="346.0">28 questions written by Claude to favor lexical matching.</text>
   <text class="n" x="20" y="363.0">Shown separately from the paraphrase set; it says the machinery works for quoted</text>
   <text class="n" x="20" y="380.0">references, not how real users ask. Whiskers: 95% bootstrap interval. Source: eval/results/.</text>
 </svg>

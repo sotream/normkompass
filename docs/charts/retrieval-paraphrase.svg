@@ -105,7 +105,7 @@
   <text class="n" x="250.0" y="368.0" text-anchor="middle">0</text>
   <text class="n" x="400.0" y="368.0" text-anchor="middle">0.5</text>
   <text class="n" x="550.0" y="368.0" text-anchor="middle">1.0</text>
-  <text class="n" x="20" y="392.0">75 questions written by the project author; embedding model multilingual-e5-small.</text>
+  <text class="n" x="20" y="392.0">75 questions written by Claude, reviewed by the owner; embedding model multilingual-e5-small.</text>
   <text class="n" x="20" y="409.0">Whiskers: 95% bootstrap interval of the mean over questions. Overlapping whiskers</text>
   <text class="n" x="20" y="426.0">mean the data cannot tell the variants apart. Source: eval/results/.</text>
 </svg>

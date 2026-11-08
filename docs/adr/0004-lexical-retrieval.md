@@ -111,7 +111,7 @@ What the numbers say, and what they do not:
   the default against 0.080 for vector-only; exact terms 0.850 against 0.811; numbers 0.701 against 0.685. The older
   Postgres hybrid was actually better than the default on exact terms (0.883) and numbers (0.889), so BM25 is not an
   improvement on plain full-text for those; it was chosen for the pooled result, not as the best at each style.
-- The lexical set is small (28, 14 held out), favors lexical matching by construction, and was written by the author.
+- The lexical set is small (28, 14 held out), favors lexical matching by construction, and was written by Claude.
   A win there shows the lexical machinery works for the quoted-reference style; it is not evidence about real users'
   questions or other corpora.
 - The BM25 index is built in the application from the chunk text at first use (about 4,600 chunks). This says nothing
