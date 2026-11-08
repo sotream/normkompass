@@ -375,7 +375,7 @@ invented text, not a real policy. The Markdown source under `packages/corpus/tes
   development half (38), even numbers the held-out half (37); the 28 lexical questions are split the same way (14 and
   14). The embedding model (multilingual-e5-small) was chosen on all 75 questions (ADR 0002), before the split
   existed. The search default was chosen on the development halves, but the held-out halves were used as the gate of
-  the decision rules in ADRs 0003, 0004 and 0005 and were run 17 times in total (`eval/results/*heldout*`), so the
+  the decision rules in ADRs 0003, 0004 and 0005 and are in 18 result files (`eval/results/*heldout*`), so the
   held-out figures (0.946 recall@5, 0.901 MRR for the default) confirm a choice; they are not an untouched test. The
   diagnosis that led to BM25 and citation matching, and the lexical set itself, were made after looking at results on
   all 75 questions. The frozen protocol for a new, untouched set is in [eval/PROTOCOL.md](eval/PROTOCOL.md); that set

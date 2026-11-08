@@ -5,7 +5,7 @@ Status: **frozen once the questions file is committed.** Before that, only the o
 ## Why
 
 The 75 paraphrase questions and the 28 lexical questions were written inside this project, and the system was tuned
-with them in view (see README "Honest limits" and ADRs 0002 to 0005). A held-out half whose results are 17
+with them in view (see README "Honest limits" and ADRs 0002 to 0005). A held-out half whose results are 18
 committed files (`eval/results/*heldout*`) and that gated three decision rules is not a test set any more. This set exists to give one number that no decision in this
 repository has seen.
 
