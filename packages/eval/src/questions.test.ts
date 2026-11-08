@@ -5,6 +5,7 @@ import {
   LEXICAL_SET_LIMITS,
   loadQuestions,
   selectSplit,
+  validateProvenance,
   validateAgainstCorpus,
   validateLexical,
   validateStructure,
@@ -193,5 +194,40 @@ describe('validateLexical', () => {
     expect(validateLexical([ok], units)).toEqual([]);
     const wrong = { ...ok, expected: ['g/§ 1/Abs. 1'] };
     expect(validateLexical([wrong], units).join()).toMatch(/not the label of an expected unit/);
+  });
+});
+
+describe('validateProvenance', () => {
+  const good = (id: string, text: string): Question => ({
+    ...answerable(id, ['x/§ 1/Abs. 1']),
+    question: text,
+    provenance: {
+      author_kind: 'model',
+      author: 'Other Model',
+      model: 'other-model-1',
+      written_on: '2026-11-09',
+      basis: 'corpus-passage',
+      reviewed_by: null,
+    },
+  });
+
+  it('accepts a model author from outside the system under test', () => {
+    expect(validateProvenance([good('a', 'Frage A?')], [])).toEqual([]);
+  });
+
+  it('rejects missing provenance, Claude authors and incomplete model authors', () => {
+    const claude = good('b', 'Frage B?');
+    if (claude.provenance) claude.provenance.model = 'claude-opus-5-5';
+    const nameless = good('c', 'Frage C?');
+    if (nameless.provenance) delete nameless.provenance.model;
+    const errors = validateProvenance([answerable('a', ['x']), claude, nameless], []).join('\n');
+    expect(errors).toMatch(/a: provenance is missing/);
+    expect(errors).toMatch(/b: the author model belongs to the system under test/);
+    expect(errors).toMatch(/c: a model author needs provenance.model/);
+  });
+
+  it('rejects text already in another set and never prints question text', () => {
+    const errors = validateProvenance([good('a', 'Frage  A?')], [good('z', 'frage a?')]);
+    expect(errors).toEqual(['a: the question text already occurs in another question set']);
   });
 });

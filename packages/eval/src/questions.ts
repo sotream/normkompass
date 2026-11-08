@@ -26,6 +26,23 @@ export interface Question {
   writer?: string;
   /** Why a question was flagged `needs_review` by the conversion. */
   review_note?: string;
+  /** Held-out v2 questions only: who wrote the question and from what (see eval/PROTOCOL.md). */
+  provenance?: Provenance;
+}
+
+/** Who wrote a held-out v2 question. Required for every question of that set. */
+export interface Provenance {
+  author_kind: 'human' | 'lawyer' | 'model';
+  /** Name of the person, or the model's product name. */
+  author: string;
+  /** Exact model identifier; required when `author_kind` is `model`. */
+  model?: string;
+  /** ISO date (YYYY-MM-DD) on which the question was written. */
+  written_on: string;
+  /** What the writer looked at: a corpus passage, or none (own knowledge, real user query). */
+  basis: 'corpus-passage' | 'own-knowledge' | 'real-query';
+  /** Whether a second person checked the expected unit; `null` if nobody did. */
+  reviewed_by: string | null;
 }
 
 export interface SetLimits {
@@ -57,6 +74,56 @@ export const EXTERNAL_SET_LIMITS: SetLimits = {
   minUnanswerable: 0,
   maxUnanswerable: 0,
 };
+
+/** The held-out v2 set has answerable questions only and a floor of 30 (eval/PROTOCOL.md). */
+export const HELDOUT_V2_LIMITS: SetLimits = {
+  minAnswerable: 30,
+  maxAnswerable: 200,
+  minUnanswerable: 0,
+  maxUnanswerable: 0,
+};
+
+/** Model families that built or are used inside this system; they may not write held-out v2 questions. */
+const EXCLUDED_AUTHOR_MODELS = /claude|anthropic/i;
+
+const normalizeText = (t: string): string => t.toLowerCase().replace(/\s+/g, ' ').trim();
+
+/**
+ * Checks the provenance of every held-out v2 question: author recorded, model authors named and not from the
+ * excluded families, a real date, and no question text that already occurs in another set. Messages carry
+ * question ids only, never question text.
+ */
+export function validateProvenance(questions: Question[], otherSets: Question[]): string[] {
+  const errors: string[] = [];
+  const seen = new Set(otherSets.map((q) => normalizeText(q.question)));
+  for (const q of questions) {
+    const p: Partial<Provenance> | undefined = q.provenance;
+    if (!p) {
+      errors.push(`${q.id}: provenance is missing`);
+      continue;
+    }
+    if (!['human', 'lawyer', 'model'].includes(p.author_kind ?? ''))
+      errors.push(`${q.id}: provenance.author_kind must be human, lawyer or model`);
+    if (!p.author?.trim()) errors.push(`${q.id}: provenance.author is empty`);
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(p.written_on ?? ''))
+      errors.push(`${q.id}: provenance.written_on must be YYYY-MM-DD`);
+    if (!['corpus-passage', 'own-knowledge', 'real-query'].includes(p.basis ?? ''))
+      errors.push(`${q.id}: provenance.basis is not one of the allowed values`);
+    if (p.reviewed_by === undefined)
+      errors.push(`${q.id}: provenance.reviewed_by must be set (null if nobody)`);
+    if (p.author_kind === 'model') {
+      if (!p.model?.trim()) errors.push(`${q.id}: a model author needs provenance.model`);
+      else if (EXCLUDED_AUTHOR_MODELS.test(`${p.model} ${p.author}`))
+        errors.push(
+          `${q.id}: the author model belongs to the system under test and is not allowed`,
+        );
+    }
+    if (seen.has(normalizeText(q.question)))
+      errors.push(`${q.id}: the question text already occurs in another question set`);
+    seen.add(normalizeText(q.question));
+  }
+  return errors;
+}
 
 export async function loadQuestions(path: string): Promise<Question[]> {
   const raw = await readFile(path, 'utf-8');

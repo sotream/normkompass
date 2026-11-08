@@ -58,7 +58,7 @@ Reference implementation, all planned v1 phases implemented: project scaffold, c
 structure-aware parser for the demo laws, hybrid search with a retrieval evaluation and an embedding
 comparison (ADR 0002), and answer generation with code-checked citations and refusal. It is not a finished
 product. See "Honest limits" for what is not known or not done, in particular that the Claude runs are one run per
-model on questions written by the author and that the default search is hybrid with BM25 and citation matching, chosen by a rule fixed before the runs (ADR 0004), after an earlier hybrid scored below vector-only (ADR 0003).
+model on questions written inside the project and that the default search is hybrid with BM25 and citation matching, chosen by a rule fixed before the runs (ADR 0004), after an earlier hybrid scored below vector-only (ADR 0003).
 
 ## How it works
 
@@ -95,8 +95,8 @@ citation turns the whole answer into a refusal. A worked example with a real ans
 | Citation validity of Claude Opus 5.5 and Sonnet 5.5 (1 run each)           | 1.000 for both (241/241 and 168/168); one run each, not a ranking                      |
 
 Every figure comes from a recorded run in [`eval/results/`](eval/results); the charts below are generated from those
-files and checked in CI. The questions were written by the project author and the sets are small, so read the
-whiskers (95% bootstrap intervals), not only the bars. Full tables are in "Retrieval results" and "Answer
+files and checked in CI. The questions were written inside this project, not by an independent party (see "Honest
+limits"), and the sets are small, so read the whiskers (95% bootstrap intervals), not only the bars. Full tables are in "Retrieval results" and "Answer
 evaluation".
 
 ![Retrieval on paraphrase questions](docs/charts/retrieval-paraphrase.svg)
@@ -110,7 +110,8 @@ Claude Code), directed by the repository owner with a human in the loop. Work fo
 [OpenSpec](https://github.com/Fission-AI/OpenSpec): every change started as a spec pull request that the
 owner read and merged before any implementation existed, and the implementation arrived as a separate pull
 request that the owner merged after review. The owner set the goals, the constraints and the acceptance
-criteria and decided at each gate. Commits are made under the owner's account.
+criteria and decided at each gate. Commits are made under the owner's account. Who wrote the evaluation questions
+and corpus units is stated under "Honest limits".
 
 If you want to judge the engineering and the product thinking rather than take this page's word for it, these
 are the places where it is visible and checkable:
@@ -362,9 +363,31 @@ invented text, not a real policy. The Markdown source under `packages/corpus/tes
 - **The reranker is not part of the service.** It improves MRR significantly (recall@5 not significantly), but
   took about 53 seconds per question on the development laptop, so it is off by default and not wired into
   `/ask`.
-- **The question set is small and written by the author.** 75 answerable and 14 unanswerable questions;
-  seven are flagged `needs_review`, three of them reworded after one review by their own author, and none reviewed by anyone else. Differences of a few points between
-  configurations are not meaningful, and four embedding models could not be told apart.
+- **Who wrote the corpus and the questions.** The corpus is the official text of five laws from gesetze-im-internet.de
+  (snapshot 2026-11-02); this project's parser cut it into units and made the citation labels, and no lawyer checked
+  those units or labels. The 75 paraphrase questions, the 14 unanswerable questions and the 28 lexical questions were
+  written inside this project, and none of them by a lawyer or any independent person. The repository does not record
+  whether the owner or Claude Code drafted a given question (the owner and Claude Code both worked on the project, see
+  "How this was built"; the design notes say the questions were "generated and then checked by a script" and the ADRs
+  call the writer "the author"). Neither is independent of the system being measured. The 144 external questions were
+  written by Perplexity and Gemini, as reported by the owner, from corpus passages, so they quote those passages.
+- **What is held out and what is not.** The 75 paraphrase questions are split by number: odd numbers are the
+  development half (38), even numbers the held-out half (37); the 28 lexical questions are split the same way (14 and
+  14). The embedding model (multilingual-e5-small) was chosen on all 75 questions (ADR 0002), before the split
+  existed. The search default was chosen on the development halves, but the held-out halves were used as the gate of
+  the decision rules in ADRs 0003, 0004 and 0005 and were run 17 times in total (`eval/results/*heldout*`), so the
+  held-out figures (0.946 recall@5, 0.901 MRR for the default) confirm a choice; they are not an untouched test. The
+  diagnosis that led to BM25 and citation matching, and the lexical set itself, were made after looking at results on
+  all 75 questions. The frozen protocol for a new, untouched set is in [eval/PROTOCOL.md](eval/PROTOCOL.md); that set
+  has not been written yet and no result exists for it.
+- **The sets are small and every number is one run.** 75 and 28 answerable questions (38 and 37, or 14 and 14, per
+  half); seven paraphrase and six lexical questions are flagged `needs_review`, three of the paraphrase ones were
+  reworded after one review by their own author, and none was reviewed by anyone else. Differences of a few points
+  between configurations are not meaningful, and four embedding models could not be told apart. Each model and each
+  search configuration was measured once per question set, so there is no spread over repeated runs.
+- **No human legal review.** Nobody with legal training checked the expected units, the answers or the refusals.
+  "Citation validity" means the quoted text is a verbatim substring of a retrieved unit (code check); it does not
+  mean the unit supports the answer or that the answer is legally right.
 - **Compound-word handling is untested by the eval.** Only one of 75 paraphrase questions contains a compound that
   the splitting touches.
 - **One corpus, one language, one snapshot.** Five German federal laws, taken on 2026-11-02 with the "Stand"
