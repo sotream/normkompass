@@ -5,8 +5,8 @@ Define what the project documentation must state: honest limits, no unsupported 
 
 ## Requirements
 
-### Requirement: Honest limits section
-The README SHALL contain a section "Honest limits" that states plainly what the project does not do or does not know, and every statement in it SHALL be true for the current repository.
+### Requirement: Limitations section
+The README SHALL contain a section "Limitations" that states plainly what the project does not do or does not know, and every statement in it SHALL be true for the current repository.
 
 #### Scenario: Reader checks claims
 - **WHEN** a reader compares the section with the repository

@@ -14,7 +14,7 @@ answer, the service refuses instead of guessing.</p>
 </p>
 
 The demo corpus is German federal law from gesetze-im-internet.de. This is a reference implementation, not a
-finished product; see "Honest limits".
+finished product; see "Limitations".
 
 This README is also published as a website: <https://sotream.github.io/normkompass/>.
 
@@ -46,7 +46,7 @@ This README is also published as a website: <https://sotream.github.io/normkompa
 
 - [Retrieval results](#retrieval-results)
 - [Answer evaluation](#answer-evaluation)
-- [Honest limits](#honest-limits)
+- [Limitations](#limitations)
 
 **Project**
 
@@ -57,7 +57,7 @@ This README is also published as a website: <https://sotream.github.io/normkompa
 Reference implementation, all planned v1 phases implemented: project scaffold, corpus ingest with a
 structure-aware parser for the demo laws, hybrid search with a retrieval evaluation and an embedding
 comparison (ADR 0002), and answer generation with code-checked citations and refusal. It is not a finished
-product. See "Honest limits" for what is not known or not done, in particular that the Claude runs are one run per
+product. See "Limitations" for what is not known or not done, in particular that the Claude runs are one run per
 model on questions written inside the project and that the default search is hybrid with BM25 and citation matching, chosen by a rule fixed before the runs (ADR 0004), after an earlier hybrid scored below vector-only (ADR 0003).
 
 ## How it works
@@ -111,7 +111,7 @@ Claude Code), directed by the repository owner with a human in the loop. Work fo
 owner read and merged before any implementation existed, and the implementation arrived as a separate pull
 request that the owner merged after review. The owner set the goals, the constraints and the acceptance
 criteria and decided at each gate. Commits are made under the owner's account. Who wrote the evaluation questions
-and corpus units is stated under "Honest limits".
+and corpus units is stated under "Limitations".
 
 If you want to judge the engineering and the product thinking rather than take this page's word for it, these
 are the places where it is visible and checkable:
@@ -122,7 +122,7 @@ are the places where it is visible and checkable:
   processed, with cited sources) and [ADR 0002](docs/adr/0002-embeddings-and-reranker.md) (the decision rule
   and where it was and was not fixed before the numbers were seen).
 - **Results that are not flattering are kept.** The tables show a weak local model, hybrid search scoring
-  below vector-only search, and a reranker that is too slow to use; "Honest limits" lists what is unknown.
+  below vector-only search, and a reranker that is too slow to use; "Limitations" lists what is unknown.
 - **A strict product rule enforced in code.** An answer needs a citation whose quote is a verbatim substring of
   the retrieved text; any failed citation turns the whole answer into a refusal.
 - **Scope.** What was deliberately left out (no UI, no auth, no promise of current law) is stated, not
@@ -348,15 +348,15 @@ invented text, not a real policy. The Markdown source under `packages/corpus/tes
   implementation, version 0.1.0; it was run against this API with the MCP Python SDK's client on 2026-11-05, and
   not yet in a desktop MCP client (see its README).
 
-## Honest limits
+## Limitations
 
 - **The Claude runs are one run per model.** Claude Opus 5.5 and Sonnet 5.5 were each run once on the 89
-  author-written questions, so there is no spread, and a difference of one question out of 72 is noise. They are
+  questions written inside this project, so there is no spread, and a difference of one question out of 72 is noise. They are
   not a ranking of the two models, and they say nothing about other question sets or real users (see "Answer
   evaluation").
 - **The lexical gain is shown on questions written to favor it.** The default search (hybrid with BM25 and citation
   matching) beat vector-only on a 28-question lexical set that favors lexical matching by construction and was written
-  by the author; on the paraphrase questions it only matched vector-only. How it behaves on real users' questions or
+  inside this project; on the paraphrase questions it only matched vector-only. How it behaves on real users' questions or
   other corpora is not known; the external check is 144 questions from two AI writers, which quote the passages' words
   and are not users' questions (see "External question set"). On exact terms and numbers the default is not shown to be better or worse than the
   older Postgres hybrid (19 questions, differences within noise, ADR 0005).
@@ -366,10 +366,9 @@ invented text, not a real policy. The Markdown source under `packages/corpus/tes
 - **Who wrote the corpus and the questions.** The corpus is the official text of five laws from gesetze-im-internet.de
   (snapshot 2026-11-02); this project's parser cut it into units and made the citation labels, and no lawyer checked
   those units or labels. The 75 paraphrase questions, the 14 unanswerable questions and the 28 lexical questions were
-  written inside this project, and none of them by a lawyer or any independent person. The repository does not record
-  whether the owner or Claude Code drafted a given question (the owner and Claude Code both worked on the project, see
-  "How this was built"; the design notes say the questions were "generated and then checked by a script" and the ADRs
-  call the writer "the author"). Neither is independent of the system being measured. The 144 external questions were
+  written inside this project, and none of them by a lawyer or any independent person. According to the owner, Claude Code drafted the questions from corpus passages and the owner reviewed them; the
+  repository does not record this per question (the design notes say the questions were "generated and then checked by a
+  script", the ADRs call the writer "the author"). Neither is independent of the system being measured. The 144 external questions were
   written by Perplexity and Gemini, as reported by the owner, from corpus passages, so they quote those passages.
 - **What is held out and what is not.** The 75 paraphrase questions are split by number: odd numbers are the
   development half (38), even numbers the held-out half (37); the 28 lexical questions are split the same way (14 and

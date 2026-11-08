@@ -163,7 +163,7 @@ describe('the real site', () => {
       ]);
       const home = await readFile(join(out, 'index.html'), 'utf-8');
       for (const heading of [
-        'Honest limits',
+        'Limitations',
         'How it works',
         'Retrieval results',
         'Related projects',
