@@ -58,7 +58,7 @@ Reference implementation, all planned v1 phases implemented: project scaffold, c
 structure-aware parser for the demo laws, hybrid search with a retrieval evaluation and an embedding
 comparison (ADR 0002), and answer generation with code-checked citations and refusal. It is not a finished
 product. See "Limitations" for what is not known or not done, in particular that the Claude runs are one run per
-model on questions written inside the project and that the default search is hybrid with BM25 and citation matching, chosen by a rule fixed before the runs (ADR 0004), after an earlier hybrid scored below vector-only (ADR 0003).
+model on questions that Claude wrote and the owner reviewed, and that the default search is hybrid with BM25 and citation matching, chosen by a rule fixed before the runs (ADR 0004), after an earlier hybrid scored below vector-only (ADR 0003).
 
 ## How it works
 
@@ -87,16 +87,17 @@ citation turns the whole answer into a refusal. A worked example with a real ans
 
 ## Results at a glance
 
-| What was measured                                                          | Result                                                                                 |
-| -------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| Default search on 75 paraphrase questions                                  | recall@5 0.960, MRR 0.900, not significantly different from vector-only (0.960, 0.889) |
-| Default search on 28 lexical questions (written to favor it)               | recall@5 0.857, MRR 0.720, against 0.679 and 0.536 for vector-only                     |
-| Citation validity of a free hosted model (`gemini-3.5-flash-lite`, 4 runs) | 0.940 to 0.976                                                                         |
-| Citation validity of Claude Opus 5.5 and Sonnet 5.5 (1 run each)           | 1.000 for both (241/241 and 168/168); one run each, not a ranking                      |
+| What was measured                                                          | Result                                                                                                                                                                                                   |
+| -------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Default search on 75 paraphrase questions                                  | recall@5 0.960, MRR 0.900 on all 75; 0.946 and 0.901 on the held-out half (37), which was used to check the tuning (see Limitations); all 75 not significantly different from vector-only (0.960, 0.889) |
+| Default search on 28 lexical questions (written to favor it)               | recall@5 0.857, MRR 0.720, against 0.679 and 0.536 for vector-only                                                                                                                                       |
+| Citation validity of a free hosted model (`gemini-3.5-flash-lite`, 4 runs) | 0.940 to 0.976                                                                                                                                                                                           |
+| Citation validity of Claude Opus 5.5 and Sonnet 5.5 (1 run each)           | 1.000 for both (241/241 and 168/168); a single run per model on 89 questions, 2026-11-07, not a ranking                                                                                                  |
 
 Every figure comes from a recorded run in [`eval/results/`](eval/results); the charts below are generated from those
-files and checked in CI. The questions were written inside this project, not by an independent party (see "Honest
-limits"), and the sets are small, so read the whiskers (95% bootstrap intervals), not only the bars. Full tables are in "Retrieval results" and "Answer
+files and checked in CI. The paraphrase and lexical questions were written by Claude, the same model that wrote the
+code, and the owner reviewed the 89 paraphrase questions; the sets are small, so read the
+whiskers (95% bootstrap intervals), not only the bars. Full tables are in "Retrieval results" and "Answer
 evaluation".
 
 ![Retrieval on paraphrase questions](docs/charts/retrieval-paraphrase.svg)
@@ -196,8 +197,8 @@ machine after the one-time model download. It was kept after comparing four loca
 answerable question lists the expected units and the place in the corpus it was derived from. A script
 checks that every expected unit exists and that the words of each unanswerable question's topic
 (`absent_terms`) occur nowhere in the corpus; it flagged seven wrong guesses while the set was written.
-Seven questions are flagged `needs_review`; they were checked once by the author of the questions, who
-reworded three of them (see [ADR 0003](docs/adr/0003-hybrid-tuning-and-default-mode.md)), and have not been
+Seven questions are flagged `needs_review`; they were checked once in the same process that wrote the questions,
+which reworded three of them (see [ADR 0003](docs/adr/0003-hybrid-tuning-and-default-mode.md)), and have not been
 reviewed by anyone else.
 
 A returned unit counts as a hit if it is the expected unit or its parent Absatz or §. Recall@5 is the
@@ -351,12 +352,12 @@ invented text, not a real policy. The Markdown source under `packages/corpus/tes
 ## Limitations
 
 - **The Claude runs are one run per model.** Claude Opus 5.5 and Sonnet 5.5 were each run once on the 89
-  questions written inside this project, so there is no spread, and a difference of one question out of 72 is noise. They are
+  questions that Claude wrote and the owner reviewed, so there is no spread, and a difference of one question out of 72 is noise. They are
   not a ranking of the two models, and they say nothing about other question sets or real users (see "Answer
   evaluation").
 - **The lexical gain is shown on questions written to favor it.** The default search (hybrid with BM25 and citation
   matching) beat vector-only on a 28-question lexical set that favors lexical matching by construction and was written
-  inside this project; on the paraphrase questions it only matched vector-only. How it behaves on real users' questions or
+  by Claude; on the paraphrase questions it only matched vector-only. How it behaves on real users' questions or
   other corpora is not known; the external check is 144 questions from two AI writers, which quote the passages' words
   and are not users' questions (see "External question set"). On exact terms and numbers the default is not shown to be better or worse than the
   older Postgres hybrid (19 questions, differences within noise, ADR 0005).
@@ -366,9 +367,9 @@ invented text, not a real policy. The Markdown source under `packages/corpus/tes
 - **Who wrote the corpus and the questions.** The corpus is the official text of five laws from gesetze-im-internet.de
   (snapshot 2026-11-02); this project's parser cut it into units and made the citation labels, and no lawyer checked
   those units or labels. The 75 paraphrase questions, the 14 unanswerable questions and the 28 lexical questions were
-  written inside this project, and none of them by a lawyer or any independent person. According to the owner, Claude Code drafted the questions from corpus passages and the owner reviewed them; the
-  repository does not record this per question (the design notes say the questions were "generated and then checked by a
-  script", the ADRs call the writer "the author"). Neither is independent of the system being measured. The 144 external questions were
+  written by Claude, the model that also wrote the code, and none of them by a lawyer or any independent person. The
+  owner reviewed the 89 paraphrase questions once, in the same process that wrote them; the lexical questions were not
+  reviewed by anyone else. The system and its test share one author (self-bias). The 144 external questions were
   written by Perplexity and Gemini, as reported by the owner, from corpus passages, so they quote those passages.
 - **What is held out and what is not.** The 75 paraphrase questions are split by number: odd numbers are the
   development half (38), even numbers the held-out half (37); the 28 lexical questions are split the same way (14 and

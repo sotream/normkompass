@@ -140,7 +140,7 @@ export async function buildCharts(resultsDir: string): Promise<Record<string, st
     series: SERIES,
     rows: para.rows,
     notes: [
-      `${para.results[0]?.questions} questions written by the project author; embedding model multilingual-e5-small.`,
+      `${para.results[0]?.questions} questions written by Claude, reviewed by the owner; embedding model multilingual-e5-small.`,
       'Whiskers: 95% bootstrap interval of the mean over questions. Overlapping whiskers',
       'mean the data cannot tell the variants apart. Source: eval/results/.',
     ],
@@ -151,7 +151,7 @@ export async function buildCharts(resultsDir: string): Promise<Record<string, st
     series: SERIES,
     rows: lex.rows,
     notes: [
-      `${lex.results[0]?.questions} questions written to favor lexical matching, by the project author.`,
+      `${lex.results[0]?.questions} questions written by Claude to favor lexical matching.`,
       'Shown separately from the paraphrase set; it says the machinery works for quoted',
       'references, not how real users ask. Whiskers: 95% bootstrap interval. Source: eval/results/.',
     ],
@@ -225,7 +225,7 @@ export async function buildCharts(resultsDir: string): Promise<Record<string, st
       'Citation validity, share of answerable questions answered, and refusal precision for five models on 89 questions (75 answerable, 14 not). One dot per run; Claude Opus 5.5 and Sonnet 5.5 have one run each. Not a ranking.',
     groups,
     notes: [
-      '89 questions (75 answerable, 14 not) written by the project author. One dot per run.',
+      '89 questions (75 answerable, 14 not) written by Claude, reviewed by the owner. One dot per run.',
       'One run per Claude model shows no spread; hosted models can change without notice,',
       'so these are data points for this corpus, not a ranking. Source: eval/results/answers-*.',
     ],

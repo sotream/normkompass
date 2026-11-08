@@ -88,7 +88,7 @@ The README SHALL link the project website once it is deployed, and the "no unsup
 - **THEN** the site states the same results and limits as the README
 
 ### Requirement: Limits describe what the Claude runs show
-Once Claude runs are recorded, the limits section SHALL say they are one run per model on questions written by the project author, that they show no spread, and that they do not rank models.
+Once Claude runs are recorded, the limits section SHALL say they are one run per model on questions written by Claude and reviewed by the owner, that they show no spread, and that they do not rank models.
 
 #### Scenario: Reader reads the limits
 - **WHEN** a reader reads the limits section

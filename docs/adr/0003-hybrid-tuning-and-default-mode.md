@@ -15,7 +15,7 @@ the seven questions flagged `needs_review` were checked against the corpus text.
 
 ## Eval set review
 
-The review was done by the author of the questions, so it is not independent, and all seven questions keep
+The review was done in the same process that wrote the questions (Claude), so it is not independent, and all seven questions keep
 their `needs_review` flag. Three questions were reworded:
 
 - **q027** asked for the deadline to apply for the refund of input VAT after the end of the calendar year. Two
@@ -110,4 +110,4 @@ citations (for example "§ 14 Abs. 1") might favor full-text. That was not teste
 - 38 and 37 questions per half give wide intervals; only large differences are detectable.
 - The held-out half was run for three configurations (the default hybrid, vector-only, and the winner), so it is
   lightly reused; no further tuning on it is claimed.
-- One corpus, one embedding model, questions written by the author who also reviewed them.
+- One corpus, one embedding model, questions written by Claude and reviewed by the owner, the same model that wrote the system.
