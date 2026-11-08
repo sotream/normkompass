@@ -8,6 +8,6 @@
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
-    "marked": "18.1.0"
+    "marked": "18.1.3"
   }
 }
