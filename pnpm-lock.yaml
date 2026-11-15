@@ -170,8 +170,8 @@ importers:
         specifier: ^10.0.1
         version: 10.0.1(eslint@10.14.0)
       '@fission-ai/openspec':
-        specifier: 1.16.0
-        version: 1.16.0(@types/node@24.19.2)
+        specifier: 2.0.0
+        version: 2.0.0(@types/node@24.19.2)
       '@swc/core':
         specifier: ^1.16.21
         version: 1.16.21
@@ -358,8 +358,8 @@ packages:
     resolution: {integrity: sha512-IkO+/KEUvwbVpiURZg+P7zF74z5Jxe0UgJxVni+RtoHQ6IZieXaO02kmadomap/q+l6bc/jdPGGqTjhuZnuz1Q==}
     engines: {node: ^20.19.0 || ^22.13.0 || >=24}
 
-  '@fission-ai/openspec@1.16.0':
-    resolution: {integrity: sha512-WQVhZoIR5PoacH/H0qh84VKMcXFbKCIKuAI96arHS3KiKYhJStlRrjUKGxLqLYKLym0j+2hAAY5MZUrPE5qXIA==}
+  '@fission-ai/openspec@2.0.0':
+    resolution: {integrity: sha512-TsGwEAWogMOhuI8npa3o8Y3popwqBIHLdbn80KGUv6rSExvlmY1kYNALMfSZG+qbliH9gffc+CWC4JPlkoFshw==}
     engines: {node: '>=22.12.0'}
     hasBin: true
 
@@ -2432,7 +2432,7 @@ snapshots:
       '@eslint/core': 1.2.1
       levn: 0.4.1
 
-  '@fission-ai/openspec@1.16.0(@types/node@24.19.2)':
+  '@fission-ai/openspec@2.0.0(@types/node@24.19.2)':
     dependencies:
       '@inquirer/core': 12.0.6(@types/node@24.19.2)
       '@inquirer/prompts': 8.7.5(@types/node@24.19.2)
